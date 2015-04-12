@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nifty xmlns="http://nifty-gui.sourceforge.net/nifty-1.3.xsd"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://nifty-gui.sourceforge.net/nifty-1.3.xsd http://nifty-gui.sourceforge.net/nifty-1.3.xsd">
+    <useStyles filename="nifty-default-styles.xml" />
+    <useControls filename="nifty-default-controls.xml" />
+    
+    <screen id="map" controller="guiPack.MapScreenControl" >
+    <layer id="scroll" childLayout="center">
+      <panel id="scrollArea" childLayout="horizontal" align="center" valign="center" width="108%" height="110%">
+        <control id="scrollbarPanelId" name="scrollPanel" height="100%" width="100%" 
+                 horizontal="true" vertical="true">
+          <!-- first child is the content, the area to scroll around -->
+          <panel id="mapArea" width="1500px" height="1500px" childLayout="vertical">
+            <image filename="Interface/testBattle.png"></image>
+          </panel>
+        </control>
+      </panel>
+    </layer>
+  </screen>
+</nifty>
