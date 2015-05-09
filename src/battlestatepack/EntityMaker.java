@@ -4,6 +4,7 @@
  */
 package battlestatepack;
 
+import battlestatepack.mobPack.MobControl;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
@@ -67,46 +68,6 @@ public class EntityMaker {
         return node;
     }
 
-    protected Node createMobAtk(Spatial mob) {
-        Node node = new Node("mobatkbox");
-
-        node.setLocalTranslation(mob.getLocalTranslation());
-
-        mob.setUserData("atkbox", node);
-
-        node.setUserData("halfwidth", 25f);
-        node.setUserData("halfheight", 40f);
-        node.setUserData("type", "attackbox");
-        node.setUserData("atkpower", 50);
-
-        return node;
-
-    }
-
-    protected Spatial createMob(String name, CollideAS cc, Node dan, Node ki) throws Exception {
-        //remember to define exceptions later
-        Spatial mob = createSpatial(name);
-
-        Node atknode = new Node("mobattack");
-
-        //this is where there will be an xml reader to take in mob info
-        //for now it will just copy the standard spatial method
-        //whole bunch of mob.setUserData()
-        //then an if statement to check for skills
-        mob.setUserData("alive", true);
-        mob.setUserData("mobBehavior", "TempWC");
-        mob.setUserData("wwidth", settings.getWidth());
-        mob.setUserData("wheight", settings.getHeight());
-        mob.setUserData("type", "mob");
-
-        MobControl mc = new MobControl("TempWC", mob, cc, dan, ki);
-        mc.setAtkNode(atknode);
-        mob.addControl(mc);
-
-
-        mob.move(500, 500, 0);
-        return mob;
-    }
 
     //debugging
     public Geometry attachWireBox(float width, float height, ColorRGBA color) {
@@ -143,13 +104,11 @@ public class EntityMaker {
             //idle
             for (int i = 0; i < 8; i++) {
                     library.addSprite(new Sprite("Textures/danidle" + i + ".png", "danidle" + i, assetManager, false, true, 1, 1, 0.08f, "Loop", "Start"));
-                
             }
 
 
         } else if (name.equals("Kirith")) {
             //adds all of kirith's sprites
-//temporarily uses dan's sprites
             for (int i = 0; i < 8; i++) {
                 library.addSprite(new Sprite("Textures/kirun" + i + ".png", "kirun" + i, assetManager, true, true, 6, 1, 0.09f, "Loop", "Start"));
 

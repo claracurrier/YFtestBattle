@@ -41,7 +41,6 @@ public class PMoveAppState extends AbstractAppState implements ActionListener {
     @Override
     public void initialize(AppStateManager asm, Application app) {
         super.initialize(asm, app);
-        System.out.println("Hey");
        setEnabled(true);
     }
     

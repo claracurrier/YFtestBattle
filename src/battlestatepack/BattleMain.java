@@ -1,5 +1,7 @@
 package battlestatepack;
 
+import battlestatepack.mobPack.Mob;
+import battlestatepack.mobPack.MobControl;
 import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AbstractAppState;
@@ -25,8 +27,6 @@ import com.jme3.scene.debug.Arrow;
 import com.jme3.scene.shape.Quad;
 import com.jme3.system.AppSettings;
 import com.jme3.texture.Texture;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import spriteProject.SpriteEngine;
 import spriteProject.SpriteLibrary;
 
@@ -52,6 +52,9 @@ public class BattleMain extends AbstractAppState implements ActionListener {
     private Camera cam;
     private float frustumSize = 1;
     private CameraNode camNode;
+    
+    public static final Node DEFNODE = new Node("defNode");
+    public static final Node ATKNODE = new Node("atkNode");
 
     public BattleMain(SimpleApplication appl, AppSettings set, InputManager input) {
         this.app = appl;
@@ -61,23 +64,21 @@ public class BattleMain extends AbstractAppState implements ActionListener {
 
     @Override
     public void initialize(AppStateManager asm, Application appl) {
-        java.util.logging.Logger.getLogger("").setLevel(Level.WARNING);
         stateManager = asm;
         assetManager = app.getAssetManager();
         Node battleNode = new Node("battleNode");
         app.getRootNode().attachChild(battleNode);
-        Node defNode = new Node("defNode");
-        Node atkNode = new Node("atkNode");
-        battleNode.attachChild(defNode);
-        battleNode.attachChild(atkNode);
+        
+        battleNode.attachChild(DEFNODE);
+        battleNode.attachChild(ATKNODE);
         collideAS = new CollideAS();
         stateManager.attach(collideAS);
 
         //set up the mapping for the switch button
         inputManager.addMapping("switchChar", new KeyTrigger(KeyInput.KEY_G));
         inputManager.addListener(this, "switchChar");
-        
-        
+
+
 
         //set up sprites and spatial making
         sEngine = new SpriteEngine();
@@ -96,15 +97,11 @@ public class BattleMain extends AbstractAppState implements ActionListener {
         kirith.move(settings.getWidth() / 3, settings.getHeight() / 3, 0);
         kiAppState = new KirithAppState(kirith);
 
-        try {
-            //spawn a Mob
-            Spatial mob = maker.createMob("Wanderer", collideAS, dan, kirith);
-            defNode.attachChild(mob);
-            atkNode.attachChild(maker.createMobAtk(mob));
-        } catch (Exception ex) {
-            Logger.getLogger(BattleMain.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
+        //spawn a Mob
+        Spatial mobSpat = maker.createSpatial("Wanderer");
+        Mob mob = new Mob(mobSpat, "Wanderer", 0, dan, kirith);
+        mob.getMobSpat().move(500, 500, 0);
+
         //Set up Camera
         makeCam();
 
@@ -113,7 +110,7 @@ public class BattleMain extends AbstractAppState implements ActionListener {
 
         //Map
         Geometry geom = new Geometry("Quad", new Quad(1500f, 1500f));
-        Texture tex = assetManager.loadTexture("Interface/testBattle.png");
+        Texture tex = assetManager.loadTexture("Textures/testBattle.png");
         Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         mat.setTexture("ColorMap", tex);
         geom.setMaterial(mat);
@@ -127,8 +124,8 @@ public class BattleMain extends AbstractAppState implements ActionListener {
         pMAppState.setSpatial(dan);
 
 
-        defNode.attachChild(dan);
-        defNode.attachChild(kirith);
+        DEFNODE.attachChild(dan);
+        DEFNODE.attachChild(kirith);
     }
 
     @Override

@@ -11,8 +11,6 @@ import com.jme3.app.state.AppStateManager;
 import com.jme3.math.Vector2f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import lemurVersionedPack.VersionedHolder;
-import lemurVersionedPack.VersionedReference;
 
 /**
  *
@@ -23,7 +21,6 @@ public class CollideAS extends AbstractAppState {
     private Node atkNode, defNode;
     private final Vector2f xaxis = new Vector2f(1f, 0);
     private final Vector2f yaxis = new Vector2f(0, 1f);
-    private VersionedHolder vCollide = new VersionedHolder(0);
     private boolean collided = false;
     private Spatial atkchild, defchild, spatial, curChild;
     private int val;
@@ -33,9 +30,8 @@ public class CollideAS extends AbstractAppState {
 
     @Override
     public void initialize(AppStateManager asm, Application app) {
-        Node battleNode = (Node) ((SimpleApplication) app).getRootNode().getChild("battleNode");
-        atkNode = (Node) battleNode.getChild("atkNode");
-        defNode = (Node) battleNode.getChild("defNode");
+        atkNode = BattleMain.ATKNODE;
+        defNode = BattleMain.DEFNODE;
     }
 
     @Override
@@ -68,11 +64,8 @@ public class CollideAS extends AbstractAppState {
                 
                 
                 if (noException(atkchild,defchild)) {
-                    //ignore dan and arrow case
                     val = satTest(atkchild, defchild);
                     if (val > 0) {
-                        //vCollide.updateObject(child2);
-                        //version reports who got hit
                         if(atkchild.getUserData("type").equals("arrow")){
                             atkchild.setUserData("collided", true);
                        }
@@ -145,10 +138,6 @@ public class CollideAS extends AbstractAppState {
             }
 
         }
-    }
-
-    public VersionedReference getvCollide() {
-        return vCollide.createReference();
     }
 
     public int satTest(Spatial mover, Spatial targ) {
