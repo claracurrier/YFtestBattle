@@ -18,4 +18,6 @@ public class MobSkills {
         
     }
     
+    //as a test, work in a simple dashing skill to be triggered randomly
+    //later to have it target a character under a certain situation
 }

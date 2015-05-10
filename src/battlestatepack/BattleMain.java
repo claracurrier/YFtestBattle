@@ -1,7 +1,6 @@
 package battlestatepack;
 
 import battlestatepack.mobPack.Mob;
-import battlestatepack.mobPack.MobControl;
 import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AbstractAppState;
@@ -83,7 +82,7 @@ public class BattleMain extends AbstractAppState implements ActionListener {
         //set up sprites and spatial making
         sEngine = new SpriteEngine();
         SpriteLibrary.l_baseNode = battleNode;
-        maker = new EntityMaker(assetManager, settings, stateManager);
+        maker = new EntityMaker(assetManager, stateManager);
 
         //spawn and set up Dan
         dan = maker.createSpatial("Dan");

@@ -14,16 +14,16 @@ import com.jme3.scene.control.AbstractControl;
  *
  * @author PC
  */
-public class MobControl extends AbstractControl {
+public class MCollideCont extends AbstractControl {
     
-    private final Node dan, ki;
     private Node atkNode;
     private Vector3f loc;
     
-    public MobControl(Node dan, Node ki){
-        
-        this.dan = dan;
-        this.ki = ki;
+    public MCollideCont(){
+    }
+    
+    public MCollideCont(Node atk){
+        atkNode = atk;
     }
     
     public void setAtkNode(Node atk){
@@ -37,8 +37,7 @@ public class MobControl extends AbstractControl {
         if(!atkNode.getLocalTranslation().equals(loc)){
             atkNode.setLocalTranslation(loc);
             //make sure box follows mob 
-        }
-        
+        }      
         
         if (loc.x > 1500
                 || loc.y > 1500
@@ -66,8 +65,6 @@ public class MobControl extends AbstractControl {
                 spatial.setUserData("collided", "none");
             }
         }
-        
-        
     }
     
     private void movedir(int dir) {

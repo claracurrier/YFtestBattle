@@ -4,7 +4,6 @@
  */
 package battlestatepack;
 
-import battlestatepack.mobPack.MobControl;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
@@ -12,9 +11,7 @@ import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
-import com.jme3.scene.Spatial;
 import com.jme3.scene.debug.WireBox;
-import com.jme3.system.AppSettings;
 import spriteProject.Sprite;
 import spriteProject.SpriteLibrary;
 
@@ -25,11 +22,9 @@ import spriteProject.SpriteLibrary;
 public class EntityMaker {
 
     private AssetManager assetManager;
-    private AppSettings settings;
 
-    public EntityMaker(AssetManager aman, AppSettings s, AppStateManager asm) {
+    public EntityMaker(AssetManager aman, AppStateManager asm) {
         this.assetManager = aman;
-        this.settings = s;
     }
 
     protected Node createSpatial(String name) {

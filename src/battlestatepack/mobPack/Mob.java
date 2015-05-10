@@ -23,7 +23,6 @@ public class Mob {
     private Node ki;
     private Spatial mob;
     
-    private MobBehavior behavior;
     
     public Mob(Spatial mob, String name, int id, Node d, Node k){
         this.name = name;
@@ -46,10 +45,8 @@ public class Mob {
         BattleMain.ATKNODE.attachChild(mobatkbox);
         BattleMain.DEFNODE.attachChild(mob);
         
-        MobControl mc = new MobControl(dan, ki);
-        mc.setAtkNode(mobatkbox);
-        mob.addControl(mc);
-        behavior = new MobBehavior(mob);
+        mob.addControl(new MCollideCont(mobatkbox));
+        mob.addControl(new PursuitCont(mob, dan)); //for now it's hard coded
     }
     
     public void readData(){
