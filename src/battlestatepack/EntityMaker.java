@@ -21,7 +21,7 @@ import spriteProject.SpriteLibrary;
  */
 public class EntityMaker {
 
-    private AssetManager assetManager;
+    private final AssetManager assetManager;
 
     public EntityMaker(AssetManager aman, AppStateManager asm) {
         this.assetManager = aman;
@@ -63,7 +63,6 @@ public class EntityMaker {
         return node;
     }
 
-
     //debugging
     public Geometry attachWireBox(float width, float height, ColorRGBA color) {
         Geometry g = new Geometry("WireBox", new WireBox(width, height, 0));
@@ -98,10 +97,10 @@ public class EntityMaker {
             }
             //idle
             for (int i = 0; i < 8; i++) {
-                    library.addSprite(new Sprite("Textures/danidle" + i + ".png", "danidle" + i, assetManager, false, true, 1, 1, 0.08f, "Loop", "Start"));
+                library.addSprite(new Sprite("Textures/danidle" + i + ".png", "danidle" + i, assetManager, false, true, 1, 1, 0.08f, "Loop", "Start"));
             }
 
-
+            library.setCurSprite(12);
         } else if (name.equals("Kirith")) {
             //adds all of kirith's sprites
             for (int i = 0; i < 8; i++) {
@@ -112,14 +111,14 @@ public class EntityMaker {
             for (int i = 0; i < 8; i++) {
                 if (i % 2 == 0) {
                     library.addSprite(new Sprite("Textures/kiidle" + i + ".png", "kiidle" + i, assetManager, false, true, 1, 1, 0.08f, "Loop", "Start"));
-                }else{
+                } else {
                     library.addSprite(new Sprite("Textures/danidle" + i + ".png", "danidle" + i, assetManager, false, true, 1, 1, 0.08f, "Loop", "Start"));
                 }
             }
-            library.activateSprite(12);
+            library.setCurSprite(12);
         } else {
             library.addSprite(new Sprite("Textures/monster.png", "monster", assetManager, true, true, 2, 1, 0.1f, "Loop", "Start"));
-            library.activateSprite(0);
+            library.setCurSprite(0);
             //does a search on the monster's name
             //adds the proper sprite
         }

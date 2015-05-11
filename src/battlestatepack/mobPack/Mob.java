@@ -46,7 +46,8 @@ public class Mob {
         BattleMain.DEFNODE.attachChild(mob);
         
         mob.addControl(new MCollideCont(mobatkbox));
-        mob.addControl(new PursuitCont(mob, dan)); //for now it's hard coded
+        //mob.addControl(new PursuitCont(mob, dan)); for now it's hard coded
+        //temp disabled
     }
     
     public void readData(){

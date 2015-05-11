@@ -30,9 +30,8 @@ import spriteProject.SpriteEngine;
 import spriteProject.SpriteLibrary;
 
 /**
- * test
  *
- * @author normenhansen
+ * @author PC
  */
 public class BattleMain extends AbstractAppState implements ActionListener {
 
@@ -42,16 +41,16 @@ public class BattleMain extends AbstractAppState implements ActionListener {
     private KirithAppState kiAppState;
     private PMoveAppState pMAppState;
     private CollideAS collideAS;
-    private SimpleApplication app;
-    private AppSettings settings;
+    private final SimpleApplication app;
+    private final AppSettings settings;
     private AssetManager assetManager;
     private AppStateManager stateManager;
-    private InputManager inputManager;
-    public static SpriteEngine sEngine;
+    private final InputManager inputManager;
     private Camera cam;
-    private float frustumSize = 1;
+    private final float frustumSize = 220f;
     private CameraNode camNode;
     
+    public static final SpriteEngine sEngine = new SpriteEngine();
     public static final Node DEFNODE = new Node("defNode");
     public static final Node ATKNODE = new Node("atkNode");
 
@@ -80,7 +79,6 @@ public class BattleMain extends AbstractAppState implements ActionListener {
 
 
         //set up sprites and spatial making
-        sEngine = new SpriteEngine();
         SpriteLibrary.l_baseNode = battleNode;
         maker = new EntityMaker(assetManager, stateManager);
 
@@ -191,8 +189,6 @@ public class BattleMain extends AbstractAppState implements ActionListener {
     public void cleanup() {
         app.getRootNode().detachAllChildren();
         maker = null;
-//        sEngine.destroyEngine();
-        sEngine = null;
         stateManager.detach(pMAppState);
         stateManager.detach(kiAppState);
         stateManager.detach(danAppState);
@@ -228,7 +224,6 @@ public class BattleMain extends AbstractAppState implements ActionListener {
         //setup camera for 2D games
         cam = app.getCamera();
         //app.getRootNode().setCullHint(Spatial.CullHint.Never);
-        frustumSize = 220f;
         float aspect = (float) cam.getWidth() / cam.getHeight();
         cam.setFrustum(-100, 100, -aspect * frustumSize, aspect * frustumSize, frustumSize, -frustumSize);
         //key: near, far, left, right, top, bottom

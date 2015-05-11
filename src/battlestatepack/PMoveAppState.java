@@ -23,12 +23,13 @@ public class PMoveAppState extends AbstractAppState implements ActionListener {
     private float screenWidth, screenHeight;
     private InputManager inputManager;
 //    speed of the player
-    private float speed = 350f;
+    private final float speed = 350f;
 //    lastRotation of the player
     private float lastRotation;
     private boolean ku, kd, kl, kr;
     private int dir = 4;
     private Spatial spatial;
+    private SpriteLibrary spatSL;
     
     private boolean moving;
 
@@ -62,6 +63,7 @@ public class PMoveAppState extends AbstractAppState implements ActionListener {
 
     public void setSpatial(Spatial s) {
         spatial = s;
+        spatSL = BattleMain.sEngine.getLibrary(spatial.getName());
     }
 
     public Spatial getSpatial() {
@@ -140,11 +142,6 @@ public class PMoveAppState extends AbstractAppState implements ActionListener {
 
     @Override
     public void update(float tpf) {
-        SpriteLibrary spatSL = BattleMain.sEngine.getLibrary(spatial.getName());
-
-        spatSL.deactivateSprite(dir+8);
-
-
         if (ku && kl && !kr) {//upleft
             if (spatial.getWorldTranslation().y < screenHeight - (Float) spatial.getUserData("halfheight")
                     && spatial.getLocalTranslation().x > (Float) spatial.getUserData("halfwidth")
@@ -152,7 +149,6 @@ public class PMoveAppState extends AbstractAppState implements ActionListener {
                     && (Boolean) spatial.getUserData("canU")) {
                 spatial.move(tpf * -speed / 1.47f, tpf * speed / 1.47f, 0);
             }
-            spatSL.deactivateSprite(dir);
             spatSL.activateSprite(7);
             dir = 7;
 
@@ -163,7 +159,6 @@ public class PMoveAppState extends AbstractAppState implements ActionListener {
                     && (Boolean) spatial.getUserData("canU")) {
                 spatial.move(tpf * speed / 1.47f, tpf * speed / 1.47f, 0);
             }
-            spatSL.deactivateSprite(dir);
             spatSL.activateSprite(1);
             dir = 1;
 
@@ -172,7 +167,6 @@ public class PMoveAppState extends AbstractAppState implements ActionListener {
                     && (Boolean) spatial.getUserData("canU")) {
                 spatial.move(0, tpf * speed, 0);
             }
-            spatSL.deactivateSprite(dir);
             spatSL.activateSprite(0);
             dir = 0;
 
@@ -183,7 +177,6 @@ public class PMoveAppState extends AbstractAppState implements ActionListener {
                     && (Boolean) spatial.getUserData("canL")) {
                 spatial.move(tpf * -speed / 1.47f, tpf * -speed / 1.47f, 0);
             }
-            spatSL.deactivateSprite(dir);
             spatSL.activateSprite(5);
             dir = 5;
 
@@ -194,7 +187,6 @@ public class PMoveAppState extends AbstractAppState implements ActionListener {
                     && (Boolean) spatial.getUserData("canD")) {
                 spatial.move(tpf * speed / 1.47f, tpf * -speed / 1.47f, 0);  //needs to be fixed
             }
-            spatSL.deactivateSprite(dir);
             spatSL.activateSprite(3);
             dir = 3;
 
@@ -203,7 +195,6 @@ public class PMoveAppState extends AbstractAppState implements ActionListener {
                     && (Boolean) spatial.getUserData("canD")) {
                 spatial.move(0, tpf * -speed, 0);
             }
-            spatSL.deactivateSprite(dir);
             spatSL.activateSprite(4);
             dir = 4;
 
@@ -212,7 +203,6 @@ public class PMoveAppState extends AbstractAppState implements ActionListener {
                     && (Boolean) spatial.getUserData("canL")) {
                 spatial.move(tpf * -speed, 0, 0);
             }
-            spatSL.deactivateSprite(dir);
             spatSL.activateSprite(6);
             dir = 6;
 
@@ -221,13 +211,10 @@ public class PMoveAppState extends AbstractAppState implements ActionListener {
                     && (Boolean) spatial.getUserData("canR")) {
                 spatial.move(tpf * speed, 0, 0);
             }
-            spatSL.deactivateSprite(dir);
             spatSL.activateSprite(2);
             dir = 2;
 
         } else { //stop moving
-
-            spatSL.deactivateSprite(dir);
 
             switch (dir) { //activite proper idle sprite
                 case 0:

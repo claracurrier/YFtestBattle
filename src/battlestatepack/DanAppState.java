@@ -17,11 +17,13 @@ import com.jme3.input.MouseInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.MouseButtonTrigger;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Spatial;
+import com.jme3.scene.shape.Line;
 import com.jme3.scene.shape.Quad;
 import com.jme3.system.AppSettings;
 import com.jme3.texture.Texture;
@@ -41,6 +43,9 @@ public class DanAppState extends AbstractAppState
     private PMoveAppState pmc;
     private AppSettings settings;
     private SpriteLibrary spatSL = BattleMain.sEngine.getLibrary("Dan");
+    private Vector2f mouse;
+    private Geometry line1;
+    private Vector3f playerPos;
 
     public DanAppState(Spatial dan, AppSettings settings) {
         this.dan = dan;
@@ -60,6 +65,14 @@ public class DanAppState extends AbstractAppState
             //if the movemap is disabled because kirith was dizzy
             pmc.setEnabled(true);
         }
+
+        //set up lines
+        Line l1 = new Line(Vector3f.ZERO,Vector3f.ZERO);
+        l1.setLineWidth(2);
+        line1 = new Geometry("line1", l1);
+        Material blue = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        blue.setColor("Color", ColorRGBA.Blue);
+        line1.setMaterial(blue);
 
         setEnabled(true);
         System.out.println("Dan is in control!");
@@ -121,7 +134,7 @@ public class DanAppState extends AbstractAppState
         float width = tex.getImage().getWidth();
         float height = tex.getImage().getHeight();
 
-        node.setLocalTranslation(dan.getLocalTranslation());
+        node.setLocalTranslation(playerPos);
 
 //        add a material to the picture
         Material picMat = new Material(assetManager, "Common/MatDefs/Gui/Gui.j3md");
@@ -142,15 +155,10 @@ public class DanAppState extends AbstractAppState
 
     private Vector3f getAimDirection() {
         //aims bullets at the direction of the mouse click
-        Vector2f mouse = inputManager.getCursorPosition();
-        Vector3f playerPos = dan.getLocalTranslation();
-
-        mouse = mouse.addLocal(((playerPos.x) - (settings.getWidth() / 2)),
-                (playerPos.y) - (settings.getHeight() / 2));
-
         Vector3f dif = new Vector3f(mouse.x - playerPos.x, mouse.y - playerPos.y, 0f);
         return dif.normalizeLocal();
     }
+    
     private float power;
     private boolean firing;
 
@@ -163,53 +171,49 @@ public class DanAppState extends AbstractAppState
 
         if (name.equals("mousePick") && isPressed) {
             firing = true;
+            //make the gui
+            appl.getRootNode().attachChild(line1);
         }
 
         if (name.equals("mousePick") && !isPressed) {
+            appl.getRootNode().detachChild(line1);
             fireArrow(power);
             firing = false;
-            spatSL.deactivateSprite(8);
-            spatSL.deactivateSprite(10);
-            spatSL.deactivateSprite(12);
-            spatSL.deactivateSprite(14);
         }
     }
 
     @Override
     public void update(float tpf) {
         if (firing && !pmc.isMoving()) {
+
+            //update the gui
+            playerPos = dan.getLocalTranslation();
+
+        
+            mouse = inputManager.getCursorPosition();
+            mouse = mouse.addLocal(((playerPos.x) - (settings.getWidth() / 2)),
+                (playerPos.y) - (settings.getHeight() / 2));
+            ((Line) line1.getMesh()).updatePoints(
+                    playerPos, new Vector3f(mouse.x, mouse.y, 0));
+
             //change dan's sprite based off of direction
             // use the idle ones for now, only 4 dir
             // voronoi region later
             // needs cleaning up for sprites
             float aim = ArrowControl.getAngleFromVector(getAimDirection());
-           
-             if (aim > FastMath.PI / 4 && aim < 3 * FastMath.PI / 4) {
+
+            if (aim > FastMath.PI / 4 && aim < 3 * FastMath.PI / 4) {
                 //facing up
                 spatSL.activateSprite(8);
-                spatSL.deactivateSprite(10);
-                spatSL.deactivateSprite(12);
-                spatSL.deactivateSprite(14);
-             }
-             else if (aim > -FastMath.PI / 4 && aim < FastMath.PI / 4) {
+            } else if (aim > -FastMath.PI / 4 && aim < FastMath.PI / 4) {
                 //facing right
                 spatSL.activateSprite(10);
-                spatSL.deactivateSprite(8);
-                spatSL.deactivateSprite(14);
-                spatSL.deactivateSprite(12);
-             }
-             else if (aim > -3* FastMath.PI / 4 && aim < -FastMath.PI / 4) {
+            } else if (aim > -3 * FastMath.PI / 4 && aim < -FastMath.PI / 4) {
                 //facing down
                 spatSL.activateSprite(12);
-                spatSL.deactivateSprite(8);
-                spatSL.deactivateSprite(10);
-                spatSL.deactivateSprite(14);
-            } else  {
+            } else {
                 //facing left
                 spatSL.activateSprite(14);
-                spatSL.deactivateSprite(8);
-                spatSL.deactivateSprite(12);
-                spatSL.deactivateSprite(10);
             }
         }
     }

@@ -16,8 +16,8 @@ import com.jme3.scene.control.AbstractControl;
  */
 public class ArrowControl extends AbstractControl {
 
-    private int screenWidth, screenHeight;
-    private float speed = 1100f;
+    private final int screenWidth, screenHeight;
+    private final float speed = 1100f;
     public Vector3f direction;
     private float rotation;
 

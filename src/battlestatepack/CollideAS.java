@@ -139,7 +139,7 @@ public class CollideAS extends AbstractAppState {
         }
     }
 
-    public int satTest(Spatial mover, Spatial targ) {
+    private int satTest(Spatial mover, Spatial targ) {
         //Separating Axis Theorem application
         //x axis check
         // project both shapes onto the axis

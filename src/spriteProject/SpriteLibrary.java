@@ -14,6 +14,7 @@ public class SpriteLibrary {
     private boolean l_staticLibrary;
     private Node l_node;
     private ArrayList<Sprite> l_library = new ArrayList<Sprite>();
+    public Sprite curSprite;
 
     public SpriteLibrary(String name, boolean staticLibrary, Node attach) {
         l_node = attach;
@@ -33,11 +34,14 @@ public class SpriteLibrary {
     //author: Clara
     public void activateSprite(int index) {
         Sprite s = getSprite(index);
+        l_node.detachChild(curSprite.getNode());
+        curSprite = s;
         l_node.attachChild(s.getNode());
     }
 
-    public void deactivateSprite(int index) {
-        l_node.detachChild(getSprite(index).getNode());
+    public void setCurSprite(int index){
+        curSprite = getSprite(index);
+        l_node.attachChild(curSprite.getNode());
     }
 
     public void removeSprite(int index) {
