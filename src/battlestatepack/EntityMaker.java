@@ -25,6 +25,7 @@ public class EntityMaker {
 
     public EntityMaker(AssetManager aman, AppStateManager asm) {
         this.assetManager = aman;
+        SpriteLibrary.l_baseNode = BattleMain.BATTLENODE;
     }
 
     protected Node createSpatial(String name) {

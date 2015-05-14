@@ -30,7 +30,6 @@ public class PMoveAppState extends AbstractAppState implements ActionListener {
     private int dir = 4;
     private Spatial spatial;
     private SpriteLibrary spatSL;
-    
     private boolean moving;
 
     public PMoveAppState(float width, float height, InputManager inManager) {
@@ -42,15 +41,15 @@ public class PMoveAppState extends AbstractAppState implements ActionListener {
     @Override
     public void initialize(AppStateManager asm, Application app) {
         super.initialize(asm, app);
-       setEnabled(true);
+        setEnabled(true);
     }
-    
+
     @Override
-    public void setEnabled(boolean enabled){
+    public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
-        if(enabled){
+        if (enabled) {
             enableCharMapping();
-        }else{
+        } else {
             disableCharMapping();
         }
     }
@@ -69,13 +68,17 @@ public class PMoveAppState extends AbstractAppState implements ActionListener {
     public Spatial getSpatial() {
         return spatial;
     }
-    
-    public boolean isMoving(){
+
+    public boolean isMoving() {
         return moving;
     }
-    
-    public int getDir(){
+
+    public int getDir() {
         return dir;
+    }
+    
+    public void setDir(int d){
+        dir = d;
     }
 
     private void enableCharMapping() {
@@ -85,9 +88,9 @@ public class PMoveAppState extends AbstractAppState implements ActionListener {
         inputManager.addListener(this, "UP");
         inputManager.addListener(this, "DOWN");
 
-        inputManager.addMapping("LEFT", new KeyTrigger(KeyInput.KEY_LEFT),new KeyTrigger(KeyInput.KEY_A));
-        inputManager.addMapping("RIGHT", new KeyTrigger(KeyInput.KEY_RIGHT),new KeyTrigger(KeyInput.KEY_D));
-        inputManager.addMapping("UP", new KeyTrigger(KeyInput.KEY_UP),new KeyTrigger(KeyInput.KEY_W));
+        inputManager.addMapping("LEFT", new KeyTrigger(KeyInput.KEY_LEFT), new KeyTrigger(KeyInput.KEY_A));
+        inputManager.addMapping("RIGHT", new KeyTrigger(KeyInput.KEY_RIGHT), new KeyTrigger(KeyInput.KEY_D));
+        inputManager.addMapping("UP", new KeyTrigger(KeyInput.KEY_UP), new KeyTrigger(KeyInput.KEY_W));
         inputManager.addMapping("DOWN", new KeyTrigger(KeyInput.KEY_DOWN), new KeyTrigger(KeyInput.KEY_S));
 
     }
@@ -215,34 +218,34 @@ public class PMoveAppState extends AbstractAppState implements ActionListener {
             dir = 2;
 
         } else { //stop moving
-
-            switch (dir) { //activite proper idle sprite
-                case 0:
-                    spatSL.activateSprite(8);
-                    break;
-                case 1:
-                    spatSL.activateSprite(9);
-                    break;
-                case 2:
-                    spatSL.activateSprite(10);
-                    break;
-                case 3:
-                    spatSL.activateSprite(11);
-                    break;
-                case 4:
-                    spatSL.activateSprite(12);
-                    break;
-                case 5:
-                    spatSL.activateSprite(13);
-                    break;
-                case 6:
-                    spatSL.activateSprite(14);
-                    break;
-                case 7:
-                    spatSL.activateSprite(15);
-                    break;
+            if (!DanAppState.isfiring()) {
+                switch (dir) { //activite proper idle sprite
+                    case 0:
+                        spatSL.activateSprite(8);
+                        break;
+                    case 1:
+                        spatSL.activateSprite(9);
+                        break;
+                    case 2:
+                        spatSL.activateSprite(10);
+                        break;
+                    case 3:
+                        spatSL.activateSprite(11);
+                        break;
+                    case 4:
+                        spatSL.activateSprite(12);
+                        break;
+                    case 5:
+                        spatSL.activateSprite(13);
+                        break;
+                    case 6:
+                        spatSL.activateSprite(14);
+                        break;
+                    case 7:
+                        spatSL.activateSprite(15);
+                        break;
+                }
             }
-
         }
 
     }

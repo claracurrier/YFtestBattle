@@ -27,7 +27,6 @@ import com.jme3.scene.shape.Quad;
 import com.jme3.system.AppSettings;
 import com.jme3.texture.Texture;
 import spriteProject.SpriteEngine;
-import spriteProject.SpriteLibrary;
 
 /**
  *
@@ -53,6 +52,7 @@ public class BattleMain extends AbstractAppState implements ActionListener {
     public static final SpriteEngine sEngine = new SpriteEngine();
     public static final Node DEFNODE = new Node("defNode");
     public static final Node ATKNODE = new Node("atkNode");
+    public static final Node BATTLENODE = new Node("battleNode");
 
     public BattleMain(SimpleApplication appl, AppSettings set, InputManager input) {
         this.app = appl;
@@ -64,23 +64,17 @@ public class BattleMain extends AbstractAppState implements ActionListener {
     public void initialize(AppStateManager asm, Application appl) {
         stateManager = asm;
         assetManager = app.getAssetManager();
-        Node battleNode = new Node("battleNode");
-        app.getRootNode().attachChild(battleNode);
+        app.getRootNode().attachChild(BATTLENODE);
         
-        battleNode.attachChild(DEFNODE);
-        battleNode.attachChild(ATKNODE);
+        BATTLENODE.attachChild(DEFNODE);
+        BATTLENODE.attachChild(ATKNODE);
         collideAS = new CollideAS();
         stateManager.attach(collideAS);
+        maker = new EntityMaker(assetManager, stateManager);
 
         //set up the mapping for the switch button
         inputManager.addMapping("switchChar", new KeyTrigger(KeyInput.KEY_G));
         inputManager.addListener(this, "switchChar");
-
-
-
-        //set up sprites and spatial making
-        SpriteLibrary.l_baseNode = battleNode;
-        maker = new EntityMaker(assetManager, stateManager);
 
         //spawn and set up Dan
         dan = maker.createSpatial("Dan");
@@ -97,7 +91,7 @@ public class BattleMain extends AbstractAppState implements ActionListener {
         //spawn a Mob
         Spatial mobSpat = maker.createSpatial("Wanderer");
         Mob mob = new Mob(mobSpat, "Wanderer", 0, dan, kirith);
-        mob.getMobSpat().move(500, 500, 0);
+        mobSpat.move(500, 500, 0);
 
         //Set up Camera
         makeCam();

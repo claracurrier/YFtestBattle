@@ -19,26 +19,27 @@ public class ArrowControl extends AbstractControl {
     private final int screenWidth, screenHeight;
     private final float speed = 1100f;
     public Vector3f direction;
-    private float rotation;
+    private boolean rotated = false;
+    private final float aim;
 
-    public ArrowControl(Vector3f direction, int screenWidth, int screenHeight) {
-        this.direction = direction;
+    public ArrowControl(Vector2f direction, int screenWidth, int screenHeight) {
+        this.direction = new Vector3f(direction.x,direction.y,0f);
         this.screenWidth = screenWidth;
         this.screenHeight = screenHeight;
+        aim = direction.getAngle();
         
     }
 
     @Override
     protected void controlUpdate(float tpf) {
+        
+        if(!rotated){
+            spatial.rotate(0, 0, aim);
+            rotated = true;
+        }
+        
         //        movement
         spatial.move(direction.mult(speed * tpf));
-
-//        rotation
-        float actualRotation = getAngleFromVector(direction);
-        if (actualRotation != rotation) {
-            spatial.rotate(0, 0, actualRotation - rotation);
-            rotation = actualRotation;
-        }
 
 //        check boundaries
         Vector3f loc = spatial.getLocalTranslation();
@@ -58,11 +59,6 @@ public class ArrowControl extends AbstractControl {
 
     @Override
     protected void controlRender(RenderManager rm, ViewPort vp) {
-    }
-
-    public static float getAngleFromVector(Vector3f vec) {
-        Vector2f vec2 = new Vector2f(vec.x, vec.y);
-        return vec2.getAngle();
     }
 
 }

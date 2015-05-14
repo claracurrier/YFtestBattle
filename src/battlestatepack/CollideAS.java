@@ -17,7 +17,7 @@ import com.jme3.scene.Spatial;
  */
 public class CollideAS extends AbstractAppState {
 
-    private Node atkNode, defNode;
+    private final Node atkNode, defNode;
     private final Vector2f xaxis = new Vector2f(1f, 0);
     private final Vector2f yaxis = new Vector2f(0, 1f);
     private boolean collided = false;
@@ -25,12 +25,12 @@ public class CollideAS extends AbstractAppState {
     private int val;
 
     public CollideAS() {
+        atkNode = BattleMain.ATKNODE;
+        defNode = BattleMain.DEFNODE;
     }
 
     @Override
     public void initialize(AppStateManager asm, Application app) {
-        atkNode = BattleMain.ATKNODE;
-        defNode = BattleMain.DEFNODE;
     }
 
     @Override
