@@ -46,7 +46,8 @@ public class DanAppState extends AbstractAppState
     //private Vector2f mouse;
     private Geometry line1, line2;
     private Vector3f playerPos;
-    private float lsize = 80f;
+    private float lsize = 150f;
+    private float aimLimit = 40f;
 
     public DanAppState(Spatial dan, AppSettings settings) {
         this.dan = dan;
@@ -71,9 +72,16 @@ public class DanAppState extends AbstractAppState
         Line l1 = new Line(Vector3f.ZERO, Vector3f.ZERO);
         l1.setLineWidth(2);
         line1 = new Geometry("line1", l1);
-        Material blue = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        blue.setColor("Color", ColorRGBA.Blue);
-        line1.setMaterial(blue);
+        Material color1 = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        color1.setColor("Color", ColorRGBA.Blue);
+        line1.setMaterial(color1);
+        
+        Line l2 = new Line(Vector3f.ZERO, Vector3f.ZERO);
+        l2.setLineWidth(2);
+        line2 = new Geometry("line1", l2);
+        Material color2 = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        color2.setColor("Color", ColorRGBA.Orange);
+        line2.setMaterial(color2);
 
         spatSL = BattleMain.sEngine.getLibrary("Dan");
         setEnabled(true);
@@ -168,8 +176,9 @@ public class DanAppState extends AbstractAppState
     }
 
     public void onAnalog(String name, float value, float tpf) {
-        power += tpf * 100f;
-
+        if(power<=aimLimit/2){
+        power += tpf*10;
+        }
     }
 
     public void onAction(String name, boolean isPressed, float tpf) {
@@ -178,21 +187,27 @@ public class DanAppState extends AbstractAppState
             firing = true;
             //make the gui
             appl.getRootNode().attachChild(line1);
+            appl.getRootNode().attachChild(line2);
         }
 
         if (name.equals("mousePick") && !isPressed) {
             appl.getRootNode().detachChild(line1);
+            appl.getRootNode().detachChild(line2);
             fireArrow(power);
             firing = false;
         }
     }
 
-    private void updateLines(float aim) {
-        
-        Vector3f newvec = new Vector3f(lsize * FastMath.cos(aim), lsize * FastMath.sin(aim), 0f);
+    private void updateLines(float aim, float range) {
+        float aim1 = -(FastMath.PI/6) + (aim + range);
+        Vector3f newvec = new Vector3f(lsize * FastMath.cos(aim1), lsize * FastMath.sin(aim1), 0f);
         newvec.addLocal(playerPos);
         ((Line) line1.getMesh()).updatePoints(playerPos, newvec);
-        //later take into account how to offset the lines based on radians
+        
+        float aim2 = (FastMath.PI/6) + (aim - range);
+        newvec = new Vector3f(lsize * FastMath.cos(aim2), lsize * FastMath.sin(aim2), 0f);
+        newvec.addLocal(playerPos);
+        ((Line) line2.getMesh()).updatePoints(playerPos, newvec);
     }
 
     @Override
@@ -201,14 +216,12 @@ public class DanAppState extends AbstractAppState
             //update the gui
             playerPos = dan.getLocalTranslation();
             float aim = getAimDirection().getAngle();
-            updateLines(aim);
+            updateLines(aim, power/aimLimit);
             
             
             //change dan's sprite based off of direction
             // use the idle ones for now, only 4 dir
             // voronoi region later
-            // needs cleaning up for sprites
-            
             if (aim > FastMath.PI / 4 && aim < 3 * FastMath.PI / 4) {
                 //facing up
                 spatSL.activateSprite(8);
