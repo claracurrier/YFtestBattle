@@ -76,8 +76,8 @@ public class PMoveAppState extends AbstractAppState implements ActionListener {
     public int getDir() {
         return dir;
     }
-    
-    public void setDir(int d){
+
+    public void setDir(int d) {
         dir = d;
     }
 

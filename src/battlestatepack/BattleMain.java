@@ -48,7 +48,6 @@ public class BattleMain extends AbstractAppState implements ActionListener {
     private Camera cam;
     private final float frustumSize = 220f;
     private CameraNode camNode;
-    
     public static final SpriteEngine sEngine = new SpriteEngine();
     public static final Node DEFNODE = new Node("defNode");
     public static final Node ATKNODE = new Node("atkNode");
@@ -65,7 +64,7 @@ public class BattleMain extends AbstractAppState implements ActionListener {
         stateManager = asm;
         assetManager = app.getAssetManager();
         app.getRootNode().attachChild(BATTLENODE);
-        
+
         BATTLENODE.attachChild(DEFNODE);
         BATTLENODE.attachChild(ATKNODE);
         collideAS = new CollideAS();

@@ -20,12 +20,12 @@ import tonegod.gui.core.Screen;
  * @author PC
  */
 public class PauseMenu {
-    
+
     private Screen screen;
     private Node guiNode;
     private AppStateManager asmr;
     private MainMenu mm;
-    
+
     public PauseMenu(Node gui, Screen screen, AppStateManager asm, Application app) {
         guiNode = gui;
         this.screen = screen;
@@ -33,7 +33,7 @@ public class PauseMenu {
         guiNode.addControl(screen);
         mm = (MainMenu) app;
     }
-    
+
     public void makePauseMenu() {
         final Window win = new Window(screen, "win", new Vector2f(15, 15));
         screen.addElement(win);
@@ -66,15 +66,15 @@ public class PauseMenu {
         exitToMenu.setTextAlign(BitmapFont.Align.Center);
         win.addChild(exitToMenu);
     }
-    
+
     public void exitToMM() {
         asmr.detach(asmr.getState(BattleMain.class));
         mm.makeStartMenu();
     }
-    
+
     public void resume() {
         asmr.getState(BattleMain.class).setEnabled(true);
         MainMenu.isPaused = false;
-        
+
     }
 }

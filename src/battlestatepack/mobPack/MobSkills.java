@@ -14,10 +14,9 @@ public class MobSkills {
      * whether a mob uses these skills or not depends on the mob at instantiation
      * every skill is an update()-able loop
      */
-    public MobSkills(){
-        
+
+    public MobSkills() {
     }
-    
     //as a test, work in a simple dashing skill to be triggered randomly
     //later to have it target a character under a certain situation
 }

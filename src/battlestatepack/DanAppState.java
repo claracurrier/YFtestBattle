@@ -75,7 +75,7 @@ public class DanAppState extends AbstractAppState
         Material color1 = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         color1.setColor("Color", ColorRGBA.Blue);
         line1.setMaterial(color1);
-        
+
         Line l2 = new Line(Vector3f.ZERO, Vector3f.ZERO);
         l2.setLineWidth(2);
         line2 = new Geometry("line1", l2);
@@ -162,22 +162,22 @@ public class DanAppState extends AbstractAppState
 
         Vector2f newvec = new Vector2f((playerPos.x) - (settings.getWidth() / 2),
                 (playerPos.y) - (settings.getHeight() / 2));
-        
+
         mouse = mouse.add(newvec);
-        
+
         Vector2f dif = new Vector2f(mouse.x - playerPos.x, mouse.y - playerPos.y);
         return dif.normalizeLocal();
     }
     private float power;
     private static boolean firing;
-    
-    public static boolean isfiring(){
+
+    public static boolean isfiring() {
         return firing;
     }
 
     public void onAnalog(String name, float value, float tpf) {
-        if(power<=aimLimit/2){
-        power += tpf*10;
+        if (power <= aimLimit / 2) {
+            power += tpf * 10;
         }
     }
 
@@ -199,12 +199,12 @@ public class DanAppState extends AbstractAppState
     }
 
     private void updateLines(float aim, float range) {
-        float aim1 = -(FastMath.PI/6) + (aim + range);
+        float aim1 = -(FastMath.PI / 6) + (aim + range);
         Vector3f newvec = new Vector3f(lsize * FastMath.cos(aim1), lsize * FastMath.sin(aim1), 0f);
         newvec.addLocal(playerPos);
         ((Line) line1.getMesh()).updatePoints(playerPos, newvec);
-        
-        float aim2 = (FastMath.PI/6) + (aim - range);
+
+        float aim2 = (FastMath.PI / 6) + (aim - range);
         newvec = new Vector3f(lsize * FastMath.cos(aim2), lsize * FastMath.sin(aim2), 0f);
         newvec.addLocal(playerPos);
         ((Line) line2.getMesh()).updatePoints(playerPos, newvec);
@@ -216,9 +216,9 @@ public class DanAppState extends AbstractAppState
             //update the gui
             playerPos = dan.getLocalTranslation();
             float aim = getAimDirection().getAngle();
-            updateLines(aim, power/aimLimit);
-            
-            
+            updateLines(aim, power / aimLimit);
+
+
             //change dan's sprite based off of direction
             // use the idle ones for now, only 4 dir
             // voronoi region later

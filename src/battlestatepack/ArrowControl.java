@@ -23,21 +23,21 @@ public class ArrowControl extends AbstractControl {
     private final float aim;
 
     public ArrowControl(Vector2f direction, int screenWidth, int screenHeight) {
-        this.direction = new Vector3f(direction.x,direction.y,0f);
+        this.direction = new Vector3f(direction.x, direction.y, 0f);
         this.screenWidth = screenWidth;
         this.screenHeight = screenHeight;
         aim = direction.getAngle();
-        
+
     }
 
     @Override
     protected void controlUpdate(float tpf) {
-        
-        if(!rotated){
+
+        if (!rotated) {
             spatial.rotate(0, 0, aim);
             rotated = true;
         }
-        
+
         //        movement
         spatial.move(direction.mult(speed * tpf));
 
@@ -49,8 +49,8 @@ public class ArrowControl extends AbstractControl {
                 || loc.y < 0) {
             spatial.removeFromParent();
         }
-        
-        if((Boolean)spatial.getUserData("collided")==true){
+
+        if ((Boolean) spatial.getUserData("collided") == true) {
             //arrow collided
             System.out.println("arrow collided!");
             spatial.removeFromParent();
@@ -60,5 +60,4 @@ public class ArrowControl extends AbstractControl {
     @Override
     protected void controlRender(RenderManager rm, ViewPort vp) {
     }
-
 }

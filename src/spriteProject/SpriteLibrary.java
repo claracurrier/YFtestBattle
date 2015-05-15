@@ -39,7 +39,7 @@ public class SpriteLibrary {
         l_node.attachChild(s.getNode());
     }
 
-    public void setCurSprite(int index){
+    public void setCurSprite(int index) {
         curSprite = getSprite(index);
         l_node.attachChild(curSprite.getNode());
     }
@@ -84,9 +84,9 @@ public class SpriteLibrary {
     public String getName() {
         return l_node.getName();
     }
-    
-    public void purge(){
-        for(int i = l_library.size()-1; i>0;i--){
+
+    public void purge() {
+        for (int i = l_library.size() - 1; i > 0; i--) {
             removeSprite(i);
         }
     }

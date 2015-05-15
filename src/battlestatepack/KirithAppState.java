@@ -45,9 +45,9 @@ public class KirithAppState extends AbstractAppState implements AnalogListener, 
         this.app = (SimpleApplication) app;
         this.inputManager = this.app.getInputManager();
         this.asm = asm;
-        
-        attacknode =((Node)((Node)this.app.getRootNode()
-                        .getChild("battleNode")).getChild("atkNode"));
+
+        attacknode = ((Node) ((Node) this.app.getRootNode()
+                .getChild("battleNode")).getChild("atkNode"));
 
         kdc = kirith.getControl(KiDizzyControl.class);
         pmc = asm.getState(PMoveAppState.class);
@@ -118,65 +118,63 @@ public class KirithAppState extends AbstractAppState implements AnalogListener, 
         kirith.rotate(0, 0, asm.getState(PMoveAppState.class).getLastRotation() + FastMath.PI * (spin / 50000));
         attacking = true;
     }
-    
-    private void makeAttackBox(String type, float power){
+
+    private void makeAttackBox(String type, float power) {
         int dir = pmc.getDir(); //current direction
-        
+
         Node node = new Node(type);
-        
+
         node.setUserData("halfwidth", 10f);
         node.setUserData("halfheight", 10f);
         node.setUserData("type", "attackbox");
         node.setUserData("atkpower", power);
-        
+
         float x = kirith.getWorldTranslation().x;
         float y = kirith.getWorldTranslation().y;
-        
+
         //node.move(kirith.getWorldTranslation());
-        switch(dir){ //moves the node to appropriate location relative to ki
+        switch (dir) { //moves the node to appropriate location relative to ki
             case 0:
-                node.setLocalTranslation(x, y+81f, 0);
+                node.setLocalTranslation(x, y + 81f, 0);
                 break;
             case 1:
-                node.setLocalTranslation(x+51f, y+81f, 0);
+                node.setLocalTranslation(x + 51f, y + 81f, 0);
                 break;
             case 2:
-                node.setLocalTranslation(x+51f, y, 0);
+                node.setLocalTranslation(x + 51f, y, 0);
                 break;
             case 3:
-                node.setLocalTranslation(x+51f, y-81f, 0);
+                node.setLocalTranslation(x + 51f, y - 81f, 0);
                 break;
             case 4:
-                node.setLocalTranslation(x+0, y-81f, 0);
+                node.setLocalTranslation(x + 0, y - 81f, 0);
                 break;
             case 5:
-                node.setLocalTranslation(x-51f, y-81f, 0);
+                node.setLocalTranslation(x - 51f, y - 81f, 0);
                 break;
             case 6:
-                node.setLocalTranslation(x-51f, y, 0);
+                node.setLocalTranslation(x - 51f, y, 0);
                 break;
             case 7:
-                node.setLocalTranslation(x-51f, y+81f, 0);
+                node.setLocalTranslation(x - 51f, y + 81f, 0);
                 break;
         }
-        
+
         /*
          * temp wirebox for seeing the new hitbox
          */
-        Geometry g = new Geometry("attackBox", new WireBox(20f, 20f,0));
+        Geometry g = new Geometry("attackBox", new WireBox(20f, 20f, 0));
         Material mat = new Material(app.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
         mat.getAdditionalRenderState().setWireframe(true);
         mat.setColor("Color", ColorRGBA.Blue);
         g.setMaterial(mat);
-       // g.setLocalTranslation(kirith.getLocalTranslation());
-       
+        // g.setLocalTranslation(kirith.getLocalTranslation());
+
         node.attachChild(g);
-        
+
         attacknode.attachChild(node);
-        
+
     }
-    
-    
     private float power;
 
     public void onAnalog(String name, float value, float tpf) {
@@ -204,21 +202,20 @@ public class KirithAppState extends AbstractAppState implements AnalogListener, 
             power = 0;
         }
     }
-    
     private boolean attacking = false;
-    private float hbtimer=0;
-    
+    private float hbtimer = 0;
+
     @Override
-    public void update(float tpf){
-        if(attacking){
-            if(hbtimer>.1f){
+    public void update(float tpf) {
+        if (attacking) {
+            if (hbtimer > .1f) {
                 attacking = false;
-                
+
                 attacknode.detachChildNamed("pushback");
                 attacknode.detachChildNamed("stun");
                 hbtimer = 0;
-            }else{
-                hbtimer+=tpf;
+            } else {
+                hbtimer += tpf;
             }
         }
     }

@@ -60,39 +60,39 @@ public class CollideAS extends AbstractAppState {
             for (int j = 0; j < defNode.getQuantity(); j++) {
                 atkchild = atkNode.getChild(i); //attacker
                 defchild = defNode.getChild(j); //reciver
-                
-                
-                if (noException(atkchild,defchild)) {
+
+
+                if (noException(atkchild, defchild)) {
                     val = satTest(atkchild, defchild);
                     if (val > 0) {
-                        if(atkchild.getUserData("type").equals("arrow")){
+                        if (atkchild.getUserData("type").equals("arrow")) {
                             atkchild.setUserData("collided", true);
-                       }
-                            defchild.setUserData("collided", atkchild.getName());
-                            defchild.setUserData("atkpower", atkchild.getUserData("power"));
-                            defchild.setUserData("atkdirection", val);
-                            
-                            System.out.println(atkchild+" collided into "+defchild);
-                        
+                        }
+                        defchild.setUserData("collided", atkchild.getName());
+                        defchild.setUserData("atkpower", atkchild.getUserData("power"));
+                        defchild.setUserData("atkdirection", val);
+
+                        System.out.println(atkchild + " collided into " + defchild);
+
                     }
                 }
             }
         }
     }
-    
-    private boolean noException(Spatial atkchild, Spatial defchild){
-        if(defchild.getName().equals("Dan")&&
-                atkchild.getUserData("type").equals("arrow")){
+
+    private boolean noException(Spatial atkchild, Spatial defchild) {
+        if (defchild.getName().equals("Dan")
+                && atkchild.getUserData("type").equals("arrow")) {
             //dan and arrow case
             return false;
         }
-        if(atkchild.getName().equals("mobatkbox")&&
-                defchild.getUserData("type").equals("mob")){
+        if (atkchild.getName().equals("mobatkbox")
+                && defchild.getUserData("type").equals("mob")) {
             //mob and its atkbox case
             return false;
         }
         //add a case for tornado kirith
-        
+
         return true;
     }
 
