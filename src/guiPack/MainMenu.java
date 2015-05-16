@@ -33,7 +33,7 @@ public class MainMenu extends SimpleApplication implements ActionListener {
         app.start();
 
     }
-    private Screen screen;
+    private static Screen screen;
     private PauseMenu pauseMenu;
     private ControlMenu controlMenu;
     private Node tgGuiNode; 
@@ -52,6 +52,10 @@ public class MainMenu extends SimpleApplication implements ActionListener {
         controlMenu = new ControlMenu(screen, stateManager, this);
         makeStartMenu();
 
+    }
+    
+    public static Screen getScreen(){
+        return screen;
     }
 
     public PauseMenu getPM() {

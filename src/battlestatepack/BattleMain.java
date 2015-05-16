@@ -45,6 +45,7 @@ public class BattleMain extends AbstractAppState implements ActionListener {
     private Camera cam;
     private final float frustumSize = 220f;
     private CameraNode camNode;
+    private BattleGUI battleGUI;
     public static final SpriteEngine sEngine = new SpriteEngine();
     public static final Node DEFNODE = new Node("defNode");
     public static final Node ATKNODE = new Node("atkNode");
@@ -108,6 +109,10 @@ public class BattleMain extends AbstractAppState implements ActionListener {
         pMAppState = new PMoveAppState(850f, 850f, inputManager);
         stateManager.attach(pMAppState);
         pMAppState.setSpatial(dan);
+        
+        //set up HUD
+        battleGUI = new BattleGUI(settings.getWidth(), settings.getHeight());
+        stateManager.attach(battleGUI);
 
         DEFNODE.attachChild(dan);
         DEFNODE.attachChild(kirith);
@@ -179,19 +184,17 @@ public class BattleMain extends AbstractAppState implements ActionListener {
 
     @Override
     public void cleanup() {
-        app.getRootNode().detachAllChildren();
-        maker = null;
+        ATKNODE.detachAllChildren();
+        DEFNODE.detachAllChildren();
         inputManager.removeListener(this);
         stateManager.detach(pMAppState);
         stateManager.detach(kiAppState);
         stateManager.detach(danAppState);
+        stateManager.detach(battleGUI);
         pMAppState = null;
         kiAppState = null;
         danAppState = null;
-        
-        ATKNODE.detachAllChildren();
-        DEFNODE.detachAllChildren();
-        
+        maker = null;
         sEngine.destroyEngine();
         super.cleanup();
     }

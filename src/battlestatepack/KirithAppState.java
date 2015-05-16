@@ -28,11 +28,12 @@ import com.jme3.scene.debug.WireBox;
 public class KirithAppState extends AbstractAppState implements AnalogListener, ActionListener {
 
     private InputManager inputManager;
-    private Spatial kirith;
+    private final Spatial kirith;
     private SimpleApplication app;
     private AppStateManager asm;
     private PMoveAppState pmc;
     private KiDizzyControl kdc;
+    private float health;
 
     public KirithAppState(Spatial ki) {
         this.kirith = ki;

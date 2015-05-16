@@ -17,11 +17,11 @@ public class Mob {
      * Wrapper class for a mob. contains all relevant information and creation
      */
 
-    private String name;
-    private int id;
-    private Node dan;
-    private Node ki;
-    private Spatial mob;
+    private final String name;
+    private final int id;
+    private final Node dan, ki;
+    private final Spatial mob;
+    private float health;
 
     public Mob(Spatial mob, String name, int id, Node d, Node k) {
         this.name = name;
@@ -45,7 +45,7 @@ public class Mob {
         BattleMain.DEFNODE.attachChild(mob);
 
         mob.addControl(new MCollideCont(mobatkbox));
-        //mob.addControl(new PursuitCont(mob, dan)); for now it's hard coded
+        //mob.addControl(new PursuitCont(mob, dan)); //for now it's hard coded
         //temp disabled
     }
     

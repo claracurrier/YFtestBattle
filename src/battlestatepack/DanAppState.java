@@ -39,7 +39,7 @@ public class DanAppState extends AbstractAppState
 
     private InputManager inputManager;
     private AssetManager assetManager;
-    private Spatial dan;
+    private final Spatial dan;
     private SimpleApplication appl;
     private PMoveAppState pmc;
     private final AppSettings settings;
@@ -48,7 +48,7 @@ public class DanAppState extends AbstractAppState
     private Vector3f playerPos;
     private float lsize = 140f;
     private float aimLimit = 35f;
-    private float aim1, aim2;
+    private float aim1, aim2, health;
     private boolean atkenabled;
     private final Random rand = new Random();
 
