@@ -48,6 +48,7 @@ public class DanAppState extends AbstractAppState
     private Vector3f playerPos;
     private float lsize = 150f;
     private float aimLimit = 40f;
+    private boolean atkenabled;
 
     public DanAppState(Spatial dan, AppSettings settings) {
         this.dan = dan;
@@ -109,11 +110,13 @@ public class DanAppState extends AbstractAppState
     protected void enableAttackMap() {
         inputManager.addMapping("mousePick", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
         inputManager.addListener(this, "mousePick");
+        atkenabled = true;
     }
 
     protected void disableAttackMap() {
         inputManager.deleteMapping("mousePick");
         inputManager.removeListener(this);
+        atkenabled = false;
     }
 
     private void fireArrow(float accuracy) {
@@ -123,7 +126,6 @@ public class DanAppState extends AbstractAppState
 
         arrow.addControl(new ArrowControl(getAimDirection(), 1500, 1500));
         System.out.println("Arrow fired, power=" + accuracy);
-        power = 0;
     }
 
     private Node makeArrow(float power) {
@@ -178,23 +180,27 @@ public class DanAppState extends AbstractAppState
     public void onAnalog(String name, float value, float tpf) {
         if (power <= aimLimit / 2) {
             power += tpf * 10;
+            lsize += tpf;
         }
     }
 
     public void onAction(String name, boolean isPressed, float tpf) {
 
-        if (name.equals("mousePick") && isPressed) {
+        if (name.equals("mousePick") && isPressed && !pmc.isMoving()) {
             firing = true;
             //make the gui
             appl.getRootNode().attachChild(line1);
             appl.getRootNode().attachChild(line2);
         }
 
-        if (name.equals("mousePick") && !isPressed) {
+        if (name.equals("mousePick") && !isPressed && !pmc.isMoving()) {
             appl.getRootNode().detachChild(line1);
             appl.getRootNode().detachChild(line2);
-            fireArrow(power);
+            if (firing) {
+                fireArrow(power);
+            }
             firing = false;
+            power = 0;
         }
     }
 
@@ -212,7 +218,23 @@ public class DanAppState extends AbstractAppState
 
     @Override
     public void update(float tpf) {
-        if (firing && !pmc.isMoving()) {
+
+        if (pmc.isMoving()) {
+            if (atkenabled) {
+                disableAttackMap();
+            }
+        } else {
+            if (!atkenabled) {
+                enableAttackMap();
+            }
+        }
+
+        if (firing && pmc.isMoving()) {
+            appl.getRootNode().detachChild(line1);
+            appl.getRootNode().detachChild(line2);
+            power = 0;
+            firing = false;
+        } else if (firing && !pmc.isMoving()) {
             //update the gui
             playerPos = dan.getLocalTranslation();
             float aim = getAimDirection().getAngle();

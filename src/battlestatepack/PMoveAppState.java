@@ -114,37 +114,30 @@ public class PMoveAppState extends AbstractAppState implements ActionListener {
         //ultimately setting the value of keyPressed will tell update which way to go
         if (name.equals("UP") && isPressed) {
             ku = true;
-            moving = true;
         } else if (name.equals("UP") && !isPressed) {
             ku = false;
-            moving = false;
         }
         if (name.equals("DOWN") && isPressed) {
             kd = true;
-            moving = true;
         } else if (name.equals("DOWN") && !isPressed) {
             kd = false;
-            moving = false;
         }
         if (name.equals("LEFT") && isPressed) {
             kl = true;
-            moving = true;
         } else if (name.equals("LEFT") && !isPressed) {
             kl = false;
-            moving = false;
         }
         if (name.equals("RIGHT") && isPressed) {
             kr = true;
-            moving = true;
         } else if (name.equals("RIGHT") && !isPressed) {
             kr = false;
-            moving = false;
         }
 
     }
 
     @Override
     public void update(float tpf) {
+        moving = true;
         if (ku && kl && !kr) {//upleft
             if (spatial.getWorldTranslation().y < screenHeight - (Float) spatial.getUserData("halfheight")
                     && spatial.getLocalTranslation().x > (Float) spatial.getUserData("halfwidth")
@@ -218,6 +211,7 @@ public class PMoveAppState extends AbstractAppState implements ActionListener {
             dir = 2;
 
         } else { //stop moving
+            moving = false;
             if (!DanAppState.isfiring()) {
                 switch (dir) { //activite proper idle sprite
                     case 0:

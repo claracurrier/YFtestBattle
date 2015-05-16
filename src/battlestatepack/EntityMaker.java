@@ -87,15 +87,10 @@ public class EntityMaker {
             //adds all of dan's running sprites
             //number convention starts from UP=0 and goes clockwise
             for (int i = 0; i < 8; i++) {
-                if (i == 5) { //DL
-                    library.addSprite(new Sprite("Textures/danrun4.png", "danrun" + i, assetManager, true, true, 6, 1, 0.08f, "Loop", "Start"));
-                } else if (i == 3) { //DR
-                    library.addSprite(new Sprite("Textures/danrun4.png", "danrun" + i, assetManager, true, true, 6, 1, 0.08f, "Loop", "Start"));
-                } else {
-                    library.addSprite(new Sprite("Textures/danrun" + i + ".png", "danrun" + i, assetManager, true, true, 6, 1, 0.09f, "Loop", "Start"));
-                }
-
+                library.addSprite(new Sprite("Textures/danrun" + i + ".png", "danrun" + i, assetManager, true, true, 6, 1, 0.09f, "Loop", "Start"));
             }
+
+
             //idle
             for (int i = 0; i < 8; i++) {
                 library.addSprite(new Sprite("Textures/danidle" + i + ".png", "danidle" + i, assetManager, false, true, 1, 1, 0.08f, "Loop", "Start"));
