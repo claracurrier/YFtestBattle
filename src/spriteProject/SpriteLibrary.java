@@ -86,7 +86,7 @@ public class SpriteLibrary {
     }
 
     public void purge() {
-        for (int i = l_library.size() - 1; i > 0; i--) {
+        for (int i = l_library.size() - 1; i >= 0; i--) {
             removeSprite(i);
         }
     }

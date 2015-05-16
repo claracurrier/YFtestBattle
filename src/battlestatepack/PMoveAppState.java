@@ -46,12 +46,12 @@ public class PMoveAppState extends AbstractAppState implements ActionListener {
 
     @Override
     public void setEnabled(boolean enabled) {
-        super.setEnabled(enabled);
         if (enabled) {
             enableCharMapping();
         } else {
             disableCharMapping();
         }
+        super.setEnabled(enabled);
     }
 
     @Override
@@ -82,27 +82,28 @@ public class PMoveAppState extends AbstractAppState implements ActionListener {
     }
 
     private void enableCharMapping() {
+        if (!inputManager.hasMapping("LEFT")) {
+            inputManager.addListener(this, "LEFT");
+            inputManager.addListener(this, "RIGHT");
+            inputManager.addListener(this, "UP");
+            inputManager.addListener(this, "DOWN");
 
-        inputManager.addListener(this, "LEFT");
-        inputManager.addListener(this, "RIGHT");
-        inputManager.addListener(this, "UP");
-        inputManager.addListener(this, "DOWN");
-
-        inputManager.addMapping("LEFT", new KeyTrigger(KeyInput.KEY_LEFT), new KeyTrigger(KeyInput.KEY_A));
-        inputManager.addMapping("RIGHT", new KeyTrigger(KeyInput.KEY_RIGHT), new KeyTrigger(KeyInput.KEY_D));
-        inputManager.addMapping("UP", new KeyTrigger(KeyInput.KEY_UP), new KeyTrigger(KeyInput.KEY_W));
-        inputManager.addMapping("DOWN", new KeyTrigger(KeyInput.KEY_DOWN), new KeyTrigger(KeyInput.KEY_S));
-
+            inputManager.addMapping("LEFT", new KeyTrigger(KeyInput.KEY_LEFT), new KeyTrigger(KeyInput.KEY_A));
+            inputManager.addMapping("RIGHT", new KeyTrigger(KeyInput.KEY_RIGHT), new KeyTrigger(KeyInput.KEY_D));
+            inputManager.addMapping("UP", new KeyTrigger(KeyInput.KEY_UP), new KeyTrigger(KeyInput.KEY_W));
+            inputManager.addMapping("DOWN", new KeyTrigger(KeyInput.KEY_DOWN), new KeyTrigger(KeyInput.KEY_S));
+        }
     }
 
     private void disableCharMapping() {
-        inputManager.removeListener(this);
+        if (inputManager.hasMapping("LEFT")) {
+            inputManager.removeListener(this);
 
-        inputManager.deleteMapping("LEFT");
-        inputManager.deleteMapping("RIGHT");
-        inputManager.deleteMapping("UP");
-        inputManager.deleteMapping("DOWN");
-
+            inputManager.deleteMapping("LEFT");
+            inputManager.deleteMapping("RIGHT");
+            inputManager.deleteMapping("UP");
+            inputManager.deleteMapping("DOWN");
+        }
     }
 
     public float getLastRotation() {

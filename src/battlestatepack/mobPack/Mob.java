@@ -48,19 +48,7 @@ public class Mob {
         //mob.addControl(new PursuitCont(mob, dan)); for now it's hard coded
         //temp disabled
     }
-
-    public void readData() {
-        //this is where there will be an xml reader to take in mob info
-    }
-
-    public Node dan() {
-        return dan;
-    }
-
-    public Node ki() {
-        return ki;
-    }
-
+    
     public Spatial getMobSpat() {
         return mob;
     }

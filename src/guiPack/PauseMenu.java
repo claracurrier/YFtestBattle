@@ -10,7 +10,6 @@ import com.jme3.app.state.AppStateManager;
 import com.jme3.font.BitmapFont;
 import com.jme3.input.event.MouseButtonEvent;
 import com.jme3.math.Vector2f;
-import com.jme3.scene.Node;
 import tonegod.gui.controls.buttons.ButtonAdapter;
 import tonegod.gui.controls.windows.Window;
 import tonegod.gui.core.Screen;
@@ -22,15 +21,12 @@ import tonegod.gui.core.Screen;
 public class PauseMenu {
 
     private Screen screen;
-    private Node guiNode;
-    private AppStateManager asmr;
-    private MainMenu mm;
+    private final AppStateManager asmr;
+    private final MainMenu mm;
 
-    public PauseMenu(Node gui, Screen screen, AppStateManager asm, Application app) {
-        guiNode = gui;
+    public PauseMenu(Screen screen, AppStateManager asm, Application app) {
         this.screen = screen;
         this.asmr = asm;
-        guiNode.addControl(screen);
         mm = (MainMenu) app;
     }
 
@@ -54,7 +50,7 @@ public class PauseMenu {
 
         //exit button
         ButtonAdapter exitToMenu = new ButtonAdapter(screen, "ExitToMenu",
-                new Vector2f(15, 105), new Vector2f(200, 35)) {
+                new Vector2f(15, 155), new Vector2f(200, 35)) {
             @Override
             public void onButtonMouseLeftUp(MouseButtonEvent evt, boolean toggled) {
                 screen.removeElement(win);
@@ -65,6 +61,20 @@ public class PauseMenu {
         exitToMenu.setText("Return to Main Menu");
         exitToMenu.setTextAlign(BitmapFont.Align.Center);
         win.addChild(exitToMenu);
+
+        //controls
+        ButtonAdapter controlMenuBtn = new ButtonAdapter(screen, "Controls",
+                new Vector2f(15, 105)) {
+            @Override
+            public void onButtonMouseLeftUp(MouseButtonEvent evt, boolean toggled) {
+                screen.removeElement(win);
+                goToControl();
+            }
+        };
+        controlMenuBtn.setFont("Interface/Fonts/Arial.fnt");
+        controlMenuBtn.setText("Controls");
+        controlMenuBtn.setTextAlign(BitmapFont.Align.Center);
+        win.addChild(controlMenuBtn);
     }
 
     public void exitToMM() {
@@ -72,9 +82,13 @@ public class PauseMenu {
         mm.makeStartMenu();
     }
 
+    private void goToControl() {
+        mm.setPaused(true);
+        mm.getCM().makeControlMenu();
+    }
+
     public void resume() {
         asmr.getState(BattleMain.class).setEnabled(true);
-        MainMenu.isPaused = false;
-
+        mm.setPaused(false);
     }
 }

@@ -33,7 +33,6 @@ public class KirithAppState extends AbstractAppState implements AnalogListener, 
     private AppStateManager asm;
     private PMoveAppState pmc;
     private KiDizzyControl kdc;
-    private Node attacknode;
 
     public KirithAppState(Spatial ki) {
         this.kirith = ki;
@@ -46,9 +45,6 @@ public class KirithAppState extends AbstractAppState implements AnalogListener, 
         this.inputManager = this.app.getInputManager();
         this.asm = asm;
 
-        attacknode = ((Node) ((Node) this.app.getRootNode()
-                .getChild("battleNode")).getChild("atkNode"));
-
         kdc = kirith.getControl(KiDizzyControl.class);
         pmc = asm.getState(PMoveAppState.class);
 
@@ -59,8 +55,6 @@ public class KirithAppState extends AbstractAppState implements AnalogListener, 
 
         setEnabled(true);
         System.out.println("Kirith is in control!");
-
-
     }
 
     @Override
@@ -85,21 +79,25 @@ public class KirithAppState extends AbstractAppState implements AnalogListener, 
     }
 
     protected void enableAttackMap() {
-        inputManager.addListener(this, "i");
-        inputManager.addListener(this, "o");
-        inputManager.addListener(this, "p");
+        if (!inputManager.hasMapping("i")) {
+            inputManager.addListener(this, "i");
+            inputManager.addListener(this, "o");
+            inputManager.addListener(this, "p");
 
-        inputManager.addMapping("i", new KeyTrigger(KeyInput.KEY_I));
-        inputManager.addMapping("o", new KeyTrigger(KeyInput.KEY_O));
-        inputManager.addMapping("p", new KeyTrigger(KeyInput.KEY_P));
+            inputManager.addMapping("i", new KeyTrigger(KeyInput.KEY_I));
+            inputManager.addMapping("o", new KeyTrigger(KeyInput.KEY_O));
+            inputManager.addMapping("p", new KeyTrigger(KeyInput.KEY_P));
+        }
     }
 
     protected void disableAttackMap() {
-        inputManager.removeListener(this);
+        if (inputManager.hasMapping("i")) {
+            inputManager.removeListener(this);
 
-        inputManager.deleteMapping("p");
-        inputManager.deleteMapping("i");
-        inputManager.deleteMapping("o");
+            inputManager.deleteMapping("p");
+            inputManager.deleteMapping("i");
+            inputManager.deleteMapping("o");
+        }
     }
 
     private void pushback(float charge) {
@@ -172,7 +170,7 @@ public class KirithAppState extends AbstractAppState implements AnalogListener, 
 
         node.attachChild(g);
 
-        attacknode.attachChild(node);
+        BattleMain.ATKNODE.attachChild(node);
 
     }
     private float power;
@@ -211,8 +209,8 @@ public class KirithAppState extends AbstractAppState implements AnalogListener, 
             if (hbtimer > .1f) {
                 attacking = false;
 
-                attacknode.detachChildNamed("pushback");
-                attacknode.detachChildNamed("stun");
+                BattleMain.ATKNODE.detachChildNamed("pushback");
+                BattleMain.ATKNODE.detachChildNamed("stun");
                 hbtimer = 0;
             } else {
                 hbtimer += tpf;

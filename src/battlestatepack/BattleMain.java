@@ -11,18 +11,15 @@ import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.material.Material;
-import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.RenderManager;
 import com.jme3.scene.CameraNode;
 import com.jme3.scene.Geometry;
-import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.control.CameraControl.ControlDirection;
-import com.jme3.scene.debug.Arrow;
 import com.jme3.scene.shape.Quad;
 import com.jme3.system.AppSettings;
 import com.jme3.texture.Texture;
@@ -70,11 +67,7 @@ public class BattleMain extends AbstractAppState implements ActionListener {
         collideAS = new CollideAS();
         stateManager.attach(collideAS);
         maker = new EntityMaker(assetManager, stateManager);
-
-        //set up the mapping for the switch button
-        inputManager.addMapping("switchChar", new KeyTrigger(KeyInput.KEY_G));
-        inputManager.addListener(this, "switchChar");
-
+        
         //spawn and set up Dan
         dan = maker.createSpatial("Dan");
         dan.move(settings.getWidth() / 2, settings.getHeight() / 2, 0);
@@ -94,9 +87,12 @@ public class BattleMain extends AbstractAppState implements ActionListener {
 
         //Set up Camera
         makeCam();
-
-        //debugging arrows
-        attachCoordinateAxes(new Vector3f(0, 0, 0));
+        
+        //SwitchChar mapping
+        if(!inputManager.hasMapping("switchChar")){
+            inputManager.addMapping("switchChar", new KeyTrigger(KeyInput.KEY_G));
+            inputManager.addListener(this, "switchChar");
+            }
 
         //Map
         Geometry geom = new Geometry("Quad", new Quad(1500f, 1500f));
@@ -112,7 +108,6 @@ public class BattleMain extends AbstractAppState implements ActionListener {
         pMAppState = new PMoveAppState(850f, 850f, inputManager);
         stateManager.attach(pMAppState);
         pMAppState.setSpatial(dan);
-
 
         DEFNODE.attachChild(dan);
         DEFNODE.attachChild(kirith);
@@ -169,11 +164,15 @@ public class BattleMain extends AbstractAppState implements ActionListener {
         pMAppState.setEnabled(enabled);
 
         if (enabled) {
+            if(!inputManager.hasMapping("switchChar")){
             inputManager.addMapping("switchChar", new KeyTrigger(KeyInput.KEY_G));
             inputManager.addListener(this, "switchChar");
+            }
         } else {
+            if(inputManager.hasMapping("switchChar")){
             inputManager.deleteMapping("switchChar");
             inputManager.removeListener(this);
+            }
         }
 
     }
@@ -182,35 +181,19 @@ public class BattleMain extends AbstractAppState implements ActionListener {
     public void cleanup() {
         app.getRootNode().detachAllChildren();
         maker = null;
+        inputManager.removeListener(this);
         stateManager.detach(pMAppState);
         stateManager.detach(kiAppState);
         stateManager.detach(danAppState);
+        pMAppState = null;
+        kiAppState = null;
+        danAppState = null;
+        
+        ATKNODE.detachAllChildren();
+        DEFNODE.detachAllChildren();
+        
+        sEngine.destroyEngine();
         super.cleanup();
-    }
-
-    private void attachCoordinateAxes(Vector3f pos) {
-        Arrow arrow = new Arrow(Vector3f.UNIT_X);
-        arrow.setLineWidth(100); // make arrow thicker
-        putShape(arrow, ColorRGBA.Red).setLocalTranslation(pos);
-
-        arrow = new Arrow(Vector3f.UNIT_Y);
-        arrow.setLineWidth(100); // make arrow thicker
-        putShape(arrow, ColorRGBA.Green).setLocalTranslation(pos);
-
-        arrow = new Arrow(Vector3f.UNIT_Z);
-        arrow.setLineWidth(100); // make arrow thicker
-        putShape(arrow, ColorRGBA.Blue).setLocalTranslation(pos);
-    }
-
-    private Geometry putShape(Mesh shape, ColorRGBA color) {
-        Geometry g = new Geometry("coordinate axis", shape);
-        Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        mat.getAdditionalRenderState().setWireframe(true);
-        mat.setColor("Color", color);
-        g.setMaterial(mat);
-        app.getRootNode().attachChild(g);
-        g.center();
-        return g;
     }
 
     private void makeCam() {

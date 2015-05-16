@@ -14,7 +14,7 @@ public class SpriteEngine {
     }
 
     public void destroyEngine() {
-        for (int i = e_libraries.size() - 1; i > 0; i--) {
+        for (int i = e_libraries.size() - 1; i >= 0; i--) {
             e_libraries.get(i).purge();
             e_libraries.remove(i);//purges library
         }

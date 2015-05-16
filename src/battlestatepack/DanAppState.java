@@ -44,7 +44,6 @@ public class DanAppState extends AbstractAppState
     private PMoveAppState pmc;
     private final AppSettings settings;
     private SpriteLibrary spatSL;
-    //private Vector2f mouse;
     private Geometry line1, line2;
     private Vector3f playerPos;
     private float lsize = 140f;
@@ -111,14 +110,18 @@ public class DanAppState extends AbstractAppState
     }
 
     protected void enableAttackMap() {
-        inputManager.addMapping("mousePick", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
-        inputManager.addListener(this, "mousePick");
+        if (!inputManager.hasMapping("mousePick")) {
+            inputManager.addMapping("mousePick", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
+            inputManager.addListener(this, "mousePick");
+        }
         atkenabled = true;
     }
 
     protected void disableAttackMap() {
-        inputManager.deleteMapping("mousePick");
-        inputManager.removeListener(this);
+        if (inputManager.hasMapping("mousePick")) {
+            inputManager.deleteMapping("mousePick");
+            inputManager.removeListener(this);
+        }
         atkenabled = false;
     }
 
