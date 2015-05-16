@@ -27,6 +27,7 @@ import com.jme3.scene.shape.Line;
 import com.jme3.scene.shape.Quad;
 import com.jme3.system.AppSettings;
 import com.jme3.texture.Texture;
+import java.util.Random;
 import spriteProject.SpriteLibrary;
 
 /**
@@ -46,9 +47,11 @@ public class DanAppState extends AbstractAppState
     //private Vector2f mouse;
     private Geometry line1, line2;
     private Vector3f playerPos;
-    private float lsize = 150f;
-    private float aimLimit = 40f;
+    private float lsize = 140f;
+    private float aimLimit = 35f;
+    private float aim1, aim2;
     private boolean atkenabled;
+    private final Random rand = new Random();
 
     public DanAppState(Spatial dan, AppSettings settings) {
         this.dan = dan;
@@ -121,14 +124,13 @@ public class DanAppState extends AbstractAppState
 
     private void fireArrow(float accuracy) {
         Spatial arrow = makeArrow(accuracy);
-
         BattleMain.ATKNODE.attachChild(arrow);
-
-        arrow.addControl(new ArrowControl(getAimDirection(), 1500, 1500));
-        System.out.println("Arrow fired, power=" + accuracy);
+        float dir = ((rand.nextFloat()) * (aim1 - aim2) + aim2);
+        arrow.addControl(new ArrowControl(lsize, 1500, 1500, dir, dan.getLocalTranslation()));
+        System.out.println("arrow fired");
     }
 
-    private Node makeArrow(float power) {
+    private Node makeArrow(float accuracy) {
         Node node = new Node("arrow");
 
         Geometry geom = new Geometry("Quad", new Quad(28f, 9f));
@@ -143,7 +145,7 @@ public class DanAppState extends AbstractAppState
 
         node.setLocalTranslation(playerPos);
 
-//        add a material to the picture
+        //add a material to the picture
         Material picMat = new Material(assetManager, "Common/MatDefs/Gui/Gui.j3md");
         picMat.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.AlphaAdditive);
         node.setMaterial(picMat);
@@ -151,7 +153,7 @@ public class DanAppState extends AbstractAppState
         node.setUserData("halfwidth", width / 2);
         node.setUserData("halfheight", height / 2);
         node.setUserData("collided", false);
-        node.setUserData("atkpower", power);
+        node.setUserData("atkpower", accuracy);
         node.setUserData("type", "arrow");
 
         node.attachChild(geom);
@@ -180,7 +182,7 @@ public class DanAppState extends AbstractAppState
     public void onAnalog(String name, float value, float tpf) {
         if (power <= aimLimit / 2) {
             power += tpf * 10;
-            lsize += tpf;
+            lsize += tpf * 60;
         }
     }
 
@@ -201,16 +203,17 @@ public class DanAppState extends AbstractAppState
             }
             firing = false;
             power = 0;
+            lsize = 140;
         }
     }
 
     private void updateLines(float aim, float range) {
-        float aim1 = -(FastMath.PI / 6) + (aim + range);
+        aim1 = -(FastMath.PI / 6) + (aim + range);
         Vector3f newvec = new Vector3f(lsize * FastMath.cos(aim1), lsize * FastMath.sin(aim1), 0f);
         newvec.addLocal(playerPos);
         ((Line) line1.getMesh()).updatePoints(playerPos, newvec);
 
-        float aim2 = (FastMath.PI / 6) + (aim - range);
+        aim2 = (FastMath.PI / 6) + (aim - range);
         newvec = new Vector3f(lsize * FastMath.cos(aim2), lsize * FastMath.sin(aim2), 0f);
         newvec.addLocal(playerPos);
         ((Line) line2.getMesh()).updatePoints(playerPos, newvec);
