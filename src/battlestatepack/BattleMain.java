@@ -68,7 +68,7 @@ public class BattleMain extends AbstractAppState implements ActionListener {
         collideAS = new CollideAS();
         stateManager.attach(collideAS);
         maker = new EntityMaker(assetManager, stateManager);
-        
+
         //spawn and set up Dan
         dan = maker.createSpatial("Dan");
         dan.move(settings.getWidth() / 2, settings.getHeight() / 2, 0);
@@ -88,12 +88,12 @@ public class BattleMain extends AbstractAppState implements ActionListener {
 
         //Set up Camera
         makeCam();
-        
+
         //SwitchChar mapping
-        if(!inputManager.hasMapping("switchChar")){
+        if (!inputManager.hasMapping("switchChar")) {
             inputManager.addMapping("switchChar", new KeyTrigger(KeyInput.KEY_G));
             inputManager.addListener(this, "switchChar");
-            }
+        }
 
         //Map
         Geometry geom = new Geometry("Quad", new Quad(1500f, 1500f));
@@ -109,7 +109,7 @@ public class BattleMain extends AbstractAppState implements ActionListener {
         pMAppState = new PMoveAppState(850f, 850f, inputManager);
         stateManager.attach(pMAppState);
         pMAppState.setSpatial(dan);
-        
+
         //set up HUD
         battleGUI = new BattleGUI(settings.getWidth(), settings.getHeight());
         stateManager.attach(battleGUI);
@@ -169,14 +169,14 @@ public class BattleMain extends AbstractAppState implements ActionListener {
         pMAppState.setEnabled(enabled);
 
         if (enabled) {
-            if(!inputManager.hasMapping("switchChar")){
-            inputManager.addMapping("switchChar", new KeyTrigger(KeyInput.KEY_G));
-            inputManager.addListener(this, "switchChar");
+            if (!inputManager.hasMapping("switchChar")) {
+                inputManager.addMapping("switchChar", new KeyTrigger(KeyInput.KEY_G));
+                inputManager.addListener(this, "switchChar");
             }
         } else {
-            if(inputManager.hasMapping("switchChar")){
-            inputManager.deleteMapping("switchChar");
-            inputManager.removeListener(this);
+            if (inputManager.hasMapping("switchChar")) {
+                inputManager.deleteMapping("switchChar");
+                inputManager.removeListener(this);
             }
         }
 
@@ -184,6 +184,7 @@ public class BattleMain extends AbstractAppState implements ActionListener {
 
     @Override
     public void cleanup() {
+        app.getRootNode().detachAllChildren();
         ATKNODE.detachAllChildren();
         DEFNODE.detachAllChildren();
         inputManager.removeListener(this);

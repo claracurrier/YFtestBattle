@@ -31,8 +31,12 @@ public class PauseMenu {
     }
 
     public void makePauseMenu() {
-        final Window win = new Window(screen, "win", new Vector2f(15, 15));
+        final Window win = new Window(screen, "win", new Vector2f(15, 15),
+                new Vector2f(100, 300));
         screen.addElement(win);
+        win.setIsResizable(false);
+        win.setIsMovable(false);
+        win.setIgnoreMouse(true);
 
         //resume button
         ButtonAdapter resumeGame = new ButtonAdapter(screen, "Resume",
@@ -48,20 +52,6 @@ public class PauseMenu {
         resumeGame.setTextAlign(BitmapFont.Align.Center);
         win.addChild(resumeGame);
 
-        //exit button
-        ButtonAdapter exitToMenu = new ButtonAdapter(screen, "ExitToMenu",
-                new Vector2f(15, 155), new Vector2f(200, 35)) {
-            @Override
-            public void onButtonMouseLeftUp(MouseButtonEvent evt, boolean toggled) {
-                screen.removeElement(win);
-                exitToMM();
-            }
-        };
-        exitToMenu.setFont("Interface/Fonts/Arial.fnt");
-        exitToMenu.setText("Return to Main Menu");
-        exitToMenu.setTextAlign(BitmapFont.Align.Center);
-        win.addChild(exitToMenu);
-
         //controls
         ButtonAdapter controlMenuBtn = new ButtonAdapter(screen, "Controls",
                 new Vector2f(15, 105)) {
@@ -75,6 +65,34 @@ public class PauseMenu {
         controlMenuBtn.setText("Controls");
         controlMenuBtn.setTextAlign(BitmapFont.Align.Center);
         win.addChild(controlMenuBtn);
+
+        //options
+        ButtonAdapter optionMenuBtn = new ButtonAdapter(screen, "Options",
+                new Vector2f(15, 155)) {
+            @Override
+            public void onButtonMouseLeftUp(MouseButtonEvent evt, boolean toggled) {
+                screen.removeElement(win);
+                goToOptions();
+            }
+        };
+        optionMenuBtn.setFont("Interface/Fonts/Arial.fnt");
+        optionMenuBtn.setText("Options");
+        optionMenuBtn.setTextAlign(BitmapFont.Align.Center);
+        win.addChild(optionMenuBtn);
+
+        //exit button
+        ButtonAdapter exitToMenu = new ButtonAdapter(screen, "ExitToMenu",
+                new Vector2f(15, 205), new Vector2f(200, 35)) {
+            @Override
+            public void onButtonMouseLeftUp(MouseButtonEvent evt, boolean toggled) {
+                screen.removeElement(win);
+                exitToMM();
+            }
+        };
+        exitToMenu.setFont("Interface/Fonts/Arial.fnt");
+        exitToMenu.setText("Return to Main Menu");
+        exitToMenu.setTextAlign(BitmapFont.Align.Center);
+        win.addChild(exitToMenu);
     }
 
     public void exitToMM() {
@@ -85,6 +103,11 @@ public class PauseMenu {
     private void goToControl() {
         mm.setPaused(true);
         mm.getCM().makeControlMenu();
+    }
+
+    private void goToOptions() {
+        mm.setPaused(true);
+        mm.getOM().makeOptionsMenu();
     }
 
     public void resume() {

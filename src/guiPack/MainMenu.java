@@ -36,7 +36,9 @@ public class MainMenu extends SimpleApplication implements ActionListener {
     private static Screen screen;
     private PauseMenu pauseMenu;
     private ControlMenu controlMenu;
-    private Node tgGuiNode; 
+    private OptionsMenu optionsMenu;
+    private Credits credits;
+    private Node tgGuiNode;
     private boolean ispaused = false;
 
     @Override
@@ -50,16 +52,21 @@ public class MainMenu extends SimpleApplication implements ActionListener {
 
         pauseMenu = new PauseMenu(screen, stateManager, this);
         controlMenu = new ControlMenu(screen, stateManager, this);
+        optionsMenu = new OptionsMenu(screen, this);
+        credits = new Credits(screen, this);
         makeStartMenu();
-
     }
-    
-    public static Screen getScreen(){
+
+    public static Screen getScreen() {
         return screen;
     }
 
     public PauseMenu getPM() {
         return pauseMenu;
+    }
+
+    public OptionsMenu getOM() {
+        return optionsMenu;
     }
 
     public ControlMenu getCM() {
@@ -73,8 +80,12 @@ public class MainMenu extends SimpleApplication implements ActionListener {
             inputManager.addListener(this, "pause");
         }
 
-        final Window win = new Window(screen, "win", new Vector2f(15, 15));
+        final Window win = new Window(screen, "win", new Vector2f(15, 15),
+                new Vector2f(settings.getWidth() - 30, settings.getHeight() - 30));
         screen.addElement(win);
+        win.setIsResizable(false);
+        win.setIsMovable(false);
+        win.setIgnoreMouse(true);
 
         //start
         ButtonAdapter startGameBtn = new ButtonAdapter(screen, "Start", new Vector2f(15, 55)) {
@@ -103,7 +114,49 @@ public class MainMenu extends SimpleApplication implements ActionListener {
         controlMenuBtn.setText("Controls");
         controlMenuBtn.setTextAlign(BitmapFont.Align.Center);
         win.addChild(controlMenuBtn);
-        
+
+        //Options
+        ButtonAdapter optionMenuBtn = new ButtonAdapter(screen, "Options",
+                new Vector2f(15, 155)) {
+            @Override
+            public void onButtonMouseLeftUp(MouseButtonEvent evt, boolean toggled) {
+                screen.removeElement(win);
+                goToOptions();
+            }
+        };
+        optionMenuBtn.setFont("Interface/Fonts/Arial.fnt");
+        optionMenuBtn.setText("Options");
+        optionMenuBtn.setTextAlign(BitmapFont.Align.Center);
+        win.addChild(optionMenuBtn);
+
+        //Credits
+        ButtonAdapter creditBtn = new ButtonAdapter(screen, "Credits",
+                new Vector2f(15, 205)) {
+            @Override
+            public void onButtonMouseLeftUp(MouseButtonEvent evt, boolean toggled) {
+                screen.removeElement(win);
+                goToCredits();
+            }
+        };
+        creditBtn.setFont("Interface/Fonts/Arial.fnt");
+        creditBtn.setText("Credits");
+        creditBtn.setTextAlign(BitmapFont.Align.Center);
+        win.addChild(creditBtn);
+
+        //Exit
+        ButtonAdapter exitBtn = new ButtonAdapter(screen, "Exit",
+                new Vector2f(15, 255)) {
+            @Override
+            public void onButtonMouseLeftUp(MouseButtonEvent evt, boolean toggled) {
+                screen.removeElement(win);
+                app.stop();
+            }
+        };
+        exitBtn.setFont("Interface/Fonts/Arial.fnt");
+        exitBtn.setText("Exit");
+        exitBtn.setTextAlign(BitmapFont.Align.Center);
+        win.addChild(exitBtn);
+
         ispaused = false;
     }
 
@@ -115,17 +168,25 @@ public class MainMenu extends SimpleApplication implements ActionListener {
             pauseMenu.makePauseMenu();
         }
     }
-    
-    public boolean isPaused(){
+
+    public boolean isPaused() {
         return ispaused;
     }
-    
-    public void setPaused(boolean p){
+
+    public void setPaused(boolean p) {
         ispaused = p;
     }
 
     private void goToControl() {
         controlMenu.makeControlMenu();
+    }
+
+    private void goToOptions() {
+        optionsMenu.makeOptionsMenu();
+    }
+    
+    private void goToCredits(){
+        credits.makeCredits();
     }
 
     public void onAction(String name, boolean isPressed, float tpf) {

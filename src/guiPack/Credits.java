@@ -5,11 +5,14 @@
 package guiPack;
 
 import com.jme3.app.Application;
-import com.jme3.app.state.AppStateManager;
 import com.jme3.font.BitmapFont;
+import com.jme3.font.LineWrapMode;
 import com.jme3.input.event.MouseButtonEvent;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import tonegod.gui.controls.buttons.ButtonAdapter;
+import tonegod.gui.controls.text.Label;
+import tonegod.gui.controls.windows.Panel;
 import tonegod.gui.controls.windows.Window;
 import tonegod.gui.core.Screen;
 
@@ -17,29 +20,37 @@ import tonegod.gui.core.Screen;
  *
  * @author PC
  */
-public class ControlMenu {
+public class Credits {
 
     private final Screen screen;
-    private final AppStateManager asmr;
     private final MainMenu mm;
 
-    public ControlMenu(Screen screen, AppStateManager asm, Application app) {
-
-        this.asmr = asm;
+    public Credits(Screen screen, Application app) {
         this.screen = screen;
         mm = (MainMenu) app;
     }
 
-    public void makeControlMenu() {
+    public void makeCredits() {
         final Window win = new Window(screen, "win", new Vector2f(15, 15));
         screen.addElement(win);
         win.setIsResizable(false);
         win.setIsMovable(false);
         win.setIgnoreMouse(true);
-        
+
+        Label txtbox = new Label(screen, "credittext", new Vector2f(15, 15),
+                new Vector2f(300, 200));
+        txtbox.setText("Copyright 2015 by Clara Currier and Yuri Kim."
+                + " All rights reserved. See license for details."
+                + " Special thanks to Jen, Autumn, and the JME3 Community for their support.");
+        txtbox.setFont("Interface/Fonts/Arial.fnt");
+        txtbox.setTextAlign(BitmapFont.Align.Left);
+        txtbox.setTextWrap(LineWrapMode.Word);
+        txtbox.setFontSize(16f);
+        win.addChild(txtbox);
+
         //go back button
         ButtonAdapter goBackBtn = new ButtonAdapter(screen, "GoBack",
-                new Vector2f(15, 105)) {
+                new Vector2f(15, 200)) {
             @Override
             public void onButtonMouseLeftUp(MouseButtonEvent evt, boolean toggled) {
                 screen.removeElement(win);
@@ -53,10 +64,6 @@ public class ControlMenu {
     }
 
     private void goBack() {
-        if (mm.isPaused()) {
-            mm.getPM().makePauseMenu();
-        } else {
-            mm.makeStartMenu();
-        }
+        mm.makeStartMenu();
     }
 }
