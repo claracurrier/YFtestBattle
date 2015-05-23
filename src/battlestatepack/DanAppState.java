@@ -48,14 +48,13 @@ public class DanAppState extends AbstractAppState
     private Vector3f playerPos;
     private float lsize = 140f;
     private float aimLimit = 35f;
-    private float aim1, aim2, health;
+    private float aim1, aim2;
     private boolean atkenabled;
     private final Random rand = new Random();
 
     public DanAppState(Spatial dan, AppSettings settings) {
         this.dan = dan;
         this.settings = settings;
-        health = 100f;
     }
 
     @Override
@@ -131,7 +130,7 @@ public class DanAppState extends AbstractAppState
         BattleMain.ATKNODE.attachChild(arrow);
         float dir = ((rand.nextFloat()) * (aim1 - aim2) + aim2);
         arrow.addControl(new ArrowControl(lsize, 1500, 1500, dir, dan.getLocalTranslation()));
-        System.out.println("arrow fired "+ accuracy);
+        System.out.println("arrow fired " + accuracy);
     }
 
     private Node makeArrow(float accuracy) {
@@ -225,7 +224,6 @@ public class DanAppState extends AbstractAppState
 
     @Override
     public void update(float tpf) {
-
         if (pmc.isMoving()) {
             if (atkenabled) {
                 disableAttackMap();
@@ -246,7 +244,6 @@ public class DanAppState extends AbstractAppState
             playerPos = dan.getLocalTranslation();
             float aim = getAimDirection().getAngle();
             updateLines(aim, power / aimLimit);
-
 
             //change dan's sprite based off of direction
             // use the idle ones for now, only 4 dir
@@ -269,13 +266,5 @@ public class DanAppState extends AbstractAppState
                 pmc.setDir(6);
             }
         }
-    }
-
-    public void reduceHealth(float damage) {
-        health -= damage;
-    }
-
-    public float getHealth() {
-        return health;
     }
 }

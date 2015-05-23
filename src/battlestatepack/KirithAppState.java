@@ -32,11 +32,9 @@ public class KirithAppState extends AbstractAppState implements AnalogListener, 
     private AppStateManager asm;
     private PMoveAppState pmc;
     private KiDizzyControl kdc;
-    private float health;
 
     public KirithAppState(Spatial ki) {
         this.kirith = ki;
-        health = 100f;
     }
 
     @Override
@@ -215,13 +213,5 @@ public class KirithAppState extends AbstractAppState implements AnalogListener, 
                 hbtimer += tpf;
             }
         }
-    }
-
-    public void reduceHealth(float damage) {
-        health -= damage;
-    }
-
-    public float getHealth() {
-        return health;
     }
 }

@@ -41,12 +41,12 @@ public class BattleMain extends AbstractAppState implements ActionListener {
     private final AssetManager assetManager;
     private final AppStateManager stateManager;
     private final InputManager inputManager;
+    private final PCollideCont danCC, kiCC;
     private final Camera cam;
     private final float frustumSize = 220f;
     private final CameraNode camNode;
     private final BattleGUI battleGUI;
     public static AppSettings settings;
-    
     public static final SpriteEngine sEngine = new SpriteEngine();
     public static final Node DEFNODE = new Node("defNode");
     public static final Node ATKNODE = new Node("atkNode");
@@ -70,22 +70,26 @@ public class BattleMain extends AbstractAppState implements ActionListener {
         dan = maker.createSpatial("Dan");
         dan.move(settings.getWidth() / 2, settings.getHeight() / 2, 0);
         danAppState = new DanAppState(dan, settings);
+        danCC = new PCollideCont();
+
         kirith = maker.createSpatial("Kirith");
         kirith.move(settings.getWidth() / 3, settings.getHeight() / 3, 0);
         kiAppState = new KirithAppState(kirith);
+        kiCC = new PCollideCont();
 
         //set up movement
         pMAppState = new PMoveAppState(850f, 850f, inputManager);
         pMAppState.setSpatial(dan);
 
-        battleGUI = new BattleGUI(settings.getWidth(), settings.getHeight());
+        battleGUI = new BattleGUI(settings.getWidth(), settings.getHeight(),
+                danCC, kiCC);
     }
 
     @Override
     public void initialize(AppStateManager asm, Application appl) {
         //spawn a Mob
         Spatial mobSpat = maker.createSpatial("Wanderer");
-        Mob mob = new Mob(mobSpat, "Wanderer", 0);
+        Mob mob = new Mob(mobSpat, "Wanderer", 0, dan, kirith);
         mobSpat.move(500, 500, -1);
 
         //SwitchChar mapping
@@ -104,6 +108,8 @@ public class BattleMain extends AbstractAppState implements ActionListener {
         stateManager.attach(pMAppState);
         stateManager.attach(battleGUI);
 
+        dan.addControl(danCC);
+        kirith.addControl(kiCC);
         DEFNODE.attachChild(dan);
         DEFNODE.attachChild(kirith);
     }
@@ -116,6 +122,7 @@ public class BattleMain extends AbstractAppState implements ActionListener {
 
     private void switchChar() {
         if (stateManager.hasState(danAppState)) {
+            //if dan is in control
             collideAS.setMovingSpatial(kirith);
             pMAppState.setSpatial(kirith);
             stateManager.detach(danAppState);
@@ -123,9 +130,11 @@ public class BattleMain extends AbstractAppState implements ActionListener {
 
             dan.detachChild(camNode);
             kirith.attachChild(camNode);
+            battleGUI.setActiveHUD(kiCC);
             look(kirith);
 
         } else if (stateManager.hasState(kiAppState)) {
+            //if kirith is in control
             collideAS.setMovingSpatial(dan);
             pMAppState.setSpatial(dan);
             stateManager.detach(kiAppState);
@@ -133,6 +142,7 @@ public class BattleMain extends AbstractAppState implements ActionListener {
 
             kirith.detachChild(camNode);
             dan.attachChild(camNode);
+            battleGUI.setActiveHUD(danCC);
             look(dan);
         }
     }
@@ -223,12 +233,20 @@ public class BattleMain extends AbstractAppState implements ActionListener {
     private void checkComplete() {
         //checks the health of dan, kirith, or the monster to see if it's below
         //threshold and if so, launch a victory or defeat screen
-        if (danAppState.getHealth() <= 0 || kiAppState.getHealth() <= 0) {
+        if (danCC.getHealth() <= 0 || kiCC.getHealth() <= 0) {
             endGame(false);
         } else if (ATKNODE.getQuantity() == 0) {
             //this method would change depending on the script being loaded
             endGame(true);
         }
+    }
+
+    public Spatial getDan() {
+        return dan;
+    }
+
+    public Spatial getKi() {
+        return kirith;
     }
 
     private void endGame(boolean victory) {

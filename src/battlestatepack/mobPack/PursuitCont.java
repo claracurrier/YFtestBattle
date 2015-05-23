@@ -17,7 +17,7 @@ import com.jme3.scene.control.AbstractControl;
  */
 public class PursuitCont extends AbstractControl {
 
-    private Node targ;
+    private Spatial targ;
     private Spatial mob;
     private float speed = 200;
 
@@ -25,7 +25,7 @@ public class PursuitCont extends AbstractControl {
         mob = m;
     }
 
-    public PursuitCont(Spatial m, Node t) {
+    public PursuitCont(Spatial m, Spatial t) {
         mob = m;
         targ = t;
     }
@@ -43,7 +43,7 @@ public class PursuitCont extends AbstractControl {
         //3) move towards target
     }
 
-    private Vector3f getTargDir(Node targ) {
+    private Vector3f getTargDir(Spatial targ) {
         Vector3f targvel = new Vector3f(
                 targ.getLocalTranslation().x - mob.getLocalTranslation().x,
                 targ.getLocalTranslation().y - mob.getLocalTranslation().y, 0);

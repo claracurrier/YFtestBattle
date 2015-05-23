@@ -111,6 +111,7 @@ public class PauseMenu {
     }
 
     public void resume() {
+        screen.removeElement(screen.getElementById("win"));
         asmr.getState(BattleMain.class).setEnabled(true);
         mm.setPaused(false);
     }

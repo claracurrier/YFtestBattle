@@ -19,13 +19,15 @@ public class Mob {
 
     private final String name;
     private final int id;
-    private final Spatial mob;
+    private final Spatial mob, dan, ki;
     private float health;
 
-    public Mob(Spatial mob, String name, int id) {
+    public Mob(Spatial mob, String name, int id, Spatial d, Spatial k) {
         this.name = name;
         this.id = id;
         this.mob = mob;
+        dan = d;
+        ki = k;
 
         health = 100f; //make this settable later
         Node mobatkbox = new Node("mobatkbox");
@@ -34,9 +36,7 @@ public class Mob {
         mobatkbox.setUserData("halfwidth", 25f);
         mobatkbox.setUserData("halfheight", 40f);
         mobatkbox.setUserData("type", "attackbox");
-        mobatkbox.setUserData("atkpower", 50);
-
-        mob.setUserData("atkbox", mobatkbox);
+        mobatkbox.setUserData("atkpower", 10f);
         mob.setUserData("type", "mob");
 
         BattleMain.ATKNODE.attachChild(mobatkbox);
@@ -50,8 +50,8 @@ public class Mob {
     public void reduceHealth(float damage) {
         health -= damage;
     }
-    
-    public float getHealth(){
+
+    public float getHealth() {
         return health;
     }
 
