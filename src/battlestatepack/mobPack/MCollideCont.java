@@ -18,15 +18,18 @@ public class MCollideCont extends AbstractControl {
 
     private Node atkNode;
     private Vector3f loc;
+    private final Mob mob;
     private final float width = 1000f;
     private final float height = 1000f;
     //TODO: make the bounds either built into the map or change this
 
-    public MCollideCont() {
+    public MCollideCont(Mob m) {
+        mob = m;
     }
 
-    public MCollideCont(Node atk) {
+    public MCollideCont(Node atk, Mob m) {
         atkNode = atk;
+        mob = m;
     }
 
     public void setAtkNode(Node atk) {
@@ -35,6 +38,12 @@ public class MCollideCont extends AbstractControl {
 
     @Override
     protected void controlUpdate(float tpf) {
+        if(mob.getHealth()<=0){
+            spatial.removeFromParent();
+            atkNode.removeFromParent();
+            return;
+        }
+        
         loc = spatial.getLocalTranslation();
 
         if (!atkNode.getLocalTranslation().equals(loc)) {
@@ -60,20 +69,21 @@ public class MCollideCont extends AbstractControl {
         {
             if (!spatial.getUserData("collided").equals("none")) {
                 //collision
+                int dir = (Integer) spatial.getUserData("atkdirection");
                 if (spatial.getUserData("collided").equals("arrow")) {
-                    movedir((Integer) spatial.getUserData("atkdirection"));
+                    movedir(dir);
 
                 } else if (spatial.getUserData("collided").equals("pushback")) {
-                    movedir((Integer) spatial.getUserData("atkdirection"));
+                    movedir(dir);
 
                 } else if (spatial.getUserData("collided").equals("stun")) {
-                    movedir((Integer) spatial.getUserData("atkdirection"));
+                    movedir(dir);
 
                 } else if (spatial.getUserData("collided").equals("spin")) {
-                    movedir((Integer) spatial.getUserData("atkdirection"));
+                    movedir(dir);
                 }
                 
-                
+                mob.reduceHealth((Float)spatial.getUserData("atkpower"));
                 //modifers can be added here depending on mob
                 //refactoring of health mechanism may be necessary
                 //especially if considering overhaul of inheritance

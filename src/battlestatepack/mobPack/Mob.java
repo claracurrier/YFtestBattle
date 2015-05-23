@@ -19,17 +19,15 @@ public class Mob {
 
     private final String name;
     private final int id;
-    private final Node dan, ki;
     private final Spatial mob;
     private float health;
 
-    public Mob(Spatial mob, String name, int id, Node d, Node k) {
+    public Mob(Spatial mob, String name, int id) {
         this.name = name;
         this.id = id;
-        dan = d;
-        ki = k;
         this.mob = mob;
 
+        health = 100f; //make this settable later
         Node mobatkbox = new Node("mobatkbox");
 
         mobatkbox.setLocalTranslation(mob.getLocalTranslation());
@@ -44,13 +42,17 @@ public class Mob {
         BattleMain.ATKNODE.attachChild(mobatkbox);
         BattleMain.DEFNODE.attachChild(mob);
 
-        mob.addControl(new MCollideCont(mobatkbox));
+        mob.addControl(new MCollideCont(mobatkbox, this));
         //mob.addControl(new PursuitCont(mob, dan)); //for now it's hard coded
         //temp disabled
     }
 
     public void reduceHealth(float damage) {
         health -= damage;
+    }
+    
+    public float getHealth(){
+        return health;
     }
 
     public Spatial getMobSpat() {

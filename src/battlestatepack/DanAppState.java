@@ -55,6 +55,7 @@ public class DanAppState extends AbstractAppState
     public DanAppState(Spatial dan, AppSettings settings) {
         this.dan = dan;
         this.settings = settings;
+        health = 100f;
     }
 
     @Override
@@ -130,7 +131,7 @@ public class DanAppState extends AbstractAppState
         BattleMain.ATKNODE.attachChild(arrow);
         float dir = ((rand.nextFloat()) * (aim1 - aim2) + aim2);
         arrow.addControl(new ArrowControl(lsize, 1500, 1500, dir, dan.getLocalTranslation()));
-        System.out.println("arrow fired");
+        System.out.println("arrow fired "+ accuracy);
     }
 
     private Node makeArrow(float accuracy) {
@@ -175,7 +176,7 @@ public class DanAppState extends AbstractAppState
         Vector2f dif = new Vector2f(mouse.x - playerPos.x, mouse.y - playerPos.y);
         return dif.normalizeLocal();
     }
-    private float power;
+    private float power = 0f;
     private static boolean firing;
 
     public static boolean isfiring() {
@@ -272,5 +273,9 @@ public class DanAppState extends AbstractAppState
 
     public void reduceHealth(float damage) {
         health -= damage;
+    }
+
+    public float getHealth() {
+        return health;
     }
 }

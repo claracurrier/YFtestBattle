@@ -37,6 +37,7 @@ public class MainMenu extends SimpleApplication implements ActionListener {
     private PauseMenu pauseMenu;
     private ControlMenu controlMenu;
     private OptionsMenu optionsMenu;
+    public static EndGame endGame;
     private Credits credits;
     private Node tgGuiNode;
     private boolean ispaused = false;
@@ -54,6 +55,7 @@ public class MainMenu extends SimpleApplication implements ActionListener {
         controlMenu = new ControlMenu(screen, stateManager, this);
         optionsMenu = new OptionsMenu(screen, this);
         credits = new Credits(screen, this);
+        endGame = new EndGame(screen, stateManager, this);
         makeStartMenu();
     }
 
@@ -91,7 +93,8 @@ public class MainMenu extends SimpleApplication implements ActionListener {
         ButtonAdapter startGameBtn = new ButtonAdapter(screen, "Start", new Vector2f(15, 55)) {
             @Override
             public void onButtonMouseLeftUp(MouseButtonEvent evt, boolean toggled) {
-                BattleMain battleMain = new BattleMain((SimpleApplication) app, settings, inputManager);
+                BattleMain battleMain = new BattleMain((SimpleApplication) app, 
+                        settings, inputManager, stateManager);
                 stateManager.attach(battleMain);
                 screen.removeElement(win);
 

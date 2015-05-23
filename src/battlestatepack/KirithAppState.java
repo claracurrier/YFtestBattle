@@ -36,7 +36,7 @@ public class KirithAppState extends AbstractAppState implements AnalogListener, 
 
     public KirithAppState(Spatial ki) {
         this.kirith = ki;
-
+        health = 100f;
     }
 
     @Override
@@ -219,5 +219,9 @@ public class KirithAppState extends AbstractAppState implements AnalogListener, 
 
     public void reduceHealth(float damage) {
         health -= damage;
+    }
+
+    public float getHealth() {
+        return health;
     }
 }

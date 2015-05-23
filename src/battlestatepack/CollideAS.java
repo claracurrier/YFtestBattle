@@ -69,7 +69,7 @@ public class CollideAS extends AbstractAppState {
                             atkchild.setUserData("collided", true);
                         }
                         defchild.setUserData("collided", atkchild.getName());
-                        defchild.setUserData("atkpower", atkchild.getUserData("power"));
+                        defchild.setUserData("atkpower", atkchild.getUserData("atkpower"));
                         defchild.setUserData("atkdirection", val);
 
                         System.out.println(atkchild + " collided into " + defchild);
