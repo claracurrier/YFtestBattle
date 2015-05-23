@@ -38,7 +38,6 @@ public class BattleMain extends AbstractAppState implements ActionListener {
     private PMoveAppState pMAppState;
     private CollideAS collideAS;
     private final SimpleApplication app;
-    private final AppSettings settings;
     private AssetManager assetManager;
     private AppStateManager stateManager;
     private final InputManager inputManager;
@@ -46,6 +45,7 @@ public class BattleMain extends AbstractAppState implements ActionListener {
     private final float frustumSize = 220f;
     private CameraNode camNode;
     private BattleGUI battleGUI;
+    public static AppSettings settings;
     public static final SpriteEngine sEngine = new SpriteEngine();
     public static final Node DEFNODE = new Node("defNode");
     public static final Node ATKNODE = new Node("atkNode");
@@ -121,6 +121,7 @@ public class BattleMain extends AbstractAppState implements ActionListener {
     @Override
     public void update(float tpf) {
         sEngine.update(tpf);
+        checkComplete();
     }
 
     @Override
@@ -226,5 +227,10 @@ public class BattleMain extends AbstractAppState implements ActionListener {
     private void look(Spatial s) {
         camNode.lookAt(s.getWorldTranslation(), Vector3f.UNIT_Y);
         camNode.rotate(camNode.getLocalRotation().fromAngleAxis(-FastMath.PI / 2, Vector3f.UNIT_Y));
+    }
+
+    private void checkComplete() {
+        //checks the health of dan, kirith, or the monster to see if it's below
+        //threshold and if so, launch a victory or defeat screen
     }
 }

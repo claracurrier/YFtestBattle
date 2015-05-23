@@ -18,6 +18,9 @@ public class MCollideCont extends AbstractControl {
 
     private Node atkNode;
     private Vector3f loc;
+    private final float width = 1000f;
+    private final float height = 1000f;
+    //TODO: make the bounds either built into the map or change this
 
     public MCollideCont() {
     }
@@ -39,11 +42,18 @@ public class MCollideCont extends AbstractControl {
             //make sure box follows mob 
         }
 
-        if (loc.x > 1500
-                || loc.y > 1500
-                || loc.x < 0
-                || loc.y < 0) {
-            //if monster is outside of bounds
+        //check bounds
+        if (loc.x > width) {
+            spatial.move(width - loc.x, 0, 0);
+        }
+        if (loc.y > height) {
+            spatial.move(0, height - loc.y, 0);
+        }
+        if (loc.x < 0) {
+            spatial.move(0 - loc.x, 0, 0);
+        }
+        if (loc.y < 0) {
+            spatial.move(0, 0 - loc.y, 0);
         }
 
         //place to poll for collisions
@@ -62,6 +72,11 @@ public class MCollideCont extends AbstractControl {
                 } else if (spatial.getUserData("collided").equals("spin")) {
                     movedir((Integer) spatial.getUserData("atkdirection"));
                 }
+                
+                
+                //modifers can be added here depending on mob
+                //refactoring of health mechanism may be necessary
+                //especially if considering overhaul of inheritance
                 spatial.setUserData("collided", "none");
             }
         }
@@ -69,29 +84,18 @@ public class MCollideCont extends AbstractControl {
 
     private void movedir(int dir) {
         switch (dir) { //moves the node opposite of the direction it was it
-            case 0:
-                spatial.move(0, -81f, 0);
+            //right now SATtest only gives 4 cardinal directions
+            case 1: //hit right
+                spatial.move(-10f, 0, 0);
                 break;
-            case 1:
-                spatial.move(-51f, -81f, 0);
+            case 2: //hit left
+                spatial.move(10f, 0, 0);
                 break;
-            case 2:
-                spatial.move(-51f, 0, 0);
+            case 3: //hit below
+                spatial.move(0, 10f, 0);
                 break;
-            case 3:
-                spatial.move(-51f, 81f, 0);
-                break;
-            case 4:
-                spatial.move(0, 81f, 0);
-                break;
-            case 5:
-                spatial.move(51f, 81f, 0);
-                break;
-            case 6:
-                spatial.move(51f, 0, 0);
-                break;
-            case 7:
-                spatial.move(51f, -81f, 0);
+            case 4: //hit above
+                spatial.move(0, -10f, 0);
                 break;
         }
     }

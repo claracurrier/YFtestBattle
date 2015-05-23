@@ -86,7 +86,7 @@ public class PauseMenu {
             @Override
             public void onButtonMouseLeftUp(MouseButtonEvent evt, boolean toggled) {
                 screen.removeElement(win);
-                exitToMM();
+                goToMM();
             }
         };
         exitToMenu.setFont("Interface/Fonts/Arial.fnt");
@@ -95,7 +95,7 @@ public class PauseMenu {
         win.addChild(exitToMenu);
     }
 
-    public void exitToMM() {
+    public void goToMM() {
         asmr.detach(asmr.getState(BattleMain.class));
         mm.makeStartMenu();
     }

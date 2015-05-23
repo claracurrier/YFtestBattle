@@ -269,4 +269,8 @@ public class DanAppState extends AbstractAppState
             }
         }
     }
+
+    public void reduceHealth(float damage) {
+        health -= damage;
+    }
 }

@@ -15,7 +15,6 @@ import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
-import com.jme3.math.FastMath;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -114,7 +113,7 @@ public class KirithAppState extends AbstractAppState implements AnalogListener, 
     }
 
     private void spinattack(float spin) {
-        kirith.rotate(0, 0, asm.getState(PMoveAppState.class).getLastRotation() + FastMath.PI * (spin / 50000));
+        //needs sprite
         attacking = true;
     }
 
@@ -172,7 +171,6 @@ public class KirithAppState extends AbstractAppState implements AnalogListener, 
         node.attachChild(g);
 
         BattleMain.ATKNODE.attachChild(node);
-
     }
     private float power;
 
@@ -207,9 +205,9 @@ public class KirithAppState extends AbstractAppState implements AnalogListener, 
     @Override
     public void update(float tpf) {
         if (attacking) {
-            if (hbtimer > .1f) {
+            if (hbtimer > .05f) {
                 attacking = false;
-
+                BattleMain.ATKNODE.detachChildNamed("spin");
                 BattleMain.ATKNODE.detachChildNamed("pushback");
                 BattleMain.ATKNODE.detachChildNamed("stun");
                 hbtimer = 0;
@@ -217,5 +215,9 @@ public class KirithAppState extends AbstractAppState implements AnalogListener, 
                 hbtimer += tpf;
             }
         }
+    }
+
+    public void reduceHealth(float damage) {
+        health -= damage;
     }
 }

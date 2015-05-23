@@ -48,7 +48,11 @@ public class Mob {
         //mob.addControl(new PursuitCont(mob, dan)); //for now it's hard coded
         //temp disabled
     }
-    
+
+    public void reduceHealth(float damage) {
+        health -= damage;
+    }
+
     public Spatial getMobSpat() {
         return mob;
     }

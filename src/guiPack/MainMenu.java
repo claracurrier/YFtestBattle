@@ -193,7 +193,7 @@ public class MainMenu extends SimpleApplication implements ActionListener {
         if (name.equals("pause") && !isPressed && !ispaused) {
             pause();
         }
-        if (name.equals("pause") && !isPressed && ispaused) {
+        else if (name.equals("pause") && !isPressed && ispaused) {
             pauseMenu.resume();
         }
     }

@@ -4,10 +4,10 @@
  */
 package battlestatepack;
 
-import com.jme3.math.FastMath;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.control.AbstractControl;
+import spriteProject.SpriteLibrary;
 
 /**
  *
@@ -19,6 +19,7 @@ public class KiDizzyControl extends AbstractControl {
     private float timecount = 0;
     private KirithAppState kiApp;
     private PMoveAppState pmAS;
+    private final SpriteLibrary sprites = BattleMain.sEngine.getLibrary("Kirith");
 
     public KiDizzyControl(float time, KirithAppState ki, PMoveAppState pmc) {
         this.time = time;
@@ -39,8 +40,10 @@ public class KiDizzyControl extends AbstractControl {
             spatial.removeControl(spatial.getControl(KiDizzyControl.class));
 
         } else {
-            spatial.rotate(0, 0, pmAS.getLastRotation() + FastMath.PI * .005f);
-        }
+            //put the dizzy sprite activiation
+                sprites.activateSprite((((int) Math.floor(timecount * 10)) % 8));
+            }
+        
         timecount += tpf;
     }
 
