@@ -31,7 +31,7 @@ public class PauseMenu {
     }
 
     public void makePauseMenu() {
-        final Window win = new Window(screen, "win", new Vector2f(15, 15),
+        final Window win = new Window(screen, "pausewin", new Vector2f(15, 15),
                 new Vector2f(100, 300));
         screen.addElement(win);
         win.setIsResizable(false);
@@ -43,7 +43,6 @@ public class PauseMenu {
                 new Vector2f(15, 55), new Vector2f(100, 35)) {
             @Override
             public void onButtonMouseLeftUp(MouseButtonEvent evt, boolean toggled) {
-                screen.removeElement(win);
                 resume();
             }
         };
@@ -111,7 +110,7 @@ public class PauseMenu {
     }
 
     public void resume() {
-        screen.removeElement(screen.getElementById("win"));
+        screen.removeElement(screen.getElementById("pausewin"));
         asmr.getState(BattleMain.class).setEnabled(true);
         mm.setPaused(false);
     }

@@ -119,22 +119,31 @@ public class MobSkill {
         final Spatial mob = m;
 
         mob.addControl(new AbstractControl() {
-            float timer = 0;
+            private float growtimer = 0;
+            private float chargetimer = 0;
+            private boolean setdir = false;
+            private Vector3f dir = new Vector3f();
 
             @Override
             protected void controlUpdate(float tpf) {
-                Vector3f dir = new Vector3f(
-                        targ.getLocalTranslation().x - mob.getLocalTranslation().x,
-                        targ.getLocalTranslation().y - mob.getLocalTranslation().y, 0);
-
-                dir.normalizeLocal().multLocal(200f);
-                if (timer <= 1) {
-                    mob.setLocalScale(1.3f);
-                    timer += tpf / 2;
+                if (growtimer <= 1) {
+                    mob.setLocalScale(1f + growtimer);
+                    growtimer += tpf / 2;
                 } else {
-                    mob.setLocalScale(.75f);
-                    mob.move(dir);
-                    mob.removeControl(this);
+                    mob.setLocalScale(1f);
+                    if (!setdir) {
+                        dir = new Vector3f(
+                                targ.getLocalTranslation().x - mob.getLocalTranslation().x,
+                                targ.getLocalTranslation().y - mob.getLocalTranslation().y, 0);
+                        dir.normalizeLocal().multLocal(4f);
+                        setdir = true;
+                    }
+                    if (chargetimer <= .3) {
+                        mob.move(dir);
+                        chargetimer += tpf;
+                    } else {
+                        mob.removeControl(this);
+                    }
                 }
             }
 

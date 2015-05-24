@@ -33,7 +33,7 @@ public class EndGame {
     }
 
     public void makeEndGameScreen(boolean victory) {
-        final Window win = new Window(screen, "win", new Vector2f(15, 15),
+        final Window win = new Window(screen, "endgamewin", new Vector2f(15, 15),
                 new Vector2f(100, 300));
         screen.addElement(win);
         win.setIsResizable(false);

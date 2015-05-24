@@ -31,7 +31,7 @@ public class ControlMenu {
     }
 
     public void makeControlMenu() {
-        final Window win = new Window(screen, "win", new Vector2f(15, 15));
+        final Window win = new Window(screen, "controlwin", new Vector2f(15, 15));
         screen.addElement(win);
         win.setIsResizable(false);
         win.setIsMovable(false);

@@ -27,7 +27,7 @@ public class OptionsMenu {
     }
 
     public void makeOptionsMenu() {
-        final Window win = new Window(screen, "win", new Vector2f(15, 15));
+        final Window win = new Window(screen, "optionswin", new Vector2f(15, 15));
         screen.addElement(win);
         win.setIsResizable(false);
         win.setIsMovable(false);

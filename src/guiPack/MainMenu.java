@@ -192,12 +192,10 @@ public class MainMenu extends SimpleApplication implements ActionListener {
         credits.makeCredits();
     }
 
+    @Override
     public void onAction(String name, boolean isPressed, float tpf) {
         if (name.equals("pause") && !isPressed && !ispaused) {
             pause();
-        }
-        else if (name.equals("pause") && !isPressed && ispaused) {
-            pauseMenu.resume();
         }
     }
 }

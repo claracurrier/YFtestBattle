@@ -76,10 +76,17 @@ public class MobAS extends AbstractAppState {
 
     @Override
     public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+        if (!enabled) {
+            if (mob.getNumControls() > 1) {
+                mob.removeControl(mob.getControl(1));
+            }
+        }
     }
 
     @Override
     public void cleanup() {
+        super.cleanup();
     }
 
     public void reduceHealth(float damage) {

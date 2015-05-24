@@ -51,6 +51,8 @@ public class BattleMain extends AbstractAppState implements ActionListener {
     public static final Node DEFNODE = new Node("defNode");
     public static final Node ATKNODE = new Node("atkNode");
     public static final Node BATTLENODE = new Node("battleNode");
+    
+    private MobAS mob;
 
     public BattleMain(SimpleApplication appl, AppSettings set, InputManager input, AppStateManager asm) {
         this.app = appl;
@@ -89,7 +91,7 @@ public class BattleMain extends AbstractAppState implements ActionListener {
     public void initialize(AppStateManager asm, Application appl) {
         //spawn a MobAS
         Spatial mobSpat = maker.createSpatial("Wanderer");
-        MobAS mob = new MobAS(mobSpat, "Wanderer", 0, dan, kirith);
+        mob = new MobAS(mobSpat, "Wanderer", 0, dan, kirith);
         mobSpat.move(500, 500, -1);
 
         //SwitchChar mapping
@@ -166,6 +168,7 @@ public class BattleMain extends AbstractAppState implements ActionListener {
 
         collideAS.setEnabled(enabled);
         pMAppState.setEnabled(enabled);
+        mob.setEnabled(enabled);
 
         if (enabled) {
             if (!inputManager.hasMapping("switchChar")) {
@@ -191,6 +194,7 @@ public class BattleMain extends AbstractAppState implements ActionListener {
         stateManager.detach(kiAppState);
         stateManager.detach(danAppState);
         stateManager.detach(battleGUI);
+        stateManager.detach(mob);
         sEngine.destroyEngine();
         super.cleanup();
     }

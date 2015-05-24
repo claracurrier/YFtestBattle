@@ -29,7 +29,7 @@ public class Credits {
     }
 
     public void makeCredits() {
-        final Window win = new Window(screen, "win", new Vector2f(15, 15));
+        final Window win = new Window(screen, "creditswin", new Vector2f(15, 15));
         screen.addElement(win);
         win.setIsResizable(false);
         win.setIsMovable(false);
