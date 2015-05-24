@@ -83,12 +83,18 @@ public class BattleGUI extends AbstractAppState {
 
     public void setActiveHUD(PCollideCont player) {
         if (player.equals(dan)) {
-            //change curPic
+            curPic.setColorMap("Textures/danPortrait.png");
+            altPic.setColorMap("Textures/kiPortrait.png");
+            curHealth.setIndicatorColor(ColorRGBA.Red);
+            altHealth.setIndicatorColor(ColorRGBA.Blue);
             curHealth.setCurrentValue(danHealth);
             altHealth.setCurrentValue(kiHealth);
             curChar = "dan";
         } else if (player.equals(ki)) {
-            //change curPic
+            curPic.setColorMap("Textures/kiPortrait.png");
+            altPic.setColorMap("Textures/danPortrait.png");
+            curHealth.setIndicatorColor(ColorRGBA.Blue);
+            altHealth.setIndicatorColor(ColorRGBA.Red);
             curHealth.setCurrentValue(kiHealth);
             altHealth.setCurrentValue(danHealth);
             curChar = "kirith";
@@ -96,10 +102,14 @@ public class BattleGUI extends AbstractAppState {
     }
 
     private void makeHUD() {
+        /*
+         * TODO: make the size and positions of HUD dependent on resolution
+         */
+        
         //for ref: screen, name, position, dimensions, resize, img
-        curPic = new Panel(screen, "curpanel", new Vector2f(w - 50, h - 80),
-                new Vector2f(50, 80),
-                new Vector4f(14, 14, 14, 14), "Textures/danidle3.png");
+        curPic = new Panel(screen, "curpanel", new Vector2f(w - 105, h - 105),
+                new Vector2f(100, 100),
+                new Vector4f(14, 14, 14, 14), "Textures/danPortrait.png");
         screen.addElement(curPic);
         curPic.setIsResizable(false);
         curPic.setIsMovable(false);
@@ -107,8 +117,8 @@ public class BattleGUI extends AbstractAppState {
 
 
         //for ref: screen, name, position, dimentions, orientation
-        curHealth = new Indicator(screen, "curindicator", new Vector2f(w - 150, h - 20),
-                new Vector2f(100, 20),
+        curHealth = new Indicator(screen, "curindicator", new Vector2f(w - (185+105), h - 35),
+                new Vector2f(180, 30),
                 Indicator.Orientation.HORIZONTAL) {
             @Override
             public void onChange(float f, float f1) {
@@ -124,16 +134,16 @@ public class BattleGUI extends AbstractAppState {
         curHealth.setIsMovable(false);
         curHealth.setIgnoreMouse(true);
 
-        altPic = new Panel(screen, "altpanel", new Vector2f(w - 100, h - 100),
-                new Vector2f(50, 80),
-                new Vector4f(14, 14, 14, 14), "Textures/danidle6.png");
+        altPic = new Panel(screen, "altpanel", new Vector2f(w - (110+70), h - (35+75)),
+                new Vector2f(70, 70),
+                new Vector4f(14, 14, 14, 14), "Textures/kiPortrait.png");
         screen.addElement(altPic);
         altPic.setIsResizable(false);
         altPic.setIsMovable(false);
         altPic.setIgnoreMouse(true);
 
-        altHealth = new Indicator(screen, "altindicator", new Vector2f(w - 154, h - 42),
-                new Vector2f(50, 14),
+        altHealth = new Indicator(screen, "altindicator", new Vector2f(w - (185+110), h - (35+25)),
+                new Vector2f(110, 20),
                 Indicator.Orientation.HORIZONTAL) {
             @Override
             public void onChange(float f, float f1) {

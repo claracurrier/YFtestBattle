@@ -18,16 +18,16 @@ public class MCollideCont extends AbstractControl {
 
     private Node atkNode;
     private Vector3f loc;
-    private final Mob mob;
+    private final MobAS mob;
     private final float width = 1000f;
     private final float height = 1000f;
     //TODO: make the bounds either built into the map or change this
 
-    public MCollideCont(Mob m) {
+    public MCollideCont(MobAS m) {
         mob = m;
     }
 
-    public MCollideCont(Node atk, Mob m) {
+    public MCollideCont(Node atk, MobAS m) {
         atkNode = atk;
         mob = m;
     }

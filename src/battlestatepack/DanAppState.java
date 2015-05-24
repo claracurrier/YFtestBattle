@@ -182,6 +182,7 @@ public class DanAppState extends AbstractAppState
         return firing;
     }
 
+    @Override
     public void onAnalog(String name, float value, float tpf) {
         if (power <= aimLimit / 2) {
             power += tpf * 10;
@@ -189,6 +190,7 @@ public class DanAppState extends AbstractAppState
         }
     }
 
+    @Override
     public void onAction(String name, boolean isPressed, float tpf) {
 
         if (name.equals("mousePick") && isPressed && !pmc.isMoving()) {

@@ -1,6 +1,6 @@
 package battlestatepack;
 
-import battlestatepack.mobPack.Mob;
+import battlestatepack.mobPack.MobAS;
 import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AbstractAppState;
@@ -87,9 +87,9 @@ public class BattleMain extends AbstractAppState implements ActionListener {
 
     @Override
     public void initialize(AppStateManager asm, Application appl) {
-        //spawn a Mob
+        //spawn a MobAS
         Spatial mobSpat = maker.createSpatial("Wanderer");
-        Mob mob = new Mob(mobSpat, "Wanderer", 0, dan, kirith);
+        MobAS mob = new MobAS(mobSpat, "Wanderer", 0, dan, kirith);
         mobSpat.move(500, 500, -1);
 
         //SwitchChar mapping
@@ -107,6 +107,7 @@ public class BattleMain extends AbstractAppState implements ActionListener {
         collideAS.setMovingSpatial(dan);
         stateManager.attach(pMAppState);
         stateManager.attach(battleGUI);
+        stateManager.attach(mob);
 
         dan.addControl(danCC);
         kirith.addControl(kiCC);
@@ -147,6 +148,7 @@ public class BattleMain extends AbstractAppState implements ActionListener {
         }
     }
 
+    @Override
     public void onAction(String name, boolean isPressed, float tpf) {
         if (name.equals("switchChar") && !isPressed) {
             switchChar();

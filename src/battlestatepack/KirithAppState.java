@@ -171,7 +171,8 @@ public class KirithAppState extends AbstractAppState implements AnalogListener, 
         BattleMain.ATKNODE.attachChild(node);
     }
     private float power;
-
+   
+    @Override
     public void onAnalog(String name, float value, float tpf) {
         power += tpf * 250f;
         if (name.equals("p")) {
@@ -186,6 +187,7 @@ public class KirithAppState extends AbstractAppState implements AnalogListener, 
         }
     }
 
+    @Override
     public void onAction(String name, boolean isPressed, float tpf) {
         if (name.equals("i") && !isPressed) {
             pushback(power);
