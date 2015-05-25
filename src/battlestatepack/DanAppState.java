@@ -51,6 +51,9 @@ public class DanAppState extends AbstractAppState
     private float aim1, aim2;
     private boolean atkenabled;
     private final Random rand = new Random();
+    
+    private float power = 0f;
+    private static boolean firing;
 
     public DanAppState(Spatial dan, AppSettings settings) {
         this.dan = dan;
@@ -175,8 +178,6 @@ public class DanAppState extends AbstractAppState
         Vector2f dif = new Vector2f(mouse.x - playerPos.x, mouse.y - playerPos.y);
         return dif.normalizeLocal();
     }
-    private float power = 0f;
-    private static boolean firing;
 
     public static boolean isfiring() {
         return firing;
@@ -192,7 +193,7 @@ public class DanAppState extends AbstractAppState
 
     @Override
     public void onAction(String name, boolean isPressed, float tpf) {
-
+        
         if (name.equals("mousePick") && isPressed && !pmc.isMoving()) {
             firing = true;
             //make the gui

@@ -8,7 +8,6 @@ import com.jme3.app.Application;
 import com.jme3.font.BitmapFont;
 import com.jme3.input.event.MouseButtonEvent;
 import com.jme3.math.Vector2f;
-import tonegod.gui.controls.buttons.ButtonAdapter;
 import tonegod.gui.controls.windows.Window;
 import tonegod.gui.core.Screen;
 
@@ -34,7 +33,7 @@ public class OptionsMenu {
         win.setIgnoreMouse(true);
 
         //go back button
-        ButtonAdapter goBackBtn = new ButtonAdapter(screen, "GoBack",
+        MyButton goBackBtn = new MyButton(screen, "GoBack",
                 new Vector2f(15, 105)) {
             @Override
             public void onButtonMouseLeftUp(MouseButtonEvent evt, boolean toggled) {

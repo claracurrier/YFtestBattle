@@ -11,7 +11,6 @@ import com.jme3.font.BitmapFont;
 import com.jme3.font.LineWrapMode;
 import com.jme3.input.event.MouseButtonEvent;
 import com.jme3.math.Vector2f;
-import tonegod.gui.controls.buttons.ButtonAdapter;
 import tonegod.gui.controls.text.Label;
 import tonegod.gui.controls.windows.Window;
 import tonegod.gui.core.Screen;
@@ -54,7 +53,7 @@ public class EndGame {
         }
         
         //exit button
-        ButtonAdapter exitToMenu = new ButtonAdapter(screen, "ExitToMenu",
+        MyButton exitToMenu = new MyButton(screen, "ExitToMenu",
                 new Vector2f(15, 205), new Vector2f(200, 35)) {
             @Override
             public void onButtonMouseLeftUp(MouseButtonEvent evt, boolean toggled) {

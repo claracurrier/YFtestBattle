@@ -10,7 +10,6 @@ import com.jme3.app.state.AppStateManager;
 import com.jme3.font.BitmapFont;
 import com.jme3.input.event.MouseButtonEvent;
 import com.jme3.math.Vector2f;
-import tonegod.gui.controls.buttons.ButtonAdapter;
 import tonegod.gui.controls.windows.Window;
 import tonegod.gui.core.Screen;
 
@@ -39,7 +38,7 @@ public class PauseMenu {
         win.setIgnoreMouse(true);
 
         //resume button
-        ButtonAdapter resumeGame = new ButtonAdapter(screen, "Resume",
+        MyButton resumeGame = new MyButton(screen, "Resume",
                 new Vector2f(15, 55), new Vector2f(100, 35)) {
             @Override
             public void onButtonMouseLeftUp(MouseButtonEvent evt, boolean toggled) {
@@ -52,7 +51,7 @@ public class PauseMenu {
         win.addChild(resumeGame);
 
         //controls
-        ButtonAdapter controlMenuBtn = new ButtonAdapter(screen, "Controls",
+        MyButton controlMenuBtn = new MyButton(screen, "Controls",
                 new Vector2f(15, 105)) {
             @Override
             public void onButtonMouseLeftUp(MouseButtonEvent evt, boolean toggled) {
@@ -66,7 +65,7 @@ public class PauseMenu {
         win.addChild(controlMenuBtn);
 
         //options
-        ButtonAdapter optionMenuBtn = new ButtonAdapter(screen, "Options",
+        MyButton optionMenuBtn = new MyButton(screen, "Options",
                 new Vector2f(15, 155)) {
             @Override
             public void onButtonMouseLeftUp(MouseButtonEvent evt, boolean toggled) {
@@ -80,7 +79,7 @@ public class PauseMenu {
         win.addChild(optionMenuBtn);
 
         //exit button
-        ButtonAdapter exitToMenu = new ButtonAdapter(screen, "ExitToMenu",
+        MyButton exitToMenu = new MyButton(screen, "ExitToMenu",
                 new Vector2f(15, 205), new Vector2f(200, 35)) {
             @Override
             public void onButtonMouseLeftUp(MouseButtonEvent evt, boolean toggled) {

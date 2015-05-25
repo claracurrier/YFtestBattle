@@ -14,7 +14,6 @@ import com.jme3.input.event.MouseButtonEvent;
 import com.jme3.math.Vector2f;
 import com.jme3.scene.Node;
 import com.jme3.system.AppSettings;
-import tonegod.gui.controls.buttons.ButtonAdapter;
 import tonegod.gui.controls.windows.Window;
 import tonegod.gui.core.Screen;
 
@@ -31,7 +30,6 @@ public class MainMenu extends SimpleApplication implements ActionListener {
         newSettings.setFrameRate(200);
         app.setSettings(newSettings);
         app.start();
-
     }
     private static Screen screen;
     private PauseMenu pauseMenu;
@@ -90,7 +88,7 @@ public class MainMenu extends SimpleApplication implements ActionListener {
         win.setIgnoreMouse(true);
 
         //start
-        ButtonAdapter startGameBtn = new ButtonAdapter(screen, "Start", new Vector2f(15, 55)) {
+        MyButton startGameBtn = new MyButton(screen, "Start", new Vector2f(15, 55)) {
             @Override
             public void onButtonMouseLeftUp(MouseButtonEvent evt, boolean toggled) {
                 BattleMain battleMain = new BattleMain((SimpleApplication) app, 
@@ -106,7 +104,7 @@ public class MainMenu extends SimpleApplication implements ActionListener {
         win.addChild(startGameBtn);
 
         //controls
-        ButtonAdapter controlMenuBtn = new ButtonAdapter(screen, "Controls", new Vector2f(15, 105)) {
+        MyButton controlMenuBtn = new MyButton(screen, "Controls", new Vector2f(15, 105)) {
             @Override
             public void onButtonMouseLeftUp(MouseButtonEvent evt, boolean toggled) {
                 screen.removeElement(win);
@@ -119,7 +117,7 @@ public class MainMenu extends SimpleApplication implements ActionListener {
         win.addChild(controlMenuBtn);
 
         //Options
-        ButtonAdapter optionMenuBtn = new ButtonAdapter(screen, "Options",
+        MyButton optionMenuBtn = new MyButton(screen, "Options",
                 new Vector2f(15, 155)) {
             @Override
             public void onButtonMouseLeftUp(MouseButtonEvent evt, boolean toggled) {
@@ -133,7 +131,7 @@ public class MainMenu extends SimpleApplication implements ActionListener {
         win.addChild(optionMenuBtn);
 
         //Credits
-        ButtonAdapter creditBtn = new ButtonAdapter(screen, "Credits",
+        MyButton creditBtn = new MyButton(screen, "Credits",
                 new Vector2f(15, 205)) {
             @Override
             public void onButtonMouseLeftUp(MouseButtonEvent evt, boolean toggled) {
@@ -147,7 +145,7 @@ public class MainMenu extends SimpleApplication implements ActionListener {
         win.addChild(creditBtn);
 
         //Exit
-        ButtonAdapter exitBtn = new ButtonAdapter(screen, "Exit",
+        MyButton exitBtn = new MyButton(screen, "Exit",
                 new Vector2f(15, 255)) {
             @Override
             public void onButtonMouseLeftUp(MouseButtonEvent evt, boolean toggled) {

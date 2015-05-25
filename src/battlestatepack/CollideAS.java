@@ -91,7 +91,11 @@ public class CollideAS extends AbstractAppState {
             //mob and its atkbox case
             return false;
         }
-        //add a case for tornado kirith
+        if (atkchild.getUserData("type").equals("kiatkbox")
+                && defchild.getName().equals("Kirith")) {
+            //ki and her attacks
+            return false;
+        }
 
         return true;
     }

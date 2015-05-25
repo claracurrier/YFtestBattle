@@ -10,7 +10,6 @@ import com.jme3.font.BitmapFont;
 import com.jme3.font.LineWrapMode;
 import com.jme3.input.event.MouseButtonEvent;
 import com.jme3.math.Vector2f;
-import tonegod.gui.controls.buttons.ButtonAdapter;
 import tonegod.gui.controls.text.Label;
 import tonegod.gui.controls.windows.Window;
 import tonegod.gui.core.Screen;
@@ -53,7 +52,7 @@ public class ControlMenu {
         win.addChild(txtbox);
 
         //go back button
-        ButtonAdapter goBackBtn = new ButtonAdapter(screen, "GoBack",
+        MyButton goBackBtn = new MyButton(screen, "GoBack",
                 new Vector2f(15, 200)) {
             @Override
             public void onButtonMouseLeftUp(MouseButtonEvent evt, boolean toggled) {

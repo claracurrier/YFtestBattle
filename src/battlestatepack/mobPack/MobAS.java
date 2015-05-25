@@ -25,6 +25,7 @@ public class MobAS extends AbstractAppState {
     private final Spatial mob, dan, ki;
     private float health;
     private MobSkill ms = MobSkill.mobSkill;
+    private Spatial targ;
 
     public MobAS(Spatial mob, String name, int id, Spatial d, Spatial k) {
         this.name = name;
@@ -33,7 +34,7 @@ public class MobAS extends AbstractAppState {
         dan = d;
         ki = k;
 
-        health = 100f; //make this settable later
+        health = 80f; //make this settable later
         Node mobatkbox = new Node("mobatkbox");
 
         mobatkbox.setLocalTranslation(mob.getLocalTranslation());
@@ -55,22 +56,40 @@ public class MobAS extends AbstractAppState {
 
     @Override
     public void update(float tpf) {
-        //hardcoded mob right now. will need an abstraction later
+        pickTarget();
+
         if (mob.getNumControls() == 1) {
-            double rand = Math.random();
-            if (rand >= 0 && rand < .3) {
-                System.out.println("pursuing");
-                ms.pursue(dan, mob, 5);
-            } else if (rand >= .3 && rand < .6) {
-                System.out.println("wandering");
-                ms.wander(mob, 5);
-            } else if (rand >= .6 && rand < .7) {
-                System.out.println("idling");
-                ms.idle(mob, 2);
-            } else if (rand >= .7 && rand < 1.0) {
-                System.out.println("dashing");
-                ms.testDash(dan, mob);
-            }
+            pickSkill(targ);
+        }
+    }
+
+    private void pickSkill(Spatial target) {
+        //hardcoded mob right now. will need an abstraction later
+        double rand = Math.random();
+        if (rand >= 0 && rand < .3) {
+            System.out.println("pursuing");
+            ms.pursue(target, mob, 5);
+        } else if (rand >= .3 && rand < .6) {
+            System.out.println("wandering");
+            ms.wander(mob, 5);
+        } else if (rand >= .6 && rand < .7) {
+            System.out.println("idling");
+            ms.idle(mob, 3);
+        } else if (rand >= .7 && rand < 1.0) {
+            System.out.println("dashing");
+            ms.testDash(target, mob);
+        }
+    }
+
+    private void pickTarget() {
+        if (health > 30f) {
+            //which one is closer
+            targ = (mob.getLocalTranslation().distance(dan.getLocalTranslation())
+                    <= mob.getLocalTranslation().distance(ki.getLocalTranslation())
+                    ? dan : ki);
+        }
+        else{
+            targ = dan;
         }
     }
 

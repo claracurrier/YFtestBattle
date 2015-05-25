@@ -31,19 +31,18 @@ public class KiDizzyControl extends AbstractControl {
     protected void controlUpdate(float tpf) {
         if (timecount > time && kiApp.isInitialized() && kiApp.isEnabled()) {
             System.out.println("you can move again");
-            spatial.removeControl(spatial.getControl(KiDizzyControl.class));
             kiApp.setEnabled(true);
             pmAS.setEnabled(true);
-
+            spatial.removeControl(spatial.getControl(KiDizzyControl.class));
         } else if (timecount > time && !kiApp.isInitialized() && kiApp.isEnabled()) {
             System.out.println("you can move again");
             spatial.removeControl(spatial.getControl(KiDizzyControl.class));
 
         } else {
             //put the dizzy sprite activiation
-                sprites.activateSprite((((int) Math.floor(timecount * 10)) % 8));
-            }
-        
+            sprites.activateSprite((((int) Math.floor(timecount * 10)) % 8));
+        }
+
         timecount += tpf;
     }
 
