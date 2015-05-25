@@ -29,7 +29,7 @@ public class OptionsMenu {
         final Window win = new Window(screen, "optionswin", new Vector2f(15, 15));
         screen.addElement(win);
         win.setIsResizable(false);
-        win.setIsMovable(false);
+        win.setWindowIsMovable(false);
         win.setIgnoreMouse(true);
 
         //go back button

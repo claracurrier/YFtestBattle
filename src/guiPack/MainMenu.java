@@ -84,14 +84,14 @@ public class MainMenu extends SimpleApplication implements ActionListener {
                 new Vector2f(settings.getWidth() - 30, settings.getHeight() - 30));
         screen.addElement(win);
         win.setIsResizable(false);
-        win.setIsMovable(false);
+        win.setWindowIsMovable(false);
         win.setIgnoreMouse(true);
 
         //start
         MyButton startGameBtn = new MyButton(screen, "Start", new Vector2f(15, 55)) {
             @Override
             public void onButtonMouseLeftUp(MouseButtonEvent evt, boolean toggled) {
-                BattleMain battleMain = new BattleMain((SimpleApplication) app, 
+                BattleMain battleMain = new BattleMain((SimpleApplication) app,
                         settings, inputManager, stateManager);
                 stateManager.attach(battleMain);
                 screen.removeElement(win);
@@ -185,8 +185,8 @@ public class MainMenu extends SimpleApplication implements ActionListener {
     private void goToOptions() {
         optionsMenu.makeOptionsMenu();
     }
-    
-    private void goToCredits(){
+
+    private void goToCredits() {
         credits.makeCredits();
     }
 

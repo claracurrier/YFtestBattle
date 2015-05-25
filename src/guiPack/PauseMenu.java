@@ -34,7 +34,7 @@ public class PauseMenu {
                 new Vector2f(100, 300));
         screen.addElement(win);
         win.setIsResizable(false);
-        win.setIsMovable(false);
+        win.setWindowIsMovable(false);
         win.setIgnoreMouse(true);
 
         //resume button

@@ -21,6 +21,7 @@ public class MCollideCont extends AbstractControl {
     private final MobAS mob;
     private final float width = 1000f;
     private final float height = 1000f;
+    private float stunThreshold = .5f;
     //TODO: make the bounds either built into the map or change this
 
     public MCollideCont(MobAS m) {
@@ -78,6 +79,11 @@ public class MCollideCont extends AbstractControl {
 
                 } else if (spatial.getUserData("collided").equals("stun")) {
                     movedir(dir);
+                    float atkpower = (Float)spatial.getUserData("atkpower");
+                    if(atkpower>stunThreshold){
+                        mob.setEnabled(false);
+                        spatial.addControl(new MStunnedCont(atkpower, mob, spatial));
+                    }
 
                 } else if (spatial.getUserData("collided").equals("spin")) {
                     movedir(dir);

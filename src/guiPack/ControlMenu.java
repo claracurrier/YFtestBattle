@@ -32,28 +32,32 @@ public class ControlMenu {
     }
 
     public void makeControlMenu() {
-        final Window win = new Window(screen, "controlwin", new Vector2f(15, 15));
+        final Window win = new Window(screen, "controlwin", new Vector2f(15, 15),
+                new Vector2f(500,400));
         screen.addElement(win);
         win.setIsResizable(false);
-        win.setIsMovable(false);
         win.setIgnoreMouse(true);
+        win.setWindowIsMovable(false);
 
         Label txtbox = new Label(screen, "controltext", new Vector2f(15, 15),
-                new Vector2f(300, 200));
+                new Vector2f(500, 250));
         txtbox.setText(" To move: use the arrow keys or the WASD keys."
                 + "\n To attack as Dan: use the mouse button. Hold down to charge."
-                + "\n To attack as Kirith: use the i or o keys. Hold down to chage"
+                + "\n To attack as Kirith:"
+                + "\n\t use the i button to push back. Hold down to charge."
+                + "\n\t use the o button to stun. Hold down to charge."
+                + "\n\t use the p button to do a spin attack. Don't get dizzy!"
                 + "\n To switch characters: use the g key"
                 + "\n To pause the game: use the h key");
         txtbox.setFont("Interface/Fonts/Arial.fnt");
         txtbox.setTextAlign(BitmapFont.Align.Left);
         txtbox.setTextWrap(LineWrapMode.Word);
-        txtbox.setFontSize(16f);
+        txtbox.setFontSize(18f);
         win.addChild(txtbox);
 
         //go back button
         MyButton goBackBtn = new MyButton(screen, "GoBack",
-                new Vector2f(15, 200)) {
+                new Vector2f(15, 300)) {
             @Override
             public void onButtonMouseLeftUp(MouseButtonEvent evt, boolean toggled) {
                 screen.removeElement(win);

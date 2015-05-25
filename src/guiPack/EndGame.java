@@ -36,7 +36,7 @@ public class EndGame {
                 new Vector2f(100, 300));
         screen.addElement(win);
         win.setIsResizable(false);
-        win.setIsMovable(false);
+        win.setWindowIsMovable(false);
         win.setIgnoreMouse(true);
 
         Label txtbox = new Label(screen, "text", new Vector2f(15, 15),
@@ -44,14 +44,14 @@ public class EndGame {
         txtbox.setFont("Interface/Fonts/Arial.fnt");
         txtbox.setTextAlign(BitmapFont.Align.Left);
         txtbox.setTextWrap(LineWrapMode.Word);
-        txtbox.setFontSize(16f);
+        txtbox.setFontSize(18f);
         win.addChild(txtbox);
         if (victory) {
             txtbox.setText("You win!");
         } else {
             txtbox.setText("You lost.");
         }
-        
+
         //exit button
         MyButton exitToMenu = new MyButton(screen, "ExitToMenu",
                 new Vector2f(15, 205), new Vector2f(200, 35)) {

@@ -31,7 +31,7 @@ public class Credits {
         final Window win = new Window(screen, "creditswin", new Vector2f(15, 15));
         screen.addElement(win);
         win.setIsResizable(false);
-        win.setIsMovable(false);
+        win.setWindowIsMovable(false);
         win.setIgnoreMouse(true);
 
         Label txtbox = new Label(screen, "credittext", new Vector2f(15, 15),
