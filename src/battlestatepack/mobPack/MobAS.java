@@ -5,11 +5,13 @@
 package battlestatepack.mobPack;
 
 import battlestatepack.BattleMain;
+import battlestatepack.GBalanceVars;
 import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import com.jme3.scene.control.AbstractControl;
 
 /**
  *
@@ -21,27 +23,24 @@ public class MobAS extends AbstractAppState {
      */
 
     private final String name;
-    private final int id;
     private final Spatial mob, dan, ki;
-    private float health;
+    private float health = GBalanceVars.gbal.mhealth;
     private MobSkill ms = MobSkill.mobSkill;
     private Spatial targ;
 
-    public MobAS(Spatial mob, String name, int id, Spatial d, Spatial k) {
+    public MobAS(Spatial mob, String name, Spatial d, Spatial k) {
         this.name = name;
-        this.id = id;
         this.mob = mob;
         dan = d;
         ki = k;
 
-        health = 80f; //make this settable later
         Node mobatkbox = new Node("mobatkbox");
 
         mobatkbox.setLocalTranslation(mob.getLocalTranslation());
         mobatkbox.setUserData("halfwidth", 25f);
         mobatkbox.setUserData("halfheight", 40f);
         mobatkbox.setUserData("type", "attackbox");
-        mobatkbox.setUserData("atkpower", 10f);
+        mobatkbox.setUserData("atkpower", GBalanceVars.gbal.matkpwr);
         mob.setUserData("type", "mob");
 
         BattleMain.ATKNODE.attachChild(mobatkbox);
@@ -87,8 +86,7 @@ public class MobAS extends AbstractAppState {
             targ = (mob.getLocalTranslation().distance(dan.getLocalTranslation())
                     <= mob.getLocalTranslation().distance(ki.getLocalTranslation())
                     ? dan : ki);
-        }
-        else{
+        } else {
             targ = dan;
         }
     }
@@ -96,11 +94,10 @@ public class MobAS extends AbstractAppState {
     @Override
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
-        if (!enabled) {
-            if (mob.getNumControls() > 1) {
-                mob.removeControl(mob.getControl(1));
-            }
+        if (mob.getNumControls() > 1) {
+            ((AbstractControl) mob.getControl(1)).setEnabled(enabled);
         }
+
     }
 
     @Override

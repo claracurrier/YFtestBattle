@@ -23,7 +23,7 @@ public class PMoveAppState extends AbstractAppState implements ActionListener {
     private float screenWidth, screenHeight;
     private InputManager inputManager;
 //    speed of the player
-    private final float speed = 350f;
+    private final float speed = GBalanceVars.gbal.pspeed;
 //    lastRotation of the player
     private float lastRotation;
     private boolean ku, kd, kl, kr;

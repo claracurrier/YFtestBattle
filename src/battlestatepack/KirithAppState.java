@@ -29,7 +29,6 @@ public class KirithAppState extends AbstractAppState implements AnalogListener, 
     private InputManager inputManager;
     private final Spatial kirith;
     private SimpleApplication app;
-    private AppStateManager asm;
     private PMoveAppState pmc;
     private KiDizzyControl kdc;
     private float power = 0;
@@ -46,7 +45,6 @@ public class KirithAppState extends AbstractAppState implements AnalogListener, 
     public void initialize(AppStateManager asm, Application app) {
         this.app = (SimpleApplication) app;
         this.inputManager = this.app.getInputManager();
-        this.asm = asm;
 
         kdc = kirith.getControl(KiDizzyControl.class);
         pmc = asm.getState(PMoveAppState.class);
@@ -78,6 +76,8 @@ public class KirithAppState extends AbstractAppState implements AnalogListener, 
                 //if not dizzy
                 disableAttackMap();
             }
+        } else {
+            kdc.setEnabled(enabled);
         }
     }
 
@@ -114,7 +114,7 @@ public class KirithAppState extends AbstractAppState implements AnalogListener, 
         makeAttackBox("stun", charge);
         attacking = true;
     }
-    
+
     private void makeSpinAtkBox() {
         Node node = new Node("spin");
 
@@ -189,12 +189,12 @@ public class KirithAppState extends AbstractAppState implements AnalogListener, 
     public void onAnalog(String name, float value, float tpf) {
         power += tpf * 10f;
         if (name.equals("p") && spinning) {
-            if (spintimer > 1.2f) {
+            if (spintimer > GBalanceVars.gbal.kmaxspintime) {
                 System.out.println("you've spun too long");
                 BattleMain.ATKNODE.detachChildNamed("spin");
                 disableAttackMap();
                 pmc.setEnabled(false);
-                kirith.addControl(new KiDizzyControl(3, this, pmc));
+                kirith.addControl(new KiDizzyControl(this, pmc));
                 power = 0;
                 spinning = false;
                 spintimer = 0;

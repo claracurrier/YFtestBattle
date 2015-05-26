@@ -91,7 +91,7 @@ public class BattleMain extends AbstractAppState implements ActionListener {
     public void initialize(AppStateManager asm, Application appl) {
         //spawn a MobAS
         Spatial mobSpat = maker.createSpatial("Wanderer");
-        mob = new MobAS(mobSpat, "Wanderer", 0, dan, kirith);
+        mob = new MobAS(mobSpat, "Wanderer", dan, kirith);
         mobSpat.move(500, 500, -1);
 
         //SwitchChar mapping

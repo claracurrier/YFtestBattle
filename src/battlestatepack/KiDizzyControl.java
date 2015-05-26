@@ -15,14 +15,13 @@ import spriteProject.SpriteLibrary;
  */
 public class KiDizzyControl extends AbstractControl {
 
-    private float time;
+    private float time = GBalanceVars.gbal.kdizzytimer;
     private float timecount = 0;
     private KirithAppState kiApp;
     private PMoveAppState pmAS;
     private final SpriteLibrary sprites = BattleMain.sEngine.getLibrary("Kirith");
 
-    public KiDizzyControl(float time, KirithAppState ki, PMoveAppState pmc) {
-        this.time = time;
+    public KiDizzyControl(KirithAppState ki, PMoveAppState pmc) {
         this.kiApp = ki;
         this.pmAS = pmc;
     }

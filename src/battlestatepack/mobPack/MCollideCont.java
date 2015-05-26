@@ -4,6 +4,7 @@
  */
 package battlestatepack.mobPack;
 
+import battlestatepack.GBalanceVars;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
@@ -21,7 +22,7 @@ public class MCollideCont extends AbstractControl {
     private final MobAS mob;
     private final float width = 1000f;
     private final float height = 1000f;
-    private float stunThreshold = .5f;
+    private float stunThreshold = GBalanceVars.gbal.mstunthreshold;
     //TODO: make the bounds either built into the map or change this
 
     public MCollideCont(MobAS m) {
@@ -39,12 +40,12 @@ public class MCollideCont extends AbstractControl {
 
     @Override
     protected void controlUpdate(float tpf) {
-        if(mob.getHealth()<=0){
+        if (mob.getHealth() <= 0) {
             spatial.removeFromParent();
             atkNode.removeFromParent();
             return;
         }
-        
+
         loc = spatial.getLocalTranslation();
 
         if (!atkNode.getLocalTranslation().equals(loc)) {
@@ -70,26 +71,30 @@ public class MCollideCont extends AbstractControl {
         {
             if (!spatial.getUserData("collided").equals("none")) {
                 //collision
+                float atkpower = (Float) spatial.getUserData("atkpower");
                 int dir = (Integer) spatial.getUserData("atkdirection");
                 if (spatial.getUserData("collided").equals("arrow")) {
                     movedir(dir);
 
                 } else if (spatial.getUserData("collided").equals("pushback")) {
-                    movedir(dir);
+                    movedir(dir, atkpower * GBalanceVars.gbal.mpushbackmod);
 
                 } else if (spatial.getUserData("collided").equals("stun")) {
                     movedir(dir);
-                    float atkpower = (Float)spatial.getUserData("atkpower");
-                    if(atkpower>stunThreshold){
+                    if (atkpower > stunThreshold) {
                         mob.setEnabled(false);
-                        spatial.addControl(new MStunnedCont(atkpower, mob, spatial));
+                        spatial.addControl(new MStunnedCont(atkpower
+                                * GBalanceVars.gbal.mstunmod, mob));
                     }
 
                 } else if (spatial.getUserData("collided").equals("spin")) {
-                    movedir(dir);
+                    movedir(dir, atkpower * GBalanceVars.gbal.mspinmod);
+                    mob.setEnabled(false);
+                    spatial.addControl(new MStunnedCont(
+                            atkpower * GBalanceVars.gbal.mspinmod, mob));
                 }
-                
-                mob.reduceHealth((Float)spatial.getUserData("atkpower"));
+
+                mob.reduceHealth((Float) spatial.getUserData("atkpower"));
                 //modifers can be added here depending on mob
                 //refactoring of health mechanism may be necessary
                 //especially if considering overhaul of inheritance
@@ -112,6 +117,24 @@ public class MCollideCont extends AbstractControl {
                 break;
             case 4: //hit above
                 spatial.move(0, -10f, 0);
+                break;
+        }
+    }
+
+    private void movedir(int dir, float atkpower) {
+        switch (dir) { //moves the node opposite of the direction it was it
+            //right now SATtest only gives 4 cardinal directions
+            case 1: //hit right
+                spatial.move(-10f - atkpower, 0, 0);
+                break;
+            case 2: //hit left
+                spatial.move(10f + atkpower, 0, 0);
+                break;
+            case 3: //hit below
+                spatial.move(0, 10f + atkpower, 0);
+                break;
+            case 4: //hit above
+                spatial.move(0, -10f - atkpower, 0);
                 break;
         }
     }

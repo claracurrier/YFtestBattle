@@ -46,12 +46,11 @@ public class DanAppState extends AbstractAppState
     private SpriteLibrary spatSL;
     private Geometry line1, line2;
     private Vector3f playerPos;
-    private float lsize = 140f;
-    private float aimLimit = 35f;
+    private float lsize = GBalanceVars.gbal.dminlinesize;
+    private float aimLimit = GBalanceVars.gbal.dmaxarrowpwr;
     private float aim1, aim2;
     private boolean atkenabled;
     private final Random rand = new Random();
-    
     private float power = 0f;
     private static boolean firing;
 
@@ -186,14 +185,14 @@ public class DanAppState extends AbstractAppState
     @Override
     public void onAnalog(String name, float value, float tpf) {
         if (power <= aimLimit / 2) {
-            power += tpf * 10;
-            lsize += tpf * 60;
+            power += tpf * GBalanceVars.gbal.darrowpwrincrement;
+            lsize += tpf * GBalanceVars.gbal.dlineincrement;
         }
     }
 
     @Override
     public void onAction(String name, boolean isPressed, float tpf) {
-        
+
         if (name.equals("mousePick") && isPressed && !pmc.isMoving()) {
             firing = true;
             //make the gui
@@ -209,17 +208,17 @@ public class DanAppState extends AbstractAppState
             }
             firing = false;
             power = 0;
-            lsize = 140;
+            lsize = GBalanceVars.gbal.dminlinesize;
         }
     }
 
     private void updateLines(float aim, float range) {
-        aim1 = -(FastMath.PI / 6) + (aim + range);
+        aim1 = -(GBalanceVars.gbal.dlineanglerange) + (aim + range);
         Vector3f newvec = new Vector3f(lsize * FastMath.cos(aim1), lsize * FastMath.sin(aim1), 0f);
         newvec.addLocal(playerPos);
         ((Line) line1.getMesh()).updatePoints(playerPos, newvec);
 
-        aim2 = (FastMath.PI / 6) + (aim - range);
+        aim2 = (GBalanceVars.gbal.dlineanglerange) + (aim - range);
         newvec = new Vector3f(lsize * FastMath.cos(aim2), lsize * FastMath.sin(aim2), 0f);
         newvec.addLocal(playerPos);
         ((Line) line2.getMesh()).updatePoints(playerPos, newvec);

@@ -4,6 +4,7 @@
  */
 package battlestatepack.mobPack;
 
+import battlestatepack.GBalanceVars;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
@@ -23,6 +24,7 @@ public class MobSkill {
      * whether a mob uses these skills or not depends on the mob at instantiation
      * every skill is an update()-able loop
      */
+    private float speed = GBalanceVars.gbal.mspeed;
 
     private MobSkill() {
     }
@@ -39,7 +41,7 @@ public class MobSkill {
             protected void controlUpdate(float tpf) {
                 if (timer < time) {
                     Vector3f dir = getTargDir(targ);
-                    mob.move(dir.multLocal(tpf * 200));
+                    mob.move(dir.multLocal(tpf * speed));
                     timer += tpf;
                 } else {
                     mob.removeControl(this);
@@ -78,7 +80,7 @@ public class MobSkill {
                         changeDirTimer = 0;
                     } else {
                         changeDirTimer += tpf;
-                        spatial.move(dir.multLocal(tpf * 200));
+                        spatial.move(dir.multLocal(tpf * speed));
                     }
                     timer += tpf;
                 } else {

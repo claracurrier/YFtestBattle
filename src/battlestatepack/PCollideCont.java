@@ -14,10 +14,9 @@ import com.jme3.scene.control.AbstractControl;
  */
 public class PCollideCont extends AbstractControl {
 
-    private float health;
+    private float health = GBalanceVars.gbal.phealth;
 
     public PCollideCont() {
-        health = 100f;
     }
 
     @Override
