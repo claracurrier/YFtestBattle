@@ -118,10 +118,11 @@ public class KirithAppState extends AbstractAppState implements AnalogListener, 
     private void makeSpinAtkBox() {
         Node node = new Node("spin");
 
-        node.setUserData("halfwidth", 40f);
-        node.setUserData("halfheight", 40f);
+        node.setUserData("halfwidth", 80f);
+        node.setUserData("halfheight", 80f);
         node.setUserData("type", "kiatkbox");
-        node.setUserData("atkpower", power);
+        node.setUserData("collided", "none");
+        node.setUserData("atkpower", GBalanceVars.gbal.kspinpower);
 
         float x = kirith.getWorldTranslation().x;
         float y = kirith.getWorldTranslation().y;
@@ -139,6 +140,7 @@ public class KirithAppState extends AbstractAppState implements AnalogListener, 
         node.setUserData("halfwidth", 15f);
         node.setUserData("halfheight", 15f);
         node.setUserData("type", "kiatkbox");
+        node.setUserData("collided", "none");
         node.setUserData("atkpower", power);
 
         float x = kirith.getWorldTranslation().x;
@@ -187,20 +189,21 @@ public class KirithAppState extends AbstractAppState implements AnalogListener, 
 
     @Override
     public void onAnalog(String name, float value, float tpf) {
-        power += tpf * 10f;
-        if (name.equals("p") && spinning) {
+        if ((name.equals("i") || name.equals("o")) && !spinning) {
+            if (power < GBalanceVars.gbal.kmaxchargepower) {
+                power += tpf * GBalanceVars.gbal.kpowerincrement;
+            }
+        } else {
             if (spintimer > GBalanceVars.gbal.kmaxspintime) {
                 System.out.println("you've spun too long");
                 BattleMain.ATKNODE.detachChildNamed("spin");
                 disableAttackMap();
                 pmc.setEnabled(false);
                 kirith.addControl(new KiDizzyControl(this, pmc));
-                power = 0;
                 spinning = false;
                 spintimer = 0;
             } else {
                 spintimer += tpf;
-                BattleMain.ATKNODE.getChild("spin").setUserData("atkpower", power);
             }
         }
     }
@@ -221,7 +224,6 @@ public class KirithAppState extends AbstractAppState implements AnalogListener, 
             BattleMain.ATKNODE.detachChildNamed("spin");
             spinning = false;
             attacking = false;
-            power = 0;
         }
     }
 
@@ -229,20 +231,25 @@ public class KirithAppState extends AbstractAppState implements AnalogListener, 
     public void update(float tpf) {
         if (attacking) {
             if (spinning) {
-                //update location
+                //update location of spin
                 if (!BattleMain.ATKNODE.getChild("spin").getLocalTranslation().
                         equals(kirith.getLocalTranslation())) {
                     BattleMain.ATKNODE.getChild("spin").setLocalTranslation(
                             kirith.getLocalTranslation());
                 }
-            }
-            if (hbtimer > .05f) {
-                attacking = false;
-                BattleMain.ATKNODE.detachChildNamed("pushback");
-                BattleMain.ATKNODE.detachChildNamed("stun");
-                hbtimer = 0;
             } else {
-                hbtimer += tpf;
+                //pushing or stunning
+                //remove whichever is not null
+                Spatial box = (BattleMain.ATKNODE.getChild("pushback") == null
+                        ? BattleMain.ATKNODE.getChild("stun")
+                        : BattleMain.ATKNODE.getChild("pushback"));
+                if (hbtimer > .02f || !box.getUserData("collided").equals("none")) {
+                    attacking = false;
+                    BattleMain.ATKNODE.detachChildNamed(box.getName());
+                    hbtimer = 0;
+                } else {
+                    hbtimer += tpf;
+                }
             }
         }
     }

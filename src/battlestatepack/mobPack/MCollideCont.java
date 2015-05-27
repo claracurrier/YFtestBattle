@@ -73,14 +73,15 @@ public class MCollideCont extends AbstractControl {
                 //collision
                 float atkpower = (Float) spatial.getUserData("atkpower");
                 int dir = (Integer) spatial.getUserData("atkdirection");
+
                 if (spatial.getUserData("collided").equals("arrow")) {
-                    movedir(dir);
+                    movedir(dir, 0);
 
                 } else if (spatial.getUserData("collided").equals("pushback")) {
                     movedir(dir, atkpower * GBalanceVars.gbal.mpushbackmod);
 
                 } else if (spatial.getUserData("collided").equals("stun")) {
-                    movedir(dir);
+                    movedir(dir, 0);
                     if (atkpower > stunThreshold) {
                         mob.setEnabled(false);
                         spatial.addControl(new MStunnedCont(atkpower
@@ -88,10 +89,10 @@ public class MCollideCont extends AbstractControl {
                     }
 
                 } else if (spatial.getUserData("collided").equals("spin")) {
-                    movedir(dir, atkpower * GBalanceVars.gbal.mspinmod);
+                    movedir(dir, atkpower * GBalanceVars.gbal.mspinpushmod);
                     mob.setEnabled(false);
                     spatial.addControl(new MStunnedCont(
-                            atkpower * GBalanceVars.gbal.mspinmod, mob));
+                            atkpower * GBalanceVars.gbal.mspinstunmod, mob));
                 }
 
                 mob.reduceHealth((Float) spatial.getUserData("atkpower"));
@@ -103,40 +104,10 @@ public class MCollideCont extends AbstractControl {
         }
     }
 
-    private void movedir(int dir) {
-        switch (dir) { //moves the node opposite of the direction it was it
-            //right now SATtest only gives 4 cardinal directions
-            case 1: //hit right
-                spatial.move(-10f, 0, 0);
-                break;
-            case 2: //hit left
-                spatial.move(10f, 0, 0);
-                break;
-            case 3: //hit below
-                spatial.move(0, 10f, 0);
-                break;
-            case 4: //hit above
-                spatial.move(0, -10f, 0);
-                break;
-        }
-    }
-
     private void movedir(int dir, float atkpower) {
-        switch (dir) { //moves the node opposite of the direction it was it
-            //right now SATtest only gives 4 cardinal directions
-            case 1: //hit right
-                spatial.move(-10f - atkpower, 0, 0);
-                break;
-            case 2: //hit left
-                spatial.move(10f + atkpower, 0, 0);
-                break;
-            case 3: //hit below
-                spatial.move(0, 10f + atkpower, 0);
-                break;
-            case 4: //hit above
-                spatial.move(0, -10f - atkpower, 0);
-                break;
-        }
+        spatial.addControl(new KnockbackCont(GBalanceVars.gbal.mminmovement + atkpower,
+                atkpower * GBalanceVars.gbal.mintensitymovemod + GBalanceVars.gbal.mminintensity,
+                spatial.getName(), 0, dir));
     }
 
     @Override

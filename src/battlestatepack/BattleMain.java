@@ -51,7 +51,6 @@ public class BattleMain extends AbstractAppState implements ActionListener {
     public static final Node DEFNODE = new Node("defNode");
     public static final Node ATKNODE = new Node("atkNode");
     public static final Node BATTLENODE = new Node("battleNode");
-    
     private MobAS mob;
 
     public BattleMain(SimpleApplication appl, AppSettings set, InputManager input, AppStateManager asm) {
@@ -67,22 +66,20 @@ public class BattleMain extends AbstractAppState implements ActionListener {
         BATTLENODE.attachChild(ATKNODE);
         collideAS = new CollideAS();
         maker = new EntityMaker(assetManager, stateManager);
+        pMAppState = new PMoveAppState(850f, 850f, inputManager);
 
         //set up characters
         dan = maker.createSpatial("Dan");
         dan.move(settings.getWidth() / 2, settings.getHeight() / 2, 0);
         danAppState = new DanAppState(dan, settings);
-        danCC = new PCollideCont();
+        danCC = new PCollideCont(pMAppState);
 
         kirith = maker.createSpatial("Kirith");
         kirith.move(settings.getWidth() / 3, settings.getHeight() / 3, 0);
         kiAppState = new KirithAppState(kirith);
-        kiCC = new PCollideCont();
+        kiCC = new PCollideCont(pMAppState);
 
         //set up movement
-        pMAppState = new PMoveAppState(850f, 850f, inputManager);
-        pMAppState.setSpatial(dan);
-
         battleGUI = new BattleGUI(settings.getWidth(), settings.getHeight(),
                 danCC, kiCC);
     }
@@ -93,6 +90,8 @@ public class BattleMain extends AbstractAppState implements ActionListener {
         Spatial mobSpat = maker.createSpatial("Wanderer");
         mob = new MobAS(mobSpat, "Wanderer", dan, kirith);
         mobSpat.move(500, 500, -1);
+        //temp disabling
+        mob.setEnabled(false);
 
         //SwitchChar mapping
         if (!inputManager.hasMapping("switchChar")) {
@@ -111,6 +110,7 @@ public class BattleMain extends AbstractAppState implements ActionListener {
         stateManager.attach(battleGUI);
         stateManager.attach(mob);
 
+        pMAppState.setSpatial(dan);
         dan.addControl(danCC);
         kirith.addControl(kiCC);
         DEFNODE.attachChild(dan);

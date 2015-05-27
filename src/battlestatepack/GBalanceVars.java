@@ -23,29 +23,32 @@ public class GBalanceVars {
     private GBalanceVars() {
     }
     //General vars
-    float pspeed = 350;
-    float phealth = 100;
+    public final float pspeed = 350;
+    public final float phealth = 100;
     //Kirith's vars
     //Kirith's whole attack structure needs to be retooled
-    float kpushpwr;
-    float kstunpwr;
-    float kspinpwr;
-    float kdizzytimer = 3;
-    float kmaxspintime = 1.2f;
-    float kmaxchargepwr;
+    public final float kspinpower = 7;
+    public final float kdizzytimer = 3;
+    public final float kmaxspintime = 1.4f;
+    public final float kmaxchargepower = 10;
+    public final float kpowerincrement = 5f;
     //Dan's vars
-    float dmaxarrowpwr = 35;
-    float dminlinesize = 140;
-    float dlineincrement = 60;
-    float darrowpwrincrement = 10;
-    float dlineanglerange = FastMath.PI / 6;
+    public final float dmaxarrowpwr = 40;
+    public final float dminlinesize = 140;
+    public final float dlineincrement = 60;
+    public final float darrowpwrincrement = 14;
+    public final float dlineanglerange = FastMath.PI / 6;
     //Standard Mob vars
-    public float mstunthreshold = .5f;
-    public float mpushbackmod = 14;
-    public float mspeed = 200;
-    public float matkpwr = 9;
-    public float mhealth = 80;
-    public float mstunmod = 8;
-    public float mspinmod = .5f;
+    public final float mstunthreshold = .6f;
+    public final float mpushbackmod = 8;
+    public final float mspeed = 200;
+    public final float matkpwr = 9;
+    public final float mhealth = 80;
+    public final float mstunmod = 8;
+    public final float mspinstunmod = .7f;
+    public final float mspinpushmod = 3.5f;
+    public final float mintensitymovemod = 8f;
+    public final float mminmovement = 30;
+    public final float mminintensity = 20;
     //pickskill and the times are all in MobAS
 }

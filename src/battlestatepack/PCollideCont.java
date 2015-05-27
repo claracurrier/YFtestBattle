@@ -4,6 +4,7 @@
  */
 package battlestatepack;
 
+import battlestatepack.mobPack.KnockbackCont;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.control.AbstractControl;
@@ -15,31 +16,23 @@ import com.jme3.scene.control.AbstractControl;
 public class PCollideCont extends AbstractControl {
 
     private float health = GBalanceVars.gbal.phealth;
+    private final PMoveAppState pmas;
 
-    public PCollideCont() {
+    public PCollideCont(PMoveAppState p) {
+        pmas = p;
     }
 
     @Override
     protected void controlUpdate(float tpf) {
         if (!spatial.getUserData("collided").equals("none")) {
             //collision
-            reduceHealth((Float) spatial.getUserData("atkpower"));
+            float atkpower = (Float) spatial.getUserData("atkpower");
+            reduceHealth(atkpower);
 
-            switch ((Integer) spatial.getUserData("atkdirection")) { //moves the node opposite of the direction it was it
-                //right now SATtest only gives 4 cardinal directions
-                case 1: //hit right
-                    spatial.move(-10f, 0, 0);
-                    break;
-                case 2: //hit left
-                    spatial.move(10f, 0, 0);
-                    break;
-                case 3: //hit below
-                    spatial.move(0, 10f, 0);
-                    break;
-                case 4: //hit above
-                    spatial.move(0, -10f, 0);
-                    break;
-            }
+            spatial.addControl(new KnockbackCont(GBalanceVars.gbal.mminmovement + atkpower,
+                    atkpower * GBalanceVars.gbal.mintensitymovemod + GBalanceVars.gbal.mminintensity,
+                    spatial.getName(), pmas.getDir()+8, (Integer) spatial.getUserData("atkdirection")));
+
             spatial.setUserData("collided", "none");
         }
     }

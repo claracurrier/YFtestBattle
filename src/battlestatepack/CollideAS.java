@@ -65,9 +65,7 @@ public class CollideAS extends AbstractAppState {
                 if (noException(atkchild, defchild)) {
                     val = satTest(atkchild, defchild);
                     if (val > 0) {
-                        if (atkchild.getUserData("type").equals("arrow")) {
-                            atkchild.setUserData("collided", true);
-                        }
+                        atkchild.setUserData("collided", true);
                         defchild.setUserData("collided", atkchild.getName());
                         defchild.setUserData("atkpower", atkchild.getUserData("atkpower"));
                         defchild.setUserData("atkdirection", val);

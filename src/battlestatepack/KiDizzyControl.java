@@ -17,8 +17,8 @@ public class KiDizzyControl extends AbstractControl {
 
     private float time = GBalanceVars.gbal.kdizzytimer;
     private float timecount = 0;
-    private KirithAppState kiApp;
-    private PMoveAppState pmAS;
+    private final KirithAppState kiApp;
+    private final PMoveAppState pmAS;
     private final SpriteLibrary sprites = BattleMain.sEngine.getLibrary("Kirith");
 
     public KiDizzyControl(KirithAppState ki, PMoveAppState pmc) {
@@ -28,15 +28,15 @@ public class KiDizzyControl extends AbstractControl {
 
     @Override
     protected void controlUpdate(float tpf) {
-        if (timecount > time && kiApp.isInitialized() && kiApp.isEnabled()) {
+        if (timecount > time && kiApp.isEnabled()) {
             System.out.println("you can move again");
-            kiApp.setEnabled(true);
+            kiApp.enableAttackMap();
             pmAS.setEnabled(true);
-            spatial.removeControl(spatial.getControl(KiDizzyControl.class));
-        } else if (timecount > time && !kiApp.isInitialized() && kiApp.isEnabled()) {
+            sprites.activateSprite(12);
+            spatial.removeControl(this);
+        } else if (timecount > time && kiApp.isEnabled()) {
             System.out.println("you can move again");
-            spatial.removeControl(spatial.getControl(KiDizzyControl.class));
-
+            spatial.removeControl(this);
         } else {
             //put the dizzy sprite activiation
             sprites.activateSprite((((int) Math.floor(timecount * 10)) % 8));
