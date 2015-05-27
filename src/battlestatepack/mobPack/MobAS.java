@@ -65,15 +65,15 @@ public class MobAS extends AbstractAppState {
     private void pickSkill(Spatial target) {
         //hardcoded mob right now. will need an abstraction later
         double rand = Math.random();
-        if (rand >= 0 && rand < .3) {
+        if (rand >= 0 && rand < .25) {
             System.out.println("pursuing");
-            ms.pursue(target, mob, 5);
-        } else if (rand >= .3 && rand < .6) {
+            ms.pursue(target, mob, 3);
+        } else if (rand >= .25 && rand < .5) {
             System.out.println("wandering");
             ms.wander(mob, 5);
-        } else if (rand >= .6 && rand < .7) {
+        } else if (rand >= .5 && rand < .7) {
             System.out.println("idling");
-            ms.idle(mob, 3);
+            ms.idle(mob, 3.5f);
         } else if (rand >= .7 && rand < 1.0) {
             System.out.println("dashing");
             ms.testDash(target, mob);

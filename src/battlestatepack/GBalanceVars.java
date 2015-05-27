@@ -41,11 +41,11 @@ public class GBalanceVars {
     float dlineanglerange = FastMath.PI / 6;
     //Standard Mob vars
     public float mstunthreshold = .5f;
-    public float mpushbackmod = 1;
+    public float mpushbackmod = 14;
     public float mspeed = 200;
     public float matkpwr = 9;
     public float mhealth = 80;
-    public float mstunmod = 1;
+    public float mstunmod = 8;
     public float mspinmod = .5f;
     //pickskill and the times are all in MobAS
 }
