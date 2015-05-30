@@ -38,7 +38,7 @@ public class MainMenu extends SimpleApplication implements ActionListener {
     public static EndGame endGame;
     private Credits credits;
     private Node tgGuiNode;
-    private boolean ispaused = false;
+    private static boolean ispaused = false;
 
     @Override
     public void simpleInitApp() {
@@ -170,7 +170,7 @@ public class MainMenu extends SimpleApplication implements ActionListener {
         }
     }
 
-    public boolean isPaused() {
+    public static boolean isPaused() {
         return ispaused;
     }
 

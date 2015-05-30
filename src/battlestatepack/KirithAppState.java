@@ -128,7 +128,7 @@ public class KirithAppState extends AbstractAppState implements AnalogListener, 
         float y = kirith.getWorldTranslation().y;
 
         node.setLocalTranslation(x, y, 0);
-        node.attachChild(tempWireBox(80));
+        node.attachChild(tempWireBox(80, 80));
         BattleMain.ATKNODE.attachChild(node);
     }
 
@@ -137,49 +137,68 @@ public class KirithAppState extends AbstractAppState implements AnalogListener, 
 
         Node node = new Node(type);
 
-        node.setUserData("halfwidth", 15f);
-        node.setUserData("halfheight", 15f);
         node.setUserData("type", "kiatkbox");
         node.setUserData("collided", "none");
         node.setUserData("atkpower", power);
 
         float x = kirith.getWorldTranslation().x;
         float y = kirith.getWorldTranslation().y;
+        float boxw = 0;
+        float boxh = 0;
 
         switch (dir) {
             //moves the node to appropriate location relative to ki
-            case 0:
+            case 0: //up
                 node.setLocalTranslation(x, y + 81f, 0);
+                boxw = 15;
+                boxh = 50;
                 break;
             case 1:
                 node.setLocalTranslation(x + 51f, y + 81f, 0);
+                boxw = 30;
+                boxh = 30;
                 break;
-            case 2:
+            case 2: //right
                 node.setLocalTranslation(x + 51f, y, 0);
+                boxw = 50;
+                boxh = 15;
                 break;
             case 3:
                 node.setLocalTranslation(x + 51f, y - 81f, 0);
+                boxw = 30;
+                boxh = 30;
                 break;
-            case 4:
+            case 4: //down
                 node.setLocalTranslation(x + 0, y - 81f, 0);
+                boxw = 15;
+                boxh = 50;
                 break;
             case 5:
                 node.setLocalTranslation(x - 51f, y - 81f, 0);
+                boxw = 30;
+                boxh = 30;
                 break;
-            case 6:
+            case 6: //left
                 node.setLocalTranslation(x - 51f, y, 0);
+                boxw = 50;
+                boxh = 15;
                 break;
             case 7:
                 node.setLocalTranslation(x - 51f, y + 81f, 0);
+                boxw = 30;
+                boxh = 30;
                 break;
         }
-        node.attachChild(tempWireBox(30));
+
+        node.setUserData("halfwidth", boxw/2);
+        node.setUserData("halfheight", boxh/2);
+        node.attachChild(tempWireBox(boxw, boxh));
         BattleMain.ATKNODE.attachChild(node);
     }
 
-    private Geometry tempWireBox(float size) {
+    private Geometry tempWireBox(float width, float height) {
         //temp wirebox to see the hitboxes
-        Geometry g = new Geometry("attackBox", new WireBox(size, size, 0));
+        Geometry g = new Geometry("attackBox", new WireBox(width, height, 0));
         Material mat = new Material(app.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
         mat.getAdditionalRenderState().setWireframe(true);
         mat.setColor("Color", ColorRGBA.Blue);
@@ -200,6 +219,7 @@ public class KirithAppState extends AbstractAppState implements AnalogListener, 
                 disableAttackMap();
                 pmc.setEnabled(false);
                 kirith.addControl(new KiDizzyControl(this, pmc));
+                attacking = false;
                 spinning = false;
                 spintimer = 0;
             } else {

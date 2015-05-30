@@ -29,12 +29,23 @@ public class MobSkill {
     private MobSkill() {
     }
 
+    public abstract class mSkillCont extends AbstractControl {
+        //for hierarchy
+
+        @Override
+        protected abstract void controlUpdate(float tpf);
+
+        @Override
+        protected void controlRender(RenderManager rm, ViewPort vp) {
+        }
+    }
+
     public void pursue(Spatial t, Spatial m, float ti) {
         final Spatial targ = t;
         final Spatial mob = m;
         final float time = ti;
 
-        mob.addControl(new AbstractControl() {
+        mob.addControl(new mSkillCont() {
             float timer = 0;
 
             @Override
@@ -54,10 +65,6 @@ public class MobSkill {
                         targ.getLocalTranslation().y - mob.getLocalTranslation().y, 0);
                 return targvel.normalizeLocal();
             }
-
-            @Override
-            protected void controlRender(RenderManager rm, ViewPort vp) {
-            }
         });
     }
 
@@ -65,7 +72,7 @@ public class MobSkill {
         final Spatial mob = m;
         final float time = ti;
 
-        mob.addControl(new AbstractControl() {
+        mob.addControl(new mSkillCont() {
             private final Random rand = new Random();
             private Vector3f dir = new Vector3f(rand.nextFloat() * 2 - 1f, rand.nextFloat() * 2 - 1f, 0);
             private float changeDirTimer = 0;
@@ -74,22 +81,18 @@ public class MobSkill {
             @Override
             protected void controlUpdate(float tpf) {
                 if (timer <= time) {
-                    if (changeDirTimer >= 1.25f) {
+                    if (changeDirTimer >= 1.3f) {
                         dir = new Vector3f(rand.nextFloat() * 2 - 1f, rand.nextFloat() * 2 - 1f, 0);
                         dir.normalizeLocal();
                         changeDirTimer = 0;
                     } else {
                         changeDirTimer += tpf;
-                        spatial.move(dir.multLocal(tpf * speed));
+                        spatial.move(dir.mult(tpf * speed));
                     }
                     timer += tpf;
                 } else {
                     mob.removeControl(this);
                 }
-            }
-
-            @Override
-            protected void controlRender(RenderManager rm, ViewPort vp) {
             }
         });
     }
@@ -98,7 +101,7 @@ public class MobSkill {
         final Spatial mob = m;
         final float time = ti;
 
-        mob.addControl(new AbstractControl() {
+        mob.addControl(new mSkillCont() {
             float timer = 0;
 
             @Override
@@ -109,10 +112,6 @@ public class MobSkill {
                     mob.removeControl(this);
                 }
             }
-
-            @Override
-            protected void controlRender(RenderManager rm, ViewPort vp) {
-            }
         });
     }
 
@@ -120,7 +119,7 @@ public class MobSkill {
         final Spatial targ = t;
         final Spatial mob = m;
 
-        mob.addControl(new AbstractControl() {
+        mob.addControl(new mSkillCont() {
             private float growtimer = 0;
             private float chargetimer = 0;
             private boolean setdir = false;
@@ -150,7 +149,13 @@ public class MobSkill {
             }
 
             @Override
-            protected void controlRender(RenderManager rm, ViewPort vp) {
+            public void setEnabled(boolean enabled) {
+                super.setEnabled(enabled);
+                if (enabled) {
+                    if (!guiPack.MainMenu.isPaused()) {
+                        mob.removeControl(this);
+                    }
+                }
             }
         });
     }

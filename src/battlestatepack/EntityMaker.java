@@ -46,6 +46,7 @@ public class EntityMaker {
         node.setUserData("collided", "none");
         node.setUserData("atkpower", 0f);
         node.setUserData("atkdirection", 0);
+        node.setUserData("knockback", false);
 
         //let the spatial move
         node.setUserData("canR", true);

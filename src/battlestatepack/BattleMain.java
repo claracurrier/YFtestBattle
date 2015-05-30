@@ -91,7 +91,7 @@ public class BattleMain extends AbstractAppState implements ActionListener {
         mob = new MobAS(mobSpat, "Wanderer", dan, kirith);
         mobSpat.move(500, 500, -1);
         //temp disabling
-        mob.setEnabled(false);
+        //mob.setEnabled(false);
 
         //SwitchChar mapping
         if (!inputManager.hasMapping("switchChar")) {

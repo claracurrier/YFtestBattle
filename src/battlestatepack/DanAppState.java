@@ -4,6 +4,7 @@
  */
 package battlestatepack;
 
+import battlestatepack.mobPack.KnockbackCont;
 import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AbstractAppState;
@@ -226,7 +227,7 @@ public class DanAppState extends AbstractAppState
 
     @Override
     public void update(float tpf) {
-        if (pmc.isMoving()) {
+        if (pmc.isMoving() || dan.getControl(KnockbackCont.class) != null) {
             if (atkenabled) {
                 disableAttackMap();
             }

@@ -29,9 +29,10 @@ public class PCollideCont extends AbstractControl {
             float atkpower = (Float) spatial.getUserData("atkpower");
             reduceHealth(atkpower);
 
+            spatial.setUserData("knockback", true);
             spatial.addControl(new KnockbackCont(GBalanceVars.gbal.mminmovement + atkpower,
                     atkpower * GBalanceVars.gbal.mintensitymovemod + GBalanceVars.gbal.mminintensity,
-                    spatial.getName(), pmas.getDir()+8, (Integer) spatial.getUserData("atkdirection")));
+                    spatial.getName(), pmas.getDir() + 8, (Integer) spatial.getUserData("atkdirection")));
 
             spatial.setUserData("collided", "none");
         }

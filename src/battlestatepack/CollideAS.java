@@ -94,6 +94,10 @@ public class CollideAS extends AbstractAppState {
             //ki and her attacks
             return false;
         }
+        if ((Boolean) defchild.getUserData("knockback")) {
+            //currently getting knocked back, no stacking of damage
+            return false;
+        }
 
         return true;
     }

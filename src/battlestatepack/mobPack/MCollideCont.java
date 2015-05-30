@@ -105,6 +105,7 @@ public class MCollideCont extends AbstractControl {
     }
 
     private void movedir(int dir, float atkpower) {
+        spatial.setUserData("knockback", true);
         spatial.addControl(new KnockbackCont(GBalanceVars.gbal.mminmovement + atkpower,
                 atkpower * GBalanceVars.gbal.mintensitymovemod + GBalanceVars.gbal.mminintensity,
                 spatial.getName(), 0, dir));

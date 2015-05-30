@@ -48,6 +48,7 @@ public class KnockbackCont extends AbstractControl {
             }
             dtimer += tpf * intensity;
         } else {
+            spatial.setUserData("knockback", false);
             spatial.removeControl(this);
         }
     }
