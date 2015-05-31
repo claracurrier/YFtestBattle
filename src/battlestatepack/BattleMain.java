@@ -1,6 +1,11 @@
 package battlestatepack;
 
-import battlestatepack.mobPack.MobAS;
+import playerPack.PAICont;
+import playerPack.PMoveAppState;
+import playerPack.PCollideCont;
+import playerPack.KirithAppState;
+import playerPack.DanAppState;
+import mobPack.MobAS;
 import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AbstractAppState;
@@ -35,7 +40,7 @@ public class BattleMain extends AbstractAppState implements ActionListener {
     private final EntityMaker maker;
     private final DanAppState danAppState;
     private final KirithAppState kiAppState;
-    private final PMoveAppState pMAppState;
+    private final PMoveAppState pMAppState, pMAppStateAI;
     private final CollideAS collideAS;
     private final SimpleApplication app;
     private final AssetManager assetManager;
@@ -46,6 +51,7 @@ public class BattleMain extends AbstractAppState implements ActionListener {
     private final float frustumSize = 220f;
     private final CameraNode camNode;
     private final BattleGUI battleGUI;
+    private final PAICont danAI, kiAI;
     public static AppSettings settings;
     public static final SpriteEngine sEngine = new SpriteEngine();
     public static final Node DEFNODE = new Node("defNode");
@@ -67,17 +73,20 @@ public class BattleMain extends AbstractAppState implements ActionListener {
         collideAS = new CollideAS();
         maker = new EntityMaker(assetManager, stateManager);
         pMAppState = new PMoveAppState(850f, 850f, inputManager);
+        pMAppStateAI = new PMoveAppState(850f, 850f, inputManager);
 
         //set up characters
         dan = maker.createSpatial("Dan");
         dan.move(settings.getWidth() / 2, settings.getHeight() / 2, 0);
         danAppState = new DanAppState(dan, settings);
         danCC = new PCollideCont(pMAppState);
+        danAI = new PAICont(pMAppStateAI);
 
         kirith = maker.createSpatial("Kirith");
         kirith.move(settings.getWidth() / 3, settings.getHeight() / 3, 0);
         kiAppState = new KirithAppState(kirith);
         kiCC = new PCollideCont(pMAppState);
+        kiAI = new PAICont(pMAppStateAI);
 
         //set up movement
         battleGUI = new BattleGUI(settings.getWidth(), settings.getHeight(),
@@ -107,12 +116,19 @@ public class BattleMain extends AbstractAppState implements ActionListener {
         stateManager.attach(danAppState);
         collideAS.setMovingSpatial(dan);
         stateManager.attach(pMAppState);
+        stateManager.attach(pMAppStateAI);
         stateManager.attach(battleGUI);
         stateManager.attach(mob);
 
         pMAppState.setSpatial(dan);
+        pMAppStateAI.setSpatial(kirith);
+        danAI.setOtherChar(kirith);
+        danAI.setEnabled(false);
+        kiAI.setOtherChar(dan);
         dan.addControl(danCC);
         kirith.addControl(kiCC);
+        dan.addControl(danAI);
+        kirith.addControl(kiAI);
         DEFNODE.attachChild(dan);
         DEFNODE.attachChild(kirith);
     }
@@ -125,27 +141,33 @@ public class BattleMain extends AbstractAppState implements ActionListener {
 
     private void switchChar() {
         if (stateManager.hasState(danAppState)) {
-            //if dan is in control
+            //if kirith is now in control
             collideAS.setMovingSpatial(kirith);
             pMAppState.setSpatial(kirith);
             stateManager.detach(danAppState);
             stateManager.attach(kiAppState);
+            kiAI.setEnabled(false);
 
+            pMAppStateAI.setSpatial(dan);
             dan.detachChild(camNode);
             kirith.attachChild(camNode);
             battleGUI.setActiveHUD(kiCC);
+            danAI.setEnabled(true);
             look(kirith);
 
         } else if (stateManager.hasState(kiAppState)) {
-            //if kirith is in control
+            //if dan is now in control
             collideAS.setMovingSpatial(dan);
             pMAppState.setSpatial(dan);
             stateManager.detach(kiAppState);
             stateManager.attach(danAppState);
+            danAI.setEnabled(false);
 
+            pMAppStateAI.setSpatial(kirith);
             kirith.detachChild(camNode);
             dan.attachChild(camNode);
             battleGUI.setActiveHUD(danCC);
+            kiAI.setEnabled(true);
             look(dan);
         }
     }
@@ -168,6 +190,9 @@ public class BattleMain extends AbstractAppState implements ActionListener {
 
         collideAS.setEnabled(enabled);
         pMAppState.setEnabled(enabled);
+        danAI.setEnabled(enabled);
+        kiAI.setEnabled(enabled);
+        pMAppStateAI.setEnabled(enabled);
         mob.setEnabled(enabled);
 
         if (enabled) {
@@ -191,6 +216,7 @@ public class BattleMain extends AbstractAppState implements ActionListener {
         DEFNODE.detachAllChildren();
         inputManager.removeListener(this);
         stateManager.detach(pMAppState);
+        stateManager.detach(pMAppStateAI);
         stateManager.detach(kiAppState);
         stateManager.detach(danAppState);
         stateManager.detach(battleGUI);
