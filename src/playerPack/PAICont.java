@@ -50,16 +50,13 @@ public class PAICont extends AbstractControl {
             }
             if (!nearMobs.isEmpty()) {
                 //run away
-                System.out.println("running away");
                 run(aimDir(spatial.getLocalTranslation(), nearMobs.get(0).getLocalTranslation()));
             } else if (spatial.getLocalTranslation().distance(otherchar.getLocalTranslation())
                     >= GBalanceVars.gbal.ddistancefromki) {
                 //run to other character
-                System.out.println("running to other player");
                 run(aimDir(otherchar.getLocalTranslation(), spatial.getLocalTranslation()));
             } else {
                 pmas.stopMoving();
-                System.out.println("I stopped");
             }
             nearMobs.clear();
         }
@@ -75,32 +72,52 @@ public class PAICont extends AbstractControl {
     private void run(float aim) {
         if (aim <= 5 * FastMath.PI / 6 && aim > 2 * FastMath.PI / 3) {
             //up left
+            pmas.move("RIGHT", false);
             pmas.move("UP", true);
+            pmas.move("DOWN", false);
             pmas.move("LEFT", true);
         } else if (aim <= 2 * FastMath.PI / 3 && aim > FastMath.PI / 3) {
             //facing up
+            pmas.move("RIGHT", false);
             pmas.move("UP", true);
+            pmas.move("DOWN", false);
+            pmas.move("LEFT", false);
         } else if (aim <= FastMath.PI / 3 && aim > FastMath.PI / 6) {
             //up right
             pmas.move("RIGHT", true);
             pmas.move("UP", true);
+            pmas.move("DOWN", false);
+            pmas.move("LEFT", false);
         } else if (aim <= FastMath.PI / 6 && aim > -FastMath.PI / 6) {
             //facing right
             pmas.move("RIGHT", true);
+            pmas.move("UP", false);
+            pmas.move("DOWN", false);
+            pmas.move("LEFT", false);
             pmas.setDir(2);
         } else if (aim <= -FastMath.PI / 6 && aim > -FastMath.PI / 3) {
             //down right
             pmas.move("RIGHT", true);
+            pmas.move("UP", false);
             pmas.move("DOWN", true);
+            pmas.move("LEFT", false);
         } else if (aim <= -FastMath.PI / 3 && aim > -2 * FastMath.PI / 3) {
             //facing down
+            pmas.move("RIGHT", false);
+            pmas.move("UP", false);
             pmas.move("DOWN", true);
+            pmas.move("LEFT", false);
         } else if (aim <= -2 * FastMath.PI / 3 && aim > -5 * FastMath.PI / 6) {
             //down left
+            pmas.move("RIGHT", false);
+            pmas.move("UP", false);
             pmas.move("DOWN", true);
             pmas.move("LEFT", true);
         } else {
             //facing left
+            pmas.move("RIGHT", false);
+            pmas.move("UP", false);
+            pmas.move("DOWN", false);
             pmas.move("LEFT", true);
         }
     }
