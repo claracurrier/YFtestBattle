@@ -23,13 +23,13 @@ import tonegod.gui.core.Screen;
 public class BattleGUI extends AbstractAppState {
 
     private final PCollideCont dan, ki;
-    private float danHealth, kiHealth;
+    private float danHealth, kiHealth, a;
     private final Screen screen;
-    private final int w;
-    private final int h;
+    private int w, h;
     private String curChar = "dan";
     private Indicator curHealth, altHealth;
     private Panel curPic, altPic;
+    private final ColorRGBA green = new ColorRGBA(50f / 255f, 143f / 255f, 50f / 255f, 1f);
 
     public BattleGUI(int w, int h, PCollideCont d, PCollideCont k) {
         screen = MainMenu.getScreen();
@@ -37,12 +37,23 @@ public class BattleGUI extends AbstractAppState {
         this.h = h;
         dan = d;
         ki = k;
+        a = 1;
     }
 
     @Override
     public void initialize(AppStateManager stateManager, Application app) {
         makeHUD();
         setActiveHUD(dan);
+    }
+
+    public void changeRes(int w, int h) {
+        this.w = w;
+        this.h = h;
+        curPic.setPosition(w - (150 * a + 5), 5);
+        curHealth.setPosition(w - (190 * a + 5 + curPic.getWidth()), 5);
+        altPic.setPosition(w - (100 * a + 5 + curPic.getWidth()), 5 + curHealth.getHeight());
+        altHealth.setPosition(w - (110 * a + altPic.getWidth() + curPic.getWidth()),
+                10 + curHealth.getHeight());
     }
 
     @Override
@@ -86,16 +97,16 @@ public class BattleGUI extends AbstractAppState {
         if (player.equals(dan)) {
             curPic.setColorMap("Textures/danPortrait.png");
             altPic.setColorMap("Textures/kiPortrait.png");
-            curHealth.setIndicatorColor(ColorRGBA.Red);
-            altHealth.setIndicatorColor(ColorRGBA.Blue);
+            curHealth.setIndicatorColor(green);
+            altHealth.setIndicatorColor(ColorRGBA.Red);
             curHealth.setCurrentValue(danHealth);
             altHealth.setCurrentValue(kiHealth);
             curChar = "dan";
         } else if (player.equals(ki)) {
             curPic.setColorMap("Textures/kiPortrait.png");
             altPic.setColorMap("Textures/danPortrait.png");
-            curHealth.setIndicatorColor(ColorRGBA.Blue);
-            altHealth.setIndicatorColor(ColorRGBA.Red);
+            curHealth.setIndicatorColor(ColorRGBA.Red);
+            altHealth.setIndicatorColor(green);
             curHealth.setCurrentValue(kiHealth);
             altHealth.setCurrentValue(danHealth);
             curChar = "kirith";
@@ -103,23 +114,20 @@ public class BattleGUI extends AbstractAppState {
     }
 
     private void makeHUD() {
-        /*
-         * TODO: make the size and positions of HUD dependent on resolution
-         */
-        
         //for ref: screen, name, position, dimensions, resize, img
-        curPic = new Panel(screen, "curpanel", new Vector2f(w - 105, h - 105),
-                new Vector2f(100, 100),
-                new Vector4f(14, 14, 14, 14), "Textures/danPortrait.png");
+        curPic = new Panel(screen, "curpanel",
+                new Vector2f(w - (150 * a + 5), h - (150 * a + 5)),
+                new Vector2f(150 * a, 150 * a),
+                new Vector4f(1, 1, 1, 1), "Textures/danPortrait.png");
         screen.addElement(curPic);
         curPic.setIsResizable(false);
         curPic.setIsMovable(false);
         curPic.setIgnoreMouse(true);
 
-
         //for ref: screen, name, position, dimentions, orientation
-        curHealth = new Indicator(screen, "curindicator", new Vector2f(w - (185+105), h - 35),
-                new Vector2f(180, 30),
+        curHealth = new Indicator(screen, "curindicator",
+                new Vector2f(w - (190 * a + 5 + curPic.getWidth()), h - (35 * a + 5)),
+                new Vector2f(190 * a, 35 * a),
                 Indicator.Orientation.HORIZONTAL) {
             @Override
             public void onChange(float f, float f1) {
@@ -127,7 +135,7 @@ public class BattleGUI extends AbstractAppState {
             }
         };
         curHealth.setBaseImage(screen.getStyle("Window").getString("defaultImg"));
-        curHealth.setIndicatorColor(ColorRGBA.Red);
+        curHealth.setIndicatorColor(green);
         curHealth.setAlphaMap(screen.getStyle("Indicator").getString("alphaImg"));
         curHealth.setMaxValue(100f);
         screen.addElement(curHealth);
@@ -135,23 +143,26 @@ public class BattleGUI extends AbstractAppState {
         curHealth.setIsMovable(false);
         curHealth.setIgnoreMouse(true);
 
-        altPic = new Panel(screen, "altpanel", new Vector2f(w - (110+70), h - (35+75)),
-                new Vector2f(70, 70),
-                new Vector4f(14, 14, 14, 14), "Textures/kiPortrait.png");
+        altPic = new Panel(screen, "altpanel",
+                new Vector2f(w - (100 * a + 5 + curPic.getWidth()), h - (100 * a + 5 + curHealth.getHeight())),
+                new Vector2f(100 * a, 100 * a),
+                new Vector4f(1, 1, 1, 1), "Textures/kiPortrait.png");
         screen.addElement(altPic);
         altPic.setIsResizable(false);
         altPic.setIsMovable(false);
         altPic.setIgnoreMouse(true);
 
-        altHealth = new Indicator(screen, "altindicator", new Vector2f(w - (185+110), h - (35+25)),
-                new Vector2f(110, 20),
+        altHealth = new Indicator(screen, "altindicator",
+                new Vector2f(w - (110 * a + altPic.getWidth() + curPic.getWidth()),
+                h - (25 * a + 5 + curHealth.getHeight())),
+                new Vector2f(100 * a, 22 * a),
                 Indicator.Orientation.HORIZONTAL) {
             @Override
             public void onChange(float f, float f1) {
             }
         };
         altHealth.setBaseImage(screen.getStyle("Window").getString("defaultImg"));
-        altHealth.setIndicatorColor(ColorRGBA.Blue);
+        altHealth.setIndicatorColor(ColorRGBA.Red);
         altHealth.setAlphaMap(screen.getStyle("Indicator").getString("alphaImg"));
         altHealth.setMaxValue(100f);
         screen.addElement(altHealth);

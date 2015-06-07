@@ -4,6 +4,7 @@
  */
 package guiPack;
 
+import battlestatepack.BattleGUI;
 import com.jme3.app.Application;
 import com.jme3.font.BitmapFont;
 import com.jme3.input.event.MouseButtonEvent;
@@ -53,6 +54,9 @@ public class OptionsMenu {
                     app.setSettings(settings);
                     app.restart();
                     win.setPosition(15, res[1] - 15 - win.getHeight());
+                    if (mm.getStateManager().getState(BattleGUI.class) != null) {
+                        mm.getStateManager().getState(BattleGUI.class).changeRes(res[0], res[1]);
+                    }
                 }
             }
         };
@@ -83,6 +87,9 @@ public class OptionsMenu {
                 app.setSettings(settings);
                 app.restart();
                 win.setPosition(15, mode.getHeight() - 15 - win.getHeight());
+                if (mm.getStateManager().getState(BattleGUI.class) != null) {
+                    mm.getStateManager().getState(BattleGUI.class).changeRes(mode.getWidth(), mode.getHeight());
+                }
             }
         };
         fullscreenBtn.setIsToggleButton(true);

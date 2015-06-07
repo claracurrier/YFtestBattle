@@ -27,7 +27,7 @@ public class MainMenu extends SimpleApplication implements ActionListener {
         // BattleMain app = new BattleMain();
         MainMenu app = new MainMenu();
         AppSettings newSettings = new AppSettings(true);
-        newSettings.setFrameRate(200);
+        newSettings.setFrameRate(60);
         app.setSettings(newSettings);
         app.start();
     }

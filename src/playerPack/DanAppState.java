@@ -60,6 +60,7 @@ public class DanAppState extends AbstractAppState
     public DanAppState(Spatial dan, AppSettings settings) {
         this.dan = dan;
         this.settings = settings;
+        playerPos = dan.getLocalTranslation();
     }
 
     @Override
@@ -93,13 +94,11 @@ public class DanAppState extends AbstractAppState
 
         spatSL = BattleMain.sEngine.getLibrary("Dan");
         setEnabled(true);
-        System.out.println("Dan is in control!");
     }
 
     @Override
     public void cleanup() {
         disableAttackMap();
-        System.out.println("Dan is no longer in control");
         super.cleanup();
     }
 

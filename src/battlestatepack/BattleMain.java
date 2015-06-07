@@ -89,7 +89,6 @@ public class BattleMain extends AbstractAppState implements ActionListener {
         kiCC = new PCollideCont(pMAppState);
         kiAI = new PAICont(pMAppStateAI, collideAS);
 
-        //set up movement
         battleGUI = new BattleGUI(settings.getWidth(), settings.getHeight(),
                 danCC, kiCC);
     }
@@ -100,8 +99,6 @@ public class BattleMain extends AbstractAppState implements ActionListener {
         Spatial mobSpat = maker.createSpatial("Wanderer");
         mob = new MobAS(mobSpat, "Wanderer", dan, kirith);
         mobSpat.move(500, 500, -1);
-        //temp disabling
-        //mob.setEnabled(false);
 
         //SwitchChar mapping
         if (!inputManager.hasMapping("switchChar")) {
@@ -207,7 +204,6 @@ public class BattleMain extends AbstractAppState implements ActionListener {
                 inputManager.removeListener(this);
             }
         }
-
     }
 
     @Override
@@ -234,17 +230,12 @@ public class BattleMain extends AbstractAppState implements ActionListener {
         //key: near, far, left, right, top, bottom
         cam.setLocation(new Vector3f(cam.getWidth() / 2, cam.getHeight() / 2, 10f));
         cam.setParallelProjection(true);
-//This mode means that camera copies the movements of the target:
+        //This mode means that camera copies the movements of the target:
         camNode.setControlDir(ControlDirection.SpatialToCamera);
         camNode.setLocalTranslation(new Vector3f(0, 0, 10f));
         look(dan);
         //Attach the camNode to the target:
         dan.attachChild(camNode);
-
-
-        /*
-         * TODO: fix scaling issues w/ different resolutions
-         */
     }
 
     private void makeMap() {

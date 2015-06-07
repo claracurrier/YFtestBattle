@@ -57,13 +57,11 @@ public class KirithAppState extends AbstractAppState implements AnalogListener, 
         }
 
         setEnabled(true);
-        System.out.println("Kirith is in control!");
     }
 
     @Override
     public void cleanup() {
         disableAttackMap();
-        System.out.println("Kirith is no longer in control");
         super.cleanup();
     }
 
