@@ -23,6 +23,8 @@ public class PAICont extends AbstractControl {
     //only one AI for now, will need to make seperate behaviors later
 
     private float activatetimer = 0;
+    private float charDistanceThreshold = GBalanceVars.gbal.pdistancefromchar;
+    private float mobDistanceThreshold = GBalanceVars.gbal.pdistancefrommob;
     private final PMoveAppState pmas;
     private ArrayList<Spatial> nearMobs = new ArrayList<>();
     private Spatial otherchar;
@@ -43,19 +45,23 @@ public class PAICont extends AbstractControl {
             for (int i = 0; i < BattleMain.ATKNODE.getQuantity(); i++) {
                 if (spatial.getLocalTranslation().distance(
                         BattleMain.ATKNODE.getChild(i).getLocalTranslation())
-                        <= GBalanceVars.gbal.ddistancefrommob) {
+                        <= mobDistanceThreshold) {
                     //check for any near mobs, made for multiple mobs
                     nearMobs.add(BattleMain.ATKNODE.getChild(i));
                 }
             }
             if (!nearMobs.isEmpty()) {
                 //run away
+                mobDistanceThreshold = GBalanceVars.gbal.pdistancefromsafety;
                 run(aimDir(spatial.getLocalTranslation(), nearMobs.get(0).getLocalTranslation()));
             } else if (spatial.getLocalTranslation().distance(otherchar.getLocalTranslation())
-                    >= GBalanceVars.gbal.ddistancefromki) {
+                    >= charDistanceThreshold) {
                 //run to other character
+                charDistanceThreshold = GBalanceVars.gbal.pdistancefromrest;
                 run(aimDir(otherchar.getLocalTranslation(), spatial.getLocalTranslation()));
             } else {
+                mobDistanceThreshold = GBalanceVars.gbal.pdistancefrommob;
+                charDistanceThreshold = GBalanceVars.gbal.pdistancefromchar;
                 pmas.stopMoving();
             }
             nearMobs.clear();

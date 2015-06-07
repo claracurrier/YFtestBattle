@@ -27,6 +27,10 @@ public class GBalanceVars {
     public final float pspeedAI = 200; //unused
     public final float phealth = 100;
     public final float pAIactivate = 1;
+    public final float pdistancefromchar = 220;
+    public final float pdistancefrommob = 180;
+    public final float pdistancefromrest = 120;
+    public final float pdistancefromsafety = 230;
     //Kirith's vars
     public final float kspinpower = 7;
     public final float kdizzytimer = 3;
@@ -40,7 +44,7 @@ public class GBalanceVars {
     public final float darrowpwrincrement = 14;
     public final float dlineanglerange = FastMath.PI / 6;
     public final float ddistancefromki = 150;
-    public final float ddistancefrommob = 200;
+    
     //Standard Mob vars
     public final float mstunthreshold = .6f;
     public final float mpushbackmod = 15;

@@ -33,7 +33,7 @@ public class ControlMenu {
 
     public void makeControlMenu() {
         final Window win = new Window(screen, "controlwin", new Vector2f(15, 15),
-                new Vector2f(500,400));
+                new Vector2f(500, 400));
         screen.addElement(win);
         win.setIsResizable(false);
         win.setIgnoreMouse(true);
@@ -71,7 +71,7 @@ public class ControlMenu {
     }
 
     private void goBack() {
-        if (mm.isPaused()) {
+        if (MainMenu.isPaused()) {
             mm.getPM().makePauseMenu();
         } else {
             mm.makeStartMenu();

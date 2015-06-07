@@ -282,6 +282,7 @@ public class BattleMain extends AbstractAppState implements ActionListener {
     }
 
     private void endGame(boolean victory) {
+        inputManager.deleteMapping("pause");
         setEnabled(false);
         MainMenu.endGame.makeEndGameScreen(victory);
     }

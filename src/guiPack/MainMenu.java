@@ -51,7 +51,7 @@ public class MainMenu extends SimpleApplication implements ActionListener {
 
         pauseMenu = new PauseMenu(screen, stateManager, this);
         controlMenu = new ControlMenu(screen, stateManager, this);
-        optionsMenu = new OptionsMenu(screen, this);
+        optionsMenu = new OptionsMenu(screen, this, settings);
         credits = new Credits(screen, this);
         endGame = new EndGame(screen, stateManager, this);
         makeStartMenu();
