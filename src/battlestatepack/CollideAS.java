@@ -50,7 +50,7 @@ public class CollideAS extends AbstractAppState {
     @Override
     public void update(float tpf) {
         if (isEnabled()) {
-            moveCheck();
+            moveCheck(spatial);
             attackCheck();
         }
     }
@@ -61,7 +61,6 @@ public class CollideAS extends AbstractAppState {
                 atkchild = atkNode.getChild(i); //attacker
                 defchild = defNode.getChild(j); //reciver
 
-
                 if (noException(atkchild, defchild)) {
                     val = satTest(atkchild, defchild);
                     if (val > 0) {
@@ -71,7 +70,6 @@ public class CollideAS extends AbstractAppState {
                         defchild.setUserData("atkdirection", val);
 
                         System.out.println(atkchild + " collided into " + defchild);
-
                     }
                 }
             }
@@ -98,50 +96,39 @@ public class CollideAS extends AbstractAppState {
             //currently getting knocked back, no stacking of damage
             return false;
         }
-
         return true;
     }
 
-    private void moveCheck() {
-
+    public void moveCheck(Spatial player) {
         collided = false;
         //collision loop
         for (int i = 0; i < defNode.getQuantity(); i++) {
-
             curChild = defNode.getChild(i);
-
-            if (!curChild.equals(spatial)) {
-
-                val = satTest(spatial, curChild);
+            if (!curChild.equals(player)) {
+                val = satTest(player, curChild);
                 if (val > 0) {
                     switch (val) {
                         case 1: //no left
-                            spatial.setUserData("canL", false);
-                            collided = true;
+                            player.setUserData("canL", false);
                             break;
                         case 2: //no right
-                            spatial.setUserData("canR", false);
-                            collided = true;
+                            player.setUserData("canR", false);
                             break;
                         case 3: //no down
-                            spatial.setUserData("canU", false);
-                            collided = true;
+                            player.setUserData("canU", false);
                             break;
                         case 4: //no up
-                            spatial.setUserData("canD", false);
-                            collided = true;
-
+                            player.setUserData("canD", false);
                             break;
                     }
+                    collided = true;
                 }
-
             } else if (!collided) {
-                spatial.setUserData("canU", true);
-                spatial.setUserData("canD", true);
-                spatial.setUserData("canR", true);
-                spatial.setUserData("canL", true);
+                player.setUserData("canU", true);
+                player.setUserData("canD", true);
+                player.setUserData("canR", true);
+                player.setUserData("canL", true);
             }
-
         }
     }
 
@@ -163,31 +150,25 @@ public class CollideAS extends AbstractAppState {
                     < Math.max(0, Math.min(ymoverp.y, ytargp.y) - Math.max(ymoverp.x, ytargp.x))) {
                 //if distance of x direction is shorter and therefore colliding left or right...
                 if (xmoverp.x > xtargp.x) {
-
                     return 1;//mover is left of targ
                 } else {
-
                     return 2; //mover is right of targ
                 }
             } else {
                 //y dir is shorter and therefore colliding up or down
                 if (ymoverp.x > ytargp.x) {
-
                     return 4; //mover is below targ
                 } else {
-
                     return 3; //mover is above targ
                 }
             }
         } else {
             return 0; //no collision
         }
-
     }
 
     private Vector2f project(Vector2f axis, Spatial shape) {
         //this takes in the rectangles hitboxes, and finds its projection
-
         //widths and heights
         float w = shape.getUserData("halfwidth");
         float h = shape.getUserData("halfheight");
@@ -202,13 +183,11 @@ public class CollideAS extends AbstractAppState {
             //both of these return statements give the projection coordinates
             //in order of min, max (they are 1d axis-aligned) line segments
             //so ([0][0], [0][1])
-
         } else { //xaxis
             Vector2f botright = new Vector2f(x + w, y - h);
             return new Vector2f(axis.dot(botleft), axis.dot(botright));
             // ([0,0], [1][0])
         }
-
     }
 
     private boolean overlap(Vector2f mover, Vector2f targ) {

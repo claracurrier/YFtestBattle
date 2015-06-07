@@ -5,7 +5,7 @@
 package playerPack;
 
 import battlestatepack.BattleMain;
-import battlestatepack.GBalanceVars;
+import battlestatepack.GVars;
 import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
@@ -24,7 +24,7 @@ public class PMoveAppState extends AbstractAppState implements ActionListener {
 
     private float screenWidth, screenHeight;
     private InputManager inputManager;
-    private final float speed = GBalanceVars.gbal.pspeed;
+    private final float speed = GVars.gvars.pspeed;
     private boolean ku, kd, kl, kr;
     private int dir = 4;
     private Spatial spatial;

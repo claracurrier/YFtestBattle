@@ -16,6 +16,7 @@ import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.material.Material;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
@@ -80,13 +81,13 @@ public class BattleMain extends AbstractAppState implements ActionListener {
         dan.move(settings.getWidth() / 2, settings.getHeight() / 2, 0);
         danAppState = new DanAppState(dan, settings);
         danCC = new PCollideCont(pMAppState);
-        danAI = new PAICont(pMAppStateAI);
+        danAI = new PAICont(pMAppStateAI, collideAS);
 
         kirith = maker.createSpatial("Kirith");
         kirith.move(settings.getWidth() / 3, settings.getHeight() / 3, 0);
         kiAppState = new KirithAppState(kirith);
         kiCC = new PCollideCont(pMAppState);
-        kiAI = new PAICont(pMAppStateAI);
+        kiAI = new PAICont(pMAppStateAI, collideAS);
 
         //set up movement
         battleGUI = new BattleGUI(settings.getWidth(), settings.getHeight(),
@@ -222,6 +223,7 @@ public class BattleMain extends AbstractAppState implements ActionListener {
         stateManager.detach(battleGUI);
         stateManager.detach(mob);
         sEngine.destroyEngine();
+        app.getViewPort().setBackgroundColor(ColorRGBA.Black);
         super.cleanup();
     }
 
@@ -255,6 +257,7 @@ public class BattleMain extends AbstractAppState implements ActionListener {
         geom.center();
         geom.move(470f, 550f, -2f);
         app.getRootNode().attachChild(geom);
+        app.getViewPort().setBackgroundColor(ColorRGBA.Brown);
     }
 
     private void look(Spatial s) {

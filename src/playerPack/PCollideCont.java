@@ -4,7 +4,7 @@
  */
 package playerPack;
 
-import battlestatepack.GBalanceVars;
+import battlestatepack.GVars;
 import battlestatepack.KnockbackCont;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
@@ -16,7 +16,7 @@ import com.jme3.scene.control.AbstractControl;
  */
 public class PCollideCont extends AbstractControl {
 
-    private float health = GBalanceVars.gbal.phealth;
+    private float health = GVars.gvars.phealth;
     private final PMoveAppState pmas;
 
     public PCollideCont(PMoveAppState p) {
@@ -31,8 +31,8 @@ public class PCollideCont extends AbstractControl {
             reduceHealth(atkpower);
 
             spatial.setUserData("knockback", true);
-            spatial.addControl(new KnockbackCont(GBalanceVars.gbal.mminmovement + atkpower,
-                    atkpower * GBalanceVars.gbal.mintensitymovemod + GBalanceVars.gbal.mminintensity,
+            spatial.addControl(new KnockbackCont(GVars.gvars.mminmovement + atkpower,
+                    atkpower * GVars.gvars.mintensitymovemod + GVars.gvars.mminintensity,
                     spatial.getName(), pmas.getDir() + 8, (Integer) spatial.getUserData("atkdirection")));
 
             spatial.setUserData("collided", "none");

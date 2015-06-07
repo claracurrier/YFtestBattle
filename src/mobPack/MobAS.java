@@ -5,7 +5,7 @@
 package mobPack;
 
 import battlestatepack.BattleMain;
-import battlestatepack.GBalanceVars;
+import battlestatepack.GVars;
 import mobPack.MobSkill.mSkillCont;
 import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
@@ -24,7 +24,7 @@ public class MobAS extends AbstractAppState {
 
     private final String name;
     private final Spatial mob, dan, ki;
-    private float health = GBalanceVars.gbal.mhealth;
+    private float health = GVars.gvars.mhealth;
     private MobSkill ms = MobSkill.mobSkill;
     private Spatial targ;
 
@@ -40,7 +40,7 @@ public class MobAS extends AbstractAppState {
         mobatkbox.setUserData("halfwidth", 25f);
         mobatkbox.setUserData("halfheight", 40f);
         mobatkbox.setUserData("type", "attackbox");
-        mobatkbox.setUserData("atkpower", GBalanceVars.gbal.matkpwr);
+        mobatkbox.setUserData("atkpower", GVars.gvars.matkpwr);
         mob.setUserData("type", "mob");
 
         BattleMain.ATKNODE.attachChild(mobatkbox);

@@ -63,16 +63,16 @@ public class MyButton extends Button {
     public MyButton(Screen screen, String UID, Vector2f position, Vector2f dimensions, Vector4f resizeBorders, String defaultImg) {
         super(screen, UID, position, dimensions, resizeBorders, defaultImg);
     }
-    
+
     @Override
-        public void onKeyPress(KeyInputEvent evt) {
-                //no
-        }
-        
-        @Override
-        public void onKeyRelease(KeyInputEvent evt) {
-                //stop
-        }
+    public void onKeyPress(KeyInputEvent evt) {
+        //no
+    }
+
+    @Override
+    public void onKeyRelease(KeyInputEvent evt) {
+        //stop
+    }
 
     @Override
     public void onButtonMouseLeftDown(MouseButtonEvent mbe, boolean bln) {

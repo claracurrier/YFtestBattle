@@ -5,7 +5,7 @@
 package playerPack;
 
 import battlestatepack.BattleMain;
-import battlestatepack.GBalanceVars;
+import battlestatepack.GVars;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.control.AbstractControl;
@@ -17,7 +17,7 @@ import spriteProject.SpriteLibrary;
  */
 public class KiDizzyControl extends AbstractControl {
 
-    private float time = GBalanceVars.gbal.kdizzytimer;
+    private float time = GVars.gvars.kdizzytimer;
     private float timecount = 0;
     private final KirithAppState kiApp;
     private final PMoveAppState pmAS;

@@ -5,7 +5,7 @@
 package mobPack;
 
 import battlestatepack.KnockbackCont;
-import battlestatepack.GBalanceVars;
+import battlestatepack.GVars;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
@@ -23,7 +23,7 @@ public class MCollideCont extends AbstractControl {
     private final MobAS mob;
     private final float width = 1000f;
     private final float height = 1000f;
-    private float stunThreshold = GBalanceVars.gbal.mstunthreshold;
+    private float stunThreshold = GVars.gvars.mstunthreshold;
     //TODO: make the bounds either built into the map or change this
 
     public MCollideCont(MobAS m) {
@@ -56,16 +56,16 @@ public class MCollideCont extends AbstractControl {
 
         //check bounds
         if (loc.x > width) {
-            spatial.move(width - loc.x, 0, 0);
+            spatial.setLocalTranslation(width, loc.y, 0);
         }
         if (loc.y > height) {
-            spatial.move(0, height - loc.y, 0);
+            spatial.setLocalTranslation(loc.x, height, 0);
         }
         if (loc.x < 0) {
-            spatial.move(0 - loc.x, 0, 0);
+            spatial.setLocalTranslation(0, loc.y, 0);
         }
         if (loc.y < 0) {
-            spatial.move(0, 0 - loc.y, 0);
+            spatial.setLocalTranslation(loc.x, 0, 0);
         }
 
         //place to poll for collisions
@@ -79,21 +79,24 @@ public class MCollideCont extends AbstractControl {
                     movedir(dir, 0);
 
                 } else if (spatial.getUserData("collided").equals("pushback")) {
-                    movedir(dir, atkpower * GBalanceVars.gbal.mpushbackmod);
+                    movedir(dir, atkpower * GVars.gvars.mpushbackmod);
+                    mob.setEnabled(false);
+                    spatial.addControl(new MStunnedCont(atkpower
+                            * GVars.gvars.mpushstunmod, mob));
 
                 } else if (spatial.getUserData("collided").equals("stun")) {
                     movedir(dir, 0);
                     if (atkpower > stunThreshold) {
                         mob.setEnabled(false);
                         spatial.addControl(new MStunnedCont(atkpower
-                                * GBalanceVars.gbal.mstunmod, mob));
+                                * GVars.gvars.mstunmod, mob));
                     }
 
                 } else if (spatial.getUserData("collided").equals("spin")) {
-                    movedir(dir, atkpower * GBalanceVars.gbal.mspinpushmod);
+                    movedir(dir, atkpower * GVars.gvars.mspinpushmod);
                     mob.setEnabled(false);
                     spatial.addControl(new MStunnedCont(
-                            atkpower * GBalanceVars.gbal.mspinstunmod, mob));
+                            atkpower * GVars.gvars.mspinstunmod, mob));
                 }
 
                 mob.reduceHealth((Float) spatial.getUserData("atkpower"));
@@ -107,8 +110,8 @@ public class MCollideCont extends AbstractControl {
 
     private void movedir(int dir, float atkpower) {
         spatial.setUserData("knockback", true);
-        spatial.addControl(new KnockbackCont(GBalanceVars.gbal.mminmovement + atkpower,
-                atkpower * GBalanceVars.gbal.mintensitymovemod + GBalanceVars.gbal.mminintensity,
+        spatial.addControl(new KnockbackCont(GVars.gvars.mminmovement + atkpower,
+                atkpower * GVars.gvars.mintensitymovemod + GVars.gvars.mminintensity,
                 spatial.getName(), 0, dir));
     }
 

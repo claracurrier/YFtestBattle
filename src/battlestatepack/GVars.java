@@ -10,7 +10,7 @@ import com.jme3.math.FastMath;
  *
  * @author PC
  */
-public class GBalanceVars {
+public class GVars {
     /*
      * A singleton class containing all of the fields with importance to gameplay
      * balance for the alpha stages. Ultimately this will get abstracted into
@@ -18,9 +18,9 @@ public class GBalanceVars {
      * and make it easier to manually adjust difficulty.
      */
 
-    public static final GBalanceVars gbal = new GBalanceVars();
+    public static final GVars gvars = new GVars();
 
-    private GBalanceVars() {
+    private GVars() {
     }
     //General vars
     public final float pspeed = 350;
@@ -44,15 +44,15 @@ public class GBalanceVars {
     public final float darrowpwrincrement = 14;
     public final float dlineanglerange = FastMath.PI / 6;
     public final float ddistancefromki = 150;
-    
     //Standard Mob vars
     public final float mstunthreshold = .6f;
-    public final float mpushbackmod = 15;
+    public final float mpushbackmod = 39;
+    public final float mpushstunmod = .2f;
     public final float mspeed = 200;
     public final float matkpwr = 10;
     public final float mhealth = 80;
-    public final float mstunmod = .8f;
-    public final float mspinstunmod = .5f;
+    public final float mstunmod = 1f;
+    public final float mspinstunmod = .4f;
     public final float mspinpushmod = 3.5f;
     public final float mintensitymovemod = 8f;
     public final float mminmovement = 30;

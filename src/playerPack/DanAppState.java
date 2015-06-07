@@ -5,7 +5,7 @@
 package playerPack;
 
 import battlestatepack.BattleMain;
-import battlestatepack.GBalanceVars;
+import battlestatepack.GVars;
 import battlestatepack.KnockbackCont;
 import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
@@ -49,8 +49,8 @@ public class DanAppState extends AbstractAppState
     private SpriteLibrary spatSL;
     private Geometry line1, line2;
     private Vector3f playerPos;
-    private float lsize = GBalanceVars.gbal.dminlinesize;
-    private float aimLimit = GBalanceVars.gbal.dmaxarrowpwr;
+    private float lsize = GVars.gvars.dminlinesize;
+    private float aimLimit = GVars.gvars.dmaxarrowpwr;
     private float aim1, aim2;
     private boolean atkenabled;
     private final Random rand = new Random();
@@ -188,8 +188,8 @@ public class DanAppState extends AbstractAppState
     @Override
     public void onAnalog(String name, float value, float tpf) {
         if (power <= aimLimit / 2) {
-            power += tpf * GBalanceVars.gbal.darrowpwrincrement;
-            lsize += tpf * GBalanceVars.gbal.dlineincrement;
+            power += tpf * GVars.gvars.darrowpwrincrement;
+            lsize += tpf * GVars.gvars.dlineincrement;
         }
     }
 
@@ -211,17 +211,17 @@ public class DanAppState extends AbstractAppState
             }
             firing = false;
             power = 0;
-            lsize = GBalanceVars.gbal.dminlinesize;
+            lsize = GVars.gvars.dminlinesize;
         }
     }
 
     private void updateLines(float aim, float range) {
-        aim1 = -(GBalanceVars.gbal.dlineanglerange) + (aim + range);
+        aim1 = -(GVars.gvars.dlineanglerange) + (aim + range);
         Vector3f newvec = new Vector3f(lsize * FastMath.cos(aim1), lsize * FastMath.sin(aim1), 0f);
         newvec.addLocal(playerPos);
         ((Line) line1.getMesh()).updatePoints(playerPos, newvec);
 
-        aim2 = (GBalanceVars.gbal.dlineanglerange) + (aim - range);
+        aim2 = (GVars.gvars.dlineanglerange) + (aim - range);
         newvec = new Vector3f(lsize * FastMath.cos(aim2), lsize * FastMath.sin(aim2), 0f);
         newvec.addLocal(playerPos);
         ((Line) line2.getMesh()).updatePoints(playerPos, newvec);

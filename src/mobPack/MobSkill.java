@@ -4,7 +4,7 @@
  */
 package mobPack;
 
-import battlestatepack.GBalanceVars;
+import battlestatepack.GVars;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
@@ -24,7 +24,7 @@ public class MobSkill {
      * whether a mob uses these skills or not depends on the mob at instantiation
      * every skill is an update()-able loop
      */
-    private float speed = GBalanceVars.gbal.mspeed;
+    private float speed = GVars.gvars.mspeed;
 
     private MobSkill() {
     }

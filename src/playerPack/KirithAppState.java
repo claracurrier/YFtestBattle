@@ -5,7 +5,7 @@
 package playerPack;
 
 import battlestatepack.BattleMain;
-import battlestatepack.GBalanceVars;
+import battlestatepack.GVars;
 import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AbstractAppState;
@@ -124,7 +124,7 @@ public class KirithAppState extends AbstractAppState implements AnalogListener, 
         node.setUserData("halfheight", 80f);
         node.setUserData("type", "kiatkbox");
         node.setUserData("collided", "none");
-        node.setUserData("atkpower", GBalanceVars.gbal.kspinpower);
+        node.setUserData("atkpower", GVars.gvars.kspinpower);
 
         float x = kirith.getWorldTranslation().x;
         float y = kirith.getWorldTranslation().y;
@@ -211,11 +211,11 @@ public class KirithAppState extends AbstractAppState implements AnalogListener, 
     @Override
     public void onAnalog(String name, float value, float tpf) {
         if ((name.equals("i") || name.equals("o")) && !spinning) {
-            if (power < GBalanceVars.gbal.kmaxchargepower) {
-                power += tpf * GBalanceVars.gbal.kpowerincrement;
+            if (power < GVars.gvars.kmaxchargepower) {
+                power += tpf * GVars.gvars.kpowerincrement;
             }
         } else {
-            if (spintimer > GBalanceVars.gbal.kmaxspintime) {
+            if (spintimer > GVars.gvars.kmaxspintime) {
                 System.out.println("you've spun too long");
                 BattleMain.ATKNODE.detachChildNamed("spin");
                 disableAttackMap();
