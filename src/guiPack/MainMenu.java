@@ -19,12 +19,11 @@ import tonegod.gui.core.Screen;
 
 /**
  *
- * @author PC
+ * @author Clara Currier
  */
 public class MainMenu extends SimpleApplication implements ActionListener {
 
     public static void main(String[] args) {
-        // BattleMain app = new BattleMain();
         MainMenu app = new MainMenu();
         AppSettings newSettings = new AppSettings(true);
         newSettings.setFrameRate(60);
@@ -74,12 +73,11 @@ public class MainMenu extends SimpleApplication implements ActionListener {
     }
 
     public void makeStartMenu() {
-        //set up the mapping for the pause button
         if (!inputManager.hasMapping("pause")) {
-            inputManager.addMapping("pause", new KeyTrigger(KeyInput.KEY_H));
-            inputManager.addListener(this, "pause");
-        }
-
+                inputManager.addMapping("pause", new KeyTrigger(KeyInput.KEY_H));
+                inputManager.addListener(this, "pause");
+            }
+        
         final Window win = new Window(screen, "win", new Vector2f(15, 15),
                 new Vector2f(settings.getWidth() - 30, settings.getHeight() - 30));
         screen.addElement(win);

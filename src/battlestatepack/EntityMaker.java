@@ -4,7 +4,6 @@
  */
 package battlestatepack;
 
-import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState;
@@ -17,24 +16,22 @@ import spriteProject.SpriteLibrary;
 
 /**
  *
- * @author PC
+ * @author Clara Currier
  */
 public class EntityMaker {
 
     private final AssetManager assetManager;
 
-    public EntityMaker(AssetManager aman, AppStateManager asm) {
+    public EntityMaker(AssetManager aman) {
         this.assetManager = aman;
         SpriteLibrary.l_baseNode = BattleMain.BATTLENODE;
     }
 
     protected Node createSpatial(String name) {
         Node node = new Node(name);
-
         float width = 50f;
         float height = 80f;
 
-//        add a material to the picture
         Material picMat = new Material(assetManager, "Common/MatDefs/Gui/Gui.j3md");
         picMat.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.AlphaAdditive);
         node.setMaterial(picMat);
@@ -42,7 +39,6 @@ public class EntityMaker {
         node.setUserData("halfwidth", width / 2);
         node.setUserData("halfheight", height / 2);
         node.setUserData("type", "player");
-
         node.setUserData("collided", "none");
         node.setUserData("atkpower", 0f);
         node.setUserData("atkdirection", 0);
@@ -77,10 +73,7 @@ public class EntityMaker {
     }
 
     private void makeSprites(String name, Node attach) {
-        //give it a sprite library
-
         SpriteLibrary library = new SpriteLibrary(name, false, attach);
-
         BattleMain.sEngine.addLibrary(library);
 
         //this could be generalized to search for any name
@@ -90,7 +83,6 @@ public class EntityMaker {
             for (int i = 0; i < 8; i++) {
                 library.addSprite(new Sprite("Textures/danrun" + i + ".png", "danrun" + i, assetManager, true, true, 6, 1, 0.09f, "Loop", "Start"));
             }
-
 
             //idle
             for (int i = 0; i < 8; i++) {

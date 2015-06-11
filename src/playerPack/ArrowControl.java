@@ -12,7 +12,7 @@ import com.jme3.scene.control.AbstractControl;
 
 /**
  *
- * @author PC
+ * @author Clara Currier
  */
 public class ArrowControl extends AbstractControl {
 
@@ -38,11 +38,9 @@ public class ArrowControl extends AbstractControl {
             spatial.rotate(0, 0, aim);
             rotated = true;
         }
-
-        //        movement
         spatial.move(direction.mult(speed * tpf));
 
-//        check boundaries
+        //check boundaries
         Vector3f loc = spatial.getLocalTranslation();
         if ((loc.x > screenWidth || loc.y > screenHeight
                 || loc.x < 0 || loc.y < 0) || (Math.abs(loc.x - initloc.x) > Math.abs(direction.x * distance)

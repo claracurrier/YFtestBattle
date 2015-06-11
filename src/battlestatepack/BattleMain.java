@@ -1,10 +1,8 @@
 package battlestatepack;
 
-import playerPack.PAICont;
-import playerPack.PMoveAppState;
 import playerPack.PCollideCont;
-import playerPack.KirithAppState;
-import playerPack.DanAppState;
+import playerPack.KirithAS;
+import playerPack.DanAS;
 import mobPack.MobAS;
 import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
@@ -33,15 +31,14 @@ import spriteProject.SpriteEngine;
 
 /**
  *
- * @author PC
+ * @author Clara Currier
  */
 public class BattleMain extends AbstractAppState implements ActionListener {
 
     private final Node dan, kirith;
     private final EntityMaker maker;
-    private final DanAppState danAppState;
-    private final KirithAppState kiAppState;
-    private final PMoveAppState pMAppState, pMAppStateAI;
+    private final DanAS danAppState;
+    private final KirithAS kiAppState;
     private final CollideAS collideAS;
     private final SimpleApplication app;
     private final AssetManager assetManager;
@@ -52,7 +49,7 @@ public class BattleMain extends AbstractAppState implements ActionListener {
     private final float frustumSize = 220f;
     private final CameraNode camNode;
     private final BattleGUI battleGUI;
-    private final PAICont danAI, kiAI;
+    private final Picker picker;
     public static AppSettings settings;
     public static final SpriteEngine sEngine = new SpriteEngine();
     public static final Node DEFNODE = new Node("defNode");
@@ -72,22 +69,19 @@ public class BattleMain extends AbstractAppState implements ActionListener {
         BATTLENODE.attachChild(DEFNODE);
         BATTLENODE.attachChild(ATKNODE);
         collideAS = new CollideAS();
-        maker = new EntityMaker(assetManager, stateManager);
-        pMAppState = new PMoveAppState(850f, 850f, inputManager);
-        pMAppStateAI = new PMoveAppState(850f, 850f, inputManager);
+        maker = new EntityMaker(assetManager);
+        picker = new Picker(cam, inputManager, set);
 
         //set up characters
         dan = maker.createSpatial("Dan");
         dan.move(settings.getWidth() / 2, settings.getHeight() / 2, 0);
-        danAppState = new DanAppState(dan, settings);
-        danCC = new PCollideCont(pMAppState);
-        danAI = new PAICont(pMAppStateAI, collideAS);
+        danAppState = new DanAS(dan, settings);
+        danCC = new PCollideCont();
 
         kirith = maker.createSpatial("Kirith");
         kirith.move(settings.getWidth() / 3, settings.getHeight() / 3, 0);
-        kiAppState = new KirithAppState(kirith);
-        kiCC = new PCollideCont(pMAppState);
-        kiAI = new PAICont(pMAppStateAI, collideAS);
+        kiAppState = new KirithAS(kirith);
+        kiCC = new PCollideCont();
 
         battleGUI = new BattleGUI(settings.getWidth(), settings.getHeight(),
                 danCC, kiCC);
@@ -99,34 +93,24 @@ public class BattleMain extends AbstractAppState implements ActionListener {
         Spatial mobSpat = maker.createSpatial("Wanderer");
         mob = new MobAS(mobSpat, "Wanderer", dan, kirith);
         mobSpat.move(500, 500, -1);
-
-        //SwitchChar mapping
-        if (!inputManager.hasMapping("switchChar")) {
-            inputManager.addMapping("switchChar", new KeyTrigger(KeyInput.KEY_G));
-            inputManager.addListener(this, "switchChar");
-        }
+        //disabled mob for now
+        mob.setEnabled(false);
 
         makeCam();
         makeMap();
+        switchCharKey(true);
+        picker.mouseKey(true);
 
         //load all the states
         stateManager.attach(collideAS);
         stateManager.attach(danAppState);
         collideAS.setMovingSpatial(dan);
-        stateManager.attach(pMAppState);
-        stateManager.attach(pMAppStateAI);
         stateManager.attach(battleGUI);
         stateManager.attach(mob);
 
-        pMAppState.setSpatial(dan);
-        pMAppStateAI.setSpatial(kirith);
-        danAI.setOtherChar(kirith);
-        danAI.setEnabled(false);
-        kiAI.setOtherChar(dan);
+        picker.setActiveChar(dan);
         dan.addControl(danCC);
         kirith.addControl(kiCC);
-        dan.addControl(danAI);
-        kirith.addControl(kiAI);
         DEFNODE.attachChild(dan);
         DEFNODE.attachChild(kirith);
     }
@@ -141,31 +125,25 @@ public class BattleMain extends AbstractAppState implements ActionListener {
         if (stateManager.hasState(danAppState)) {
             //if kirith is now in control
             collideAS.setMovingSpatial(kirith);
-            pMAppState.setSpatial(kirith);
             stateManager.detach(danAppState);
             stateManager.attach(kiAppState);
-            kiAI.setEnabled(false);
+            picker.setActiveChar(kirith);
 
-            pMAppStateAI.setSpatial(dan);
             dan.detachChild(camNode);
             kirith.attachChild(camNode);
             battleGUI.setActiveHUD(kiCC);
-            danAI.setEnabled(true);
             look(kirith);
 
         } else if (stateManager.hasState(kiAppState)) {
             //if dan is now in control
             collideAS.setMovingSpatial(dan);
-            pMAppState.setSpatial(dan);
             stateManager.detach(kiAppState);
             stateManager.attach(danAppState);
-            danAI.setEnabled(false);
+            picker.setActiveChar(dan);
 
-            pMAppStateAI.setSpatial(kirith);
             kirith.detachChild(camNode);
             dan.attachChild(camNode);
             battleGUI.setActiveHUD(danCC);
-            kiAI.setEnabled(true);
             look(dan);
         }
     }
@@ -187,12 +165,29 @@ public class BattleMain extends AbstractAppState implements ActionListener {
         }
 
         collideAS.setEnabled(enabled);
-        pMAppState.setEnabled(enabled);
-        danAI.setEnabled(enabled);
-        kiAI.setEnabled(enabled);
-        pMAppStateAI.setEnabled(enabled);
         mob.setEnabled(enabled);
 
+        switchCharKey(enabled);
+        picker.mouseKey(enabled);
+    }
+
+    @Override
+    public void cleanup() {
+        app.getRootNode().detachAllChildren();
+        ATKNODE.detachAllChildren();
+        DEFNODE.detachAllChildren();
+        picker.mouseKey(false);
+        inputManager.removeListener(this);
+        stateManager.detach(kiAppState);
+        stateManager.detach(danAppState);
+        stateManager.detach(battleGUI);
+        stateManager.detach(mob);
+        sEngine.destroyEngine();
+        app.getViewPort().setBackgroundColor(ColorRGBA.Black);
+        super.cleanup();
+    }
+
+    protected void switchCharKey(boolean enabled) {
         if (enabled) {
             if (!inputManager.hasMapping("switchChar")) {
                 inputManager.addMapping("switchChar", new KeyTrigger(KeyInput.KEY_G));
@@ -204,23 +199,6 @@ public class BattleMain extends AbstractAppState implements ActionListener {
                 inputManager.removeListener(this);
             }
         }
-    }
-
-    @Override
-    public void cleanup() {
-        app.getRootNode().detachAllChildren();
-        ATKNODE.detachAllChildren();
-        DEFNODE.detachAllChildren();
-        inputManager.removeListener(this);
-        stateManager.detach(pMAppState);
-        stateManager.detach(pMAppStateAI);
-        stateManager.detach(kiAppState);
-        stateManager.detach(danAppState);
-        stateManager.detach(battleGUI);
-        stateManager.detach(mob);
-        sEngine.destroyEngine();
-        app.getViewPort().setBackgroundColor(ColorRGBA.Black);
-        super.cleanup();
     }
 
     private void makeCam() {
@@ -247,7 +225,7 @@ public class BattleMain extends AbstractAppState implements ActionListener {
         geom.setMaterial(mat);
         geom.center();
         geom.move(470f, 550f, -2f);
-        app.getRootNode().attachChild(geom);
+        BATTLENODE.attachChild(geom);
         app.getViewPort().setBackgroundColor(ColorRGBA.Brown);
     }
 
@@ -265,14 +243,6 @@ public class BattleMain extends AbstractAppState implements ActionListener {
             //this method would change depending on the script being loaded
             endGame(true);
         }
-    }
-
-    public Spatial getDan() {
-        return dan;
-    }
-
-    public Spatial getKi() {
-        return kirith;
     }
 
     private void endGame(boolean victory) {

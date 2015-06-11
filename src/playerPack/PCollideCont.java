@@ -12,15 +12,13 @@ import com.jme3.scene.control.AbstractControl;
 
 /**
  *
- * @author PC
+ * @author Clara Currier
  */
 public class PCollideCont extends AbstractControl {
 
     private float health = GVars.gvars.phealth;
-    private final PMoveAppState pmas;
 
-    public PCollideCont(PMoveAppState p) {
-        pmas = p;
+    public PCollideCont() {
     }
 
     @Override
@@ -33,8 +31,8 @@ public class PCollideCont extends AbstractControl {
             spatial.setUserData("knockback", true);
             spatial.addControl(new KnockbackCont(GVars.gvars.mminmovement + atkpower,
                     atkpower * GVars.gvars.mintensitymovemod + GVars.gvars.mminintensity,
-                    spatial.getName(), pmas.getDir() + 8, (Integer) spatial.getUserData("atkdirection")));
-
+                    spatial.getName(), 8, (Integer) spatial.getUserData("atkdirection")));
+//note: needs a way to set the direction of recoil
             spatial.setUserData("collided", "none");
         }
     }
