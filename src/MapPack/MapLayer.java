@@ -25,8 +25,8 @@ public class MapLayer {
     public MapLayer(String name) {
         this.name = name;
     }
-    
-    public String getName(){
+
+    public String getName() {
         return name;
     }
 
@@ -48,6 +48,10 @@ public class MapLayer {
 
     public Tile getTile(int x, int y) {
         return tiles[x][y];
+    }
+
+    public void setTileAt(int x, int y, Tile tile) {
+        tiles[x][y] = tile;
     }
 
     public void setTiles(Tile[][] tiles) {

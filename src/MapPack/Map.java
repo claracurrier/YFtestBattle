@@ -95,6 +95,14 @@ public class Map {
         return objectGroups.get(index);
     }
 
+    public TileSet getTileSet(int index) {
+        return tileSets.get(index);
+    }
+
+    public int getNumTileSets() {
+        return tileSets.size();
+    }
+
     public int getNumLayers() {
         return mapLayers.size();
     }

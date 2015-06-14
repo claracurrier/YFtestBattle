@@ -35,6 +35,8 @@ public class TMXReader {
 
     private DefaultHandler currentHandler = new TMXHandler();
     private Map map = null;
+    private HashMap<Integer, Integer> tileSetsGids = new HashMap<>();
+    private int tileSetIndex = 0;
 
     // SAX library don't have SAXParser.setHandler(DefaultHandler) method, thats why we will use this workaround stub to parse hierarchy 
     private class SAXStub extends DefaultHandler {
@@ -80,7 +82,6 @@ public class TMXReader {
 
         @Override
         public void startElement(String uri, String name, String qName, Attributes atts) throws SAXException {
-
             if (qName.equalsIgnoreCase("tileset")) {
                 TileSet tileSet = new TileSet();
                 tileSet.setName(getString(atts, "name"));
@@ -110,7 +111,6 @@ public class TMXReader {
             } else {
                 throw new SAXException("unknown tag:" + qName);
             }
-
         }
 
         @Override
@@ -203,7 +203,6 @@ public class TMXReader {
             } else {
                 throw new SAXException("unknown tag:" + qName);
             }
-
         }
 
         @Override
@@ -315,7 +314,6 @@ public class TMXReader {
             } else {
                 throw new SAXException("unknown tag:" + qName);
             }
-
         }
 
         @Override
@@ -334,14 +332,6 @@ public class TMXReader {
         }
         return 0;
     }
-    /*
-     private int getInteger(String value){
-     if(value!=null){
-     return(Integer.valueOf(value));
-     }
-     return 0;
-     }
-     */
 
     private String getString(Attributes atts, String name) {
         String value = atts.getValue(name);
@@ -357,8 +347,6 @@ public class TMXReader {
         saxParser.parse(IS, new SAXStub());
         return (map);
     }
-    private HashMap<Integer, Integer> tileSetsGids = new HashMap<>();
-    private int tileSetIndex = 0;
 
     private Tile[][] data2tilesArray(String data, String encoding, String compression, MapLayer mapLayer) throws IOException {
         Tile[][] tiles = new Tile[mapLayer.getWidth()][mapLayer.getHeight()];
@@ -380,28 +368,32 @@ public class TMXReader {
 
                 for (int y = 0; y < mapLayer.getHeight(); y++) {
                     for (int x = 0; x < mapLayer.getWidth(); x++) {
-                        int tileId = 0;
-                        tileId |= is.read();
-                        tileId |= is.read() << 8;
-                        tileId |= is.read() << 16;
-                        tileId |= is.read() << 24;
+                        int tiletypeId = 0;
+                        tiletypeId |= is.read();
+                        tiletypeId |= is.read() << 8;
+                        tiletypeId |= is.read() << 16;
+                        tiletypeId |= is.read() << 24;
 
                         int TGID = -1;
                         Iterator<Integer> i = tileSetsGids.keySet().iterator();
                         while (i.hasNext()) {
                             int gid = i.next();
-                            if ((gid <= tileId) && (gid >= TGID)) {
+                            if ((gid <= tiletypeId) && (gid >= TGID)) {
                                 TGID = gid;
                             }
+                        }
+                        
+                        if(x==31 && y ==13){
+                            int hello = 0;
                         }
 
                         Tile tile = new Tile();
 
                         if (TGID != -1) {
-                            tile.setTileID(tileSetsGids.get(TGID));
-                            tile.setNumber(tileId - TGID);
+                            tile.setId(tileSetsGids.get(TGID));
+                            tile.setNumber(tiletypeId-TGID);
                         } else {
-                            tile.setTileID(-1);
+                            tile.setId(-1);
                             tile.setNumber(-1);
                         }
 

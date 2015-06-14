@@ -1,5 +1,9 @@
 package battlestatepack;
 
+import MapPack.JMEMap2d;
+import MapPack.Tile;
+import MapPack.TileCutter;
+import MapPack.TileSet;
 import playerPack.PCollideCont;
 import playerPack.KirithAS;
 import playerPack.DanAS;
@@ -19,14 +23,16 @@ import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.CameraNode;
-import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.control.CameraControl.ControlDirection;
 import com.jme3.scene.shape.Quad;
 import com.jme3.system.AppSettings;
-import com.jme3.texture.Texture;
+import com.jme3.texture.plugins.AWTLoader;
 import guiPack.MainMenu;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import spriteProject.SpriteEngine;
 
 /**
@@ -217,15 +223,31 @@ public class BattleMain extends AbstractAppState implements ActionListener {
     }
 
     private void makeMap() {
-        Geometry geom = new Geometry("Background", new Quad(1500f, 1500f));
-        Texture tex = assetManager.loadTexture("Textures/testBattle.png");
-        Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        mat.setTexture("ColorMap", tex);
-        geom.setMaterial(mat);
-        geom.center();
-        geom.move(470f, 550f, -2f);
-        BATTLENODE.attachChild(geom);
+        JMEMap2d mapMaker = new JMEMap2d(app.getRootNode(), assetManager, settings);
+        mapMaker.makeMap("test1");
         app.getViewPort().setBackgroundColor(ColorRGBA.Brown);
+
+        //test tile
+        /*
+        TileSet tileSet = new TileSet();
+        tileSet.setSource("Buch_Tiles.png");
+        TileCutter tileCutter = new TileCutter(16, 16, 0, 0);
+        try {
+            tileSet.importTileBitmap("assets/Scenes/" + tileSet.getSource(), tileCutter);
+        } catch (IOException ex) {
+            Logger.getLogger(JMEMap2d.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        AWTLoader loader = new AWTLoader();
+
+        Tile firstTile = new Tile();
+        firstTile.setId(4);
+        firstTile.setMesh(new Quad(16, 16));
+        firstTile.setMaterial(new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md"));
+        firstTile.setImage(tileSet.getTile(firstTile.getId()).getImage(), loader);
+        firstTile.setLocalTranslation(400, 400, -1);
+        
+        app.getRootNode().attachChild(firstTile);
+*/
     }
 
     private void look(Spatial s) {
