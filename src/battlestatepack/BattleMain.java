@@ -217,8 +217,7 @@ public class BattleMain extends AbstractAppState implements ActionListener {
     }
 
     private void makeMap() {
-        //at some point this will read a real map
-        Geometry geom = new Geometry("Quad", new Quad(1500f, 1500f));
+        Geometry geom = new Geometry("Background", new Quad(1500f, 1500f));
         Texture tex = assetManager.loadTexture("Textures/testBattle.png");
         Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         mat.setTexture("ColorMap", tex);

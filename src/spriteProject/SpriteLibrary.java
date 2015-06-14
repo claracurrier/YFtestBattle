@@ -6,14 +6,14 @@ import java.util.ArrayList;
 /**
  * @author Nicholas Mamo - Nyphoon Games
  *
- * edited by Clara Currier
+ * edited 2015 by Clara Currier
  */
 public class SpriteLibrary {
 
     public static Node l_baseNode;
     private boolean l_staticLibrary;
     private Node l_node;
-    private ArrayList<Sprite> l_library = new ArrayList<Sprite>();
+    private ArrayList<Sprite> l_library = new ArrayList<>();
     public Sprite curSprite;
 
     public SpriteLibrary(String name, boolean staticLibrary, Node attach) {
@@ -25,13 +25,11 @@ public class SpriteLibrary {
         this.l_staticLibrary = staticLibrary;
     }
 
-    //editor: Clara
     public void addSprite(Sprite sprite) {
         l_library.add(sprite);
         sprite.move(-(Float) l_node.getUserData("halfwidth"), -(Float) l_node.getUserData("halfheight"));
     }
 
-    //author: Clara
     public void activateSprite(int index) {
         Sprite s = getSprite(index);
         l_node.detachChild(curSprite.getNode());

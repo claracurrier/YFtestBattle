@@ -5,10 +5,12 @@ import java.util.ArrayList;
 
 /**
  * @author Nicholas Mamo - Nyphoon Games
+ * 
+ * edited 2015 by Clara Currier
  */
 public class SpriteEngine {
 
-    private ArrayList<SpriteLibrary> e_libraries = new ArrayList<SpriteLibrary>();
+    private ArrayList<SpriteLibrary> e_libraries = new ArrayList<>();
 
     public SpriteEngine() {
     }
