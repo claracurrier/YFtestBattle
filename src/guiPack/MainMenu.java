@@ -14,6 +14,7 @@ import com.jme3.input.event.MouseButtonEvent;
 import com.jme3.math.Vector2f;
 import com.jme3.scene.Node;
 import com.jme3.system.AppSettings;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import tonegod.gui.controls.windows.Window;
 import tonegod.gui.core.Screen;
 
@@ -38,6 +39,7 @@ public class MainMenu extends SimpleApplication implements ActionListener {
     private Credits credits;
     private Node tgGuiNode;
     private static boolean ispaused = false;
+    private static ScheduledThreadPoolExecutor executor;
 
     @Override
     public void simpleInitApp() {
@@ -47,6 +49,8 @@ public class MainMenu extends SimpleApplication implements ActionListener {
         screen = new Screen(this);
         guiNode.attachChild(tgGuiNode);
         tgGuiNode.addControl(screen);
+
+        executor = new ScheduledThreadPoolExecutor(2);
 
         pauseMenu = new PauseMenu(screen, stateManager, this);
         controlMenu = new ControlMenu(screen, stateManager, this);
@@ -74,10 +78,10 @@ public class MainMenu extends SimpleApplication implements ActionListener {
 
     public void makeStartMenu() {
         if (!inputManager.hasMapping("pause")) {
-                inputManager.addMapping("pause", new KeyTrigger(KeyInput.KEY_H));
-                inputManager.addListener(this, "pause");
-            }
-        
+            inputManager.addMapping("pause", new KeyTrigger(KeyInput.KEY_H));
+            inputManager.addListener(this, "pause");
+        }
+
         final Window win = new Window(screen, "win", new Vector2f(15, 15),
                 new Vector2f(settings.getWidth() - 30, settings.getHeight() - 30));
         screen.addElement(win);
@@ -193,5 +197,15 @@ public class MainMenu extends SimpleApplication implements ActionListener {
         if (name.equals("pause") && !isPressed && !ispaused) {
             pause();
         }
+    }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        executor.shutdown();
+    }
+
+    public static ScheduledThreadPoolExecutor getExecutor() {
+        return executor;
     }
 }

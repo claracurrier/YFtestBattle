@@ -1,9 +1,6 @@
 package battlestatepack;
 
 import MapPack.JMEMap2d;
-import MapPack.Tile;
-import MapPack.TileCutter;
-import MapPack.TileSet;
 import playerPack.PCollideCont;
 import playerPack.KirithAS;
 import playerPack.DanAS;
@@ -17,7 +14,6 @@ import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
-import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
@@ -26,13 +22,8 @@ import com.jme3.scene.CameraNode;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.control.CameraControl.ControlDirection;
-import com.jme3.scene.shape.Quad;
 import com.jme3.system.AppSettings;
-import com.jme3.texture.plugins.AWTLoader;
 import guiPack.MainMenu;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import spriteProject.SpriteEngine;
 
 /**
@@ -76,7 +67,7 @@ public class BattleMain extends AbstractAppState implements ActionListener {
         BATTLENODE.attachChild(ATKNODE);
         collideAS = new CollideAS();
         maker = new EntityMaker(assetManager);
-        picker = new Picker(cam, inputManager, set);
+        picker = new Picker(cam, inputManager, set, app.getRootNode());
 
         //set up characters
         dan = maker.createSpatial("Dan");
@@ -212,7 +203,7 @@ public class BattleMain extends AbstractAppState implements ActionListener {
         float aspect = (float) cam.getWidth() / cam.getHeight();
         cam.setFrustum(-100, 100, -aspect * frustumSize, aspect * frustumSize, frustumSize, -frustumSize);
         //key: near, far, left, right, top, bottom
-        cam.setLocation(new Vector3f(cam.getWidth() / 2, cam.getHeight() / 2, 10f));
+        cam.setLocation(new Vector3f(cam.getWidth() / 2, cam.getHeight() / 2, 5f));
         cam.setParallelProjection(true);
         //This mode means that camera copies the movements of the target:
         camNode.setControlDir(ControlDirection.SpatialToCamera);
@@ -226,28 +217,6 @@ public class BattleMain extends AbstractAppState implements ActionListener {
         JMEMap2d mapMaker = new JMEMap2d(app.getRootNode(), assetManager, settings);
         mapMaker.makeMap("test1");
         app.getViewPort().setBackgroundColor(ColorRGBA.Brown);
-
-        //test tile
-        /*
-        TileSet tileSet = new TileSet();
-        tileSet.setSource("Buch_Tiles.png");
-        TileCutter tileCutter = new TileCutter(16, 16, 0, 0);
-        try {
-            tileSet.importTileBitmap("assets/Scenes/" + tileSet.getSource(), tileCutter);
-        } catch (IOException ex) {
-            Logger.getLogger(JMEMap2d.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        AWTLoader loader = new AWTLoader();
-
-        Tile firstTile = new Tile();
-        firstTile.setId(4);
-        firstTile.setMesh(new Quad(16, 16));
-        firstTile.setMaterial(new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md"));
-        firstTile.setImage(tileSet.getTile(firstTile.getId()).getImage(), loader);
-        firstTile.setLocalTranslation(400, 400, -1);
-        
-        app.getRootNode().attachChild(firstTile);
-*/
     }
 
     private void look(Spatial s) {

@@ -382,21 +382,18 @@ public class TMXReader {
                                 TGID = gid;
                             }
                         }
-                        
-                        if(x==31 && y ==13){
-                            int hello = 0;
-                        }
-
                         Tile tile = new Tile();
 
                         if (TGID != -1) {
                             tile.setId(tileSetsGids.get(TGID));
-                            tile.setNumber(tiletypeId-TGID);
+                            tile.setNumber(tiletypeId - TGID);
                         } else {
                             tile.setId(-1);
                             tile.setNumber(-1);
                         }
 
+                        tile.setLoc(x, y);
+                        tile.setLayer(mapLayer);
                         tiles[x][y] = tile;
                     }
                 }

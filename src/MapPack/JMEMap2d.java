@@ -74,12 +74,13 @@ public class JMEMap2d {
 
         Tile firstTile = layer.getTile(0, 0);
         firstTile.setMesh(new Quad(16, 16));
-        firstTile.setMaterial(new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md"));
+        
         for (int j = 0; j < layer.getHeight(); j++) {
             for (int i = 0; i < layer.getWidth(); i++) {
                 if (layer.getTile(i, j).getNumber() >= 0) {
                     Tile tile = layer.getTile(i, j);
-                    tile.setGeom(firstTile);
+                    tile.setMaterial(new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md"));
+                    tile.setMesh(firstTile);
                     tile.setImage(tileSet.getTile(tile.getNumber()).getImage(), loader);
                     tileGeoms.attachChild(tile);
                     tile.setLocalTranslation(i* 16, (layer.getHeight()-j)*16, zorder-3);
