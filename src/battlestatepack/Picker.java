@@ -85,8 +85,9 @@ public class Picker implements ActionListener {
                 System.out.println(closest.getGeometry().toString());
                 if (closest.getGeometry() instanceof Tile) {
                     activeChar.addControl(new MoveCont(
-                            new Pathway(mouseAngle(mouseLoc2d),
-                            activeChar.getLocalTranslation().distance(mouseLoc3d)),
+                            new Pathway(
+                            activeChar.getLocalTranslation(),
+                            mouseLoc3d),
                             activeChar.getName()));
                 } else {
                     System.out.println("not a tile");
@@ -96,38 +97,6 @@ public class Picker implements ActionListener {
                 System.out.println("nothing");
 
             }
-        }
-    }
-
-    private int mouseAngle(Vector2f mouseloc) {
-        Vector2f newvec = mouseloc.subtract(cam.getLocation().x,
-                cam.getLocation().y);
-        float aim = newvec.normalize().getAngle();
-
-        if (aim <= 5 * FastMath.PI / 6 && aim > 2 * FastMath.PI / 3) {
-            //up left
-            return 7;
-        } else if (aim <= 2 * FastMath.PI / 3 && aim > FastMath.PI / 3) {
-            //facing up
-            return 0;
-        } else if (aim <= FastMath.PI / 3 && aim > FastMath.PI / 6) {
-            //up right
-            return 1;
-        } else if (aim <= FastMath.PI / 6 && aim > -FastMath.PI / 6) {
-            //facing right
-            return 2;
-        } else if (aim <= -FastMath.PI / 6 && aim > -FastMath.PI / 3) {
-            //down right
-            return 3;
-        } else if (aim <= -FastMath.PI / 3 && aim > -2 * FastMath.PI / 3) {
-            //facing down
-            return 4;
-        } else if (aim <= -2 * FastMath.PI / 3 && aim > -5 * FastMath.PI / 6) {
-            //down left
-            return 5;
-        } else {
-            //facing left
-            return 6;
         }
     }
 }

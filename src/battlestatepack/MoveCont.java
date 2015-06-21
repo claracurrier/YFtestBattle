@@ -4,9 +4,12 @@
  */
 package battlestatepack;
 
+import com.jme3.math.FastMath;
+import com.jme3.math.Vector2f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.control.AbstractControl;
+import java.util.LinkedList;
 import spriteProject.SpriteLibrary;
 
 /**
@@ -15,16 +18,20 @@ import spriteProject.SpriteLibrary;
  */
 public class MoveCont extends AbstractControl {
 
-    private Pathway path;
+    private LinkedList<Vector2f> path;
     private final float speed = GVars.gvars.pspeed;
     private int dir = 4;
     private SpriteLibrary spatSL;
     private float distanceCovered;
-    private int dirsCovered;
+    private Vector2f curCoord;
+    private Vector2f targCoord;
+    boolean runOnce = true;
 
     public MoveCont(Pathway p, String name) {
-        path = p;
+        path = p.getPath();
         spatSL = BattleMain.sEngine.getLibrary(name);
+        curCoord = path.removeFirst();
+        targCoord = path.removeFirst();
     }
 
     public int getDir() {
@@ -37,9 +44,14 @@ public class MoveCont extends AbstractControl {
 
     @Override
     public void controlUpdate(float tpf) {
-        if (dirsCovered < path.getDirs().length) {
-            if (distanceCovered <= path.getLengths()[dirsCovered]) {
-                switch (path.getDirs()[dirsCovered]) {
+        if (runOnce) {
+            if (!path.isEmpty()) {
+                curCoord = targCoord;
+                targCoord = path.removeFirst();
+            }
+
+            if (distanceCovered < curCoord.distance(targCoord)) {
+                switch (findMoveDir(curCoord, targCoord)) {
                     case 0: //up
                         spatial.move(0, tpf * speed, 0);
                         spatSL.activateSprite(0);
@@ -88,10 +100,13 @@ public class MoveCont extends AbstractControl {
                         dir = 7;
                         distanceCovered += tpf * speed / 2.818f;
                         break;
-
                 }
+
             } else {
-                dirsCovered++;
+                distanceCovered = 0;
+                if (path.isEmpty()) {
+                    runOnce = false;
+                }
             }
         } else {
             //stop moving
@@ -122,6 +137,37 @@ public class MoveCont extends AbstractControl {
                     break;
             }
             spatial.removeControl(this);
+        }
+    }
+
+    private int findMoveDir(Vector2f cur, Vector2f targ) {
+        Vector2f newvec = targ.subtract(cur);
+        float aim = newvec.normalize().getAngle();
+
+        if (aim <= 5 * FastMath.PI / 6 && aim > 2 * FastMath.PI / 3) {
+            //up left
+            return 7;
+        } else if (aim <= 2 * FastMath.PI / 3 && aim > FastMath.PI / 3) {
+            //facing up
+            return 0;
+        } else if (aim <= FastMath.PI / 3 && aim > FastMath.PI / 6) {
+            //up right
+            return 1;
+        } else if (aim <= FastMath.PI / 6 && aim > -FastMath.PI / 6) {
+            //facing right
+            return 2;
+        } else if (aim <= -FastMath.PI / 6 && aim > -FastMath.PI / 3) {
+            //down right
+            return 3;
+        } else if (aim <= -FastMath.PI / 3 && aim > -2 * FastMath.PI / 3) {
+            //facing down
+            return 4;
+        } else if (aim <= -2 * FastMath.PI / 3 && aim > -5 * FastMath.PI / 6) {
+            //down left
+            return 5;
+        } else {
+            //facing left
+            return 6;
         }
     }
 

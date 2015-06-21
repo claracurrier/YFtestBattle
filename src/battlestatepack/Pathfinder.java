@@ -25,11 +25,11 @@ import java.util.logging.Logger;
  */
 public class Pathfinder extends AbstractControl {
 
-    Tile start, end;
+    private Tile start, end;
     //The future that is used to check the execution status:
-    Future future = null;
-    Pathway way = null;
-    ScheduledThreadPoolExecutor executor = MainMenu.getExecutor();
+    private Future future = null;
+    private Pathway way = null;
+    private final ScheduledThreadPoolExecutor executor = MainMenu.getExecutor();
 
     public Pathfinder(Tile s, Tile e) {
         start = s;
@@ -64,7 +64,7 @@ public class Pathfinder extends AbstractControl {
         }
     }
 
-    public static class PriorityList<T> extends LinkedList {
+    private class PriorityList<T> extends LinkedList {
 
         public void add(Comparable tile) {
             for (int i = 0; i < size(); i++) {
@@ -99,13 +99,13 @@ public class Pathfinder extends AbstractControl {
                     if (closedset.contains(neighbor)) {
                         continue;
                     }
-                    float tentative_g_cost = current.costFromStart
+                    float possibleNewCost = current.costFromStart
                             + current.getCost(neighbor);
 
                     if (!openset.contains(neighbor)
-                            || tentative_g_cost < neighbor.costFromStart) {
+                            || possibleNewCost < neighbor.costFromStart) {
                         neighbor.pathParent = current;
-                        neighbor.costFromStart = tentative_g_cost;
+                        neighbor.costFromStart = possibleNewCost;
                         neighbor.estimatedCostToGoal = neighbor.costFromStart
                                 + neighbor.getEstimatedCost(end);
                         if (!openset.contains(neighbor)) {
@@ -119,8 +119,13 @@ public class Pathfinder extends AbstractControl {
         }
     };
 
-    public Pathway reconstructWay(Tile begin, Tile current) {
-        return new Pathway(0, 0); //contains the lengths and number of turns to make
+    public Pathway reconstructWay(Tile node) {
+        LinkedList<Tile> path = new LinkedList<>();
+        while (node.pathParent != null) {
+            path.addFirst(node);
+            node = node.pathParent;
+        }
+        return new Pathway(path); //contains the lengths and number of turns to make
     }
 
     @Override

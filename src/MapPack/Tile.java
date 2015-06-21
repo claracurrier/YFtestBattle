@@ -95,11 +95,22 @@ public class Tile extends Geometry implements Comparable {
         return location;
     }
 
-    public int[][] getLocArray() {
+    public int[][] getLocArrayInt() {
         int[][] newint = new int[1][1];
         newint[0][1] = (int) location.y;
         newint[1][0] = (int) location.x;
         return newint;
+    }
+
+    public float[][] getLocArrayFloat() {
+        float[][] newint = new float[1][1];
+        newint[0][1] = (float) location.y * 16f;
+        newint[1][0] = (float) location.x * 16f;
+        return newint;
+    }
+
+    public Vector2f getWorldLocVec() {
+        return location.mult(16);
     }
 
     public float distBetween(Tile other) {
