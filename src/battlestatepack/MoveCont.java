@@ -44,70 +44,61 @@ public class MoveCont extends AbstractControl {
 
     @Override
     public void controlUpdate(float tpf) {
-        if (runOnce) {
-            if (!path.isEmpty()) {
-                curCoord = targCoord;
-                targCoord = path.removeFirst();
+        if (distanceCovered < curCoord.distance(targCoord)) {
+            switch (findMoveDir(curCoord, targCoord)) {
+                case 0: //up
+                    spatial.move(0, tpf * speed, 0);
+                    spatSL.activateSprite(0);
+                    dir = 0;
+                    distanceCovered += tpf * speed;
+                    break;
+                case 1://upright
+                    spatial.move(tpf * speed / 1.414f, tpf * speed / 1.414f, 0);
+                    spatSL.activateSprite(1);
+                    dir = 1;
+                    distanceCovered += tpf * speed * 1.414f;
+                    break;
+                case 2://right
+                    spatial.move(tpf * speed, 0, 0);
+                    spatSL.activateSprite(2);
+                    dir = 2;
+                    distanceCovered += tpf * speed;
+                    break;
+                case 3: //downright
+                    spatial.move(tpf * speed / 1.414f, tpf * -speed / 1.414f, 0);  //needs to be fixed
+                    spatSL.activateSprite(3);
+                    dir = 3;
+                    distanceCovered += tpf * speed * 1.414f;
+                    break;
+                case 4://down
+                    spatial.move(0, tpf * -speed, 0);
+                    spatSL.activateSprite(4);
+                    dir = 4;
+                    distanceCovered += tpf * speed;
+                    break;
+                case 5://downleft
+                    spatial.move(tpf * -speed / 1.414f, tpf * -speed / 1.414f, 0);
+                    spatSL.activateSprite(5);
+                    dir = 5;
+                    distanceCovered += tpf * speed * 1.414f;
+                    break;
+                case 6: //left
+                    spatial.move(tpf * -speed, 0, 0);
+                    spatSL.activateSprite(6);
+                    dir = 6;
+                    distanceCovered += tpf * speed;
+                    break;
+                case 7: //upleft
+                    spatial.move(tpf * -speed / 1.414f, tpf * speed / 1.414f, 0);
+                    spatSL.activateSprite(7);
+                    dir = 7;
+                    distanceCovered += tpf * speed * 1.414f;
+                    break;
             }
-
-            if (distanceCovered < curCoord.distance(targCoord)) {
-                switch (findMoveDir(curCoord, targCoord)) {
-                    case 0: //up
-                        spatial.move(0, tpf * speed, 0);
-                        spatSL.activateSprite(0);
-                        dir = 0;
-                        distanceCovered += tpf * speed;
-                        break;
-                    case 1://upright
-                        spatial.move(tpf * speed / 1.414f, tpf * speed / 1.414f, 0);
-                        spatSL.activateSprite(1);
-                        dir = 1;
-                        distanceCovered += tpf * speed / 2.818f;
-                        break;
-                    case 2://right
-                        spatial.move(tpf * speed, 0, 0);
-                        spatSL.activateSprite(2);
-                        dir = 2;
-                        distanceCovered += tpf * speed;
-                        break;
-                    case 3: //downright
-                        spatial.move(tpf * speed / 1.414f, tpf * -speed / 1.414f, 0);  //needs to be fixed
-                        spatSL.activateSprite(3);
-                        dir = 3;
-                        distanceCovered += tpf * speed / 2.818f;
-                        break;
-                    case 4://down
-                        spatial.move(0, tpf * -speed, 0);
-                        spatSL.activateSprite(4);
-                        dir = 4;
-                        distanceCovered += tpf * speed;
-                        break;
-                    case 5://downleft
-                        spatial.move(tpf * -speed / 1.414f, tpf * -speed / 1.414f, 0);
-                        spatSL.activateSprite(5);
-                        dir = 5;
-                        distanceCovered += tpf * speed / 2.818f;
-                        break;
-                    case 6: //left
-                        spatial.move(tpf * -speed, 0, 0);
-                        spatSL.activateSprite(6);
-                        dir = 6;
-                        distanceCovered += tpf * speed;
-                        break;
-                    case 7: //upleft
-                        spatial.move(tpf * -speed / 1.414f, tpf * speed / 1.414f, 0);
-                        spatSL.activateSprite(7);
-                        dir = 7;
-                        distanceCovered += tpf * speed / 2.818f;
-                        break;
-                }
-
-            } else {
-                distanceCovered = 0;
-                if (path.isEmpty()) {
-                    runOnce = false;
-                }
-            }
+        } else if (!path.isEmpty()) {
+            curCoord = targCoord;
+            targCoord = path.removeFirst();
+            distanceCovered = 0;
         } else {
             //stop moving
             switch (dir) { //activite proper idle sprite

@@ -40,6 +40,12 @@ public class Tile extends Geometry implements Comparable {
         mesh = new Quad(16, 16);
     }
 
+    public Tile(Vector2f location, Tile mimic) {
+        //for navigational purposes, meant to be destroyed after use
+        this.location = location;
+        layer = mimic.getLayer();
+    }
+
     public void setMesh(Geometry clone) {
         mesh = clone.getMesh();
     }
@@ -161,41 +167,46 @@ public class Tile extends Geometry implements Comparable {
         return costFromStart + estimatedCostToGoal;
     }
 
+    public float getEstimatedCost(Tile end) {
+        //TODO
+        return this.distBetween(end);
+    }
+
     public Tile[] getNeighbors() {
         Tile[] neighbors = new Tile[8];
 
         //up
         neighbors[0] = layer.getTile(
-                (int) this.getLocVec().x,
-                (int) this.getLocVec().y + 16);
+                location.x,
+                location.y + 1);
         //upright
         neighbors[1] = layer.getTile(
-                (int) this.getLocVec().x + 16,
-                (int) this.getLocVec().y + 16);
+                location.x + 1,
+                location.y + 1);
         //right
         neighbors[2] = layer.getTile(
-                (int) this.getLocVec().x + 16,
-                (int) this.getLocVec().y);
+                location.x + 1,
+                location.y);
         //downright
         neighbors[3] = layer.getTile(
-                (int) this.getLocVec().x + 16,
-                (int) this.getLocVec().y - 16);
+                location.x + 1,
+                location.y - 1);
         //down
         neighbors[4] = layer.getTile(
-                (int) this.getLocVec().x,
-                (int) this.getLocVec().y - 16);
+                location.x,
+                location.y - 1);
         //downleft
         neighbors[5] = layer.getTile(
-                (int) this.getLocVec().x - 16,
-                (int) this.getLocVec().y - 16);
+                location.x - 1,
+                location.y - 1);
         //left
         neighbors[6] = layer.getTile(
-                (int) this.getLocVec().x - 16,
-                (int) this.getLocVec().y);
+                location.x - 1,
+                location.y);
         //upleft
         neighbors[7] = layer.getTile(
-                (int) this.getLocVec().x - 16,
-                (int) this.getLocVec().y + 16);
+                location.x - 1,
+                location.y + 1);
 
         return neighbors;
     }
@@ -207,10 +218,5 @@ public class Tile extends Geometry implements Comparable {
 
         float v = thisValue - otherValue;
         return (v > 0) ? 1 : (v < 0) ? -1 : 0; // sign function
-    }
-
-    public float getEstimatedCost(Tile end) {
-        //TODO
-        return 0f;
     }
 }

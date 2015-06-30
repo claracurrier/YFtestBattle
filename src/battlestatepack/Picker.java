@@ -11,7 +11,6 @@ import com.jme3.input.InputManager;
 import com.jme3.input.MouseInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.MouseButtonTrigger;
-import com.jme3.math.FastMath;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
@@ -63,19 +62,13 @@ public class Picker implements ActionListener {
         if (name.equals("click") && !keyPressed) {
             mouse = input.getCursorPosition();
 
-            //to get an accurate location of the mouse
-            //subtract half the screenwidth and screenheight from mouse
-            //add camera's position to the recalculated mouse
-            Vector3f mouseLoc3d = new Vector3f(mouse.x - settings.getWidth() / 2,
-                    mouse.y - settings.getHeight() / 2, 2f);
-            mouseLoc3d.addLocal(cam.getLocation());
-
-            Vector2f mouseLoc2d = new Vector2f(mouseLoc3d.x, mouseLoc3d.y);
+            Vector3f mousePosition3d = cam.getWorldCoordinates(mouse, 0).clone();
+            Vector3f direction = cam.getWorldCoordinates(mouse, 1f).subtractLocal(mousePosition3d).normalizeLocal();
 
             // 1. Reset results list.
             CollisionResults results = new CollisionResults();
             // 2. Aim the ray from cam loc to cam direction.
-            Ray ray = new Ray(mouseLoc3d, Vector3f.UNIT_Z.mult(-1));
+            Ray ray = new Ray(mousePosition3d, direction);
             // 3. Collect intersections between Ray and Shootables in results list.
             rootNode.collideWith(ray, results);
             // 4. Use the results (we mark the hit object)
@@ -84,11 +77,13 @@ public class Picker implements ActionListener {
                 CollisionResult closest = results.getClosestCollision();
                 System.out.println(closest.getGeometry().toString());
                 if (closest.getGeometry() instanceof Tile) {
-                    activeChar.addControl(new MoveCont(
-                            new Pathway(
-                            activeChar.getLocalTranslation(),
-                            mouseLoc3d),
-                            activeChar.getName()));
+                    Tile start = new Tile(new Vector2f(
+                            activeChar.getLocalTranslation().x/16,
+                            activeChar.getLocalTranslation().y/16),
+                            (Tile) closest.getGeometry());
+                    Pathfinder pathfinder = new Pathfinder(start, (Tile) closest.getGeometry());
+                    activeChar.addControl(pathfinder);
+                    start = null;
                 } else {
                     System.out.println("not a tile");
                 }

@@ -52,14 +52,17 @@ public class Pathfinder extends AbstractControl {
                 } else if (future.isCancelled()) {
                     //Set future to null. Maybe we succeed next time...
                     future = null;
+                    spatial.removeControl(this);
                 }
             }
         } catch (InterruptedException | ExecutionException e) {
             Logger.getLogger(JMEMap2d.class.getName()).log(Level.SEVERE, null, e);
+            spatial.removeControl(this);
         }
         if (way != null) {
             //.... Success! Let's process the wayList and move the NPC...
             //add a new MoveCont using the pathway
+            spatial.addControl(new MoveCont(way, spatial.getName()));
             spatial.removeControl(this);
         }
     }
@@ -91,7 +94,7 @@ public class Pathfinder extends AbstractControl {
             while (!openset.isEmpty()) {
                 Tile current = (Tile) openset.removeFirst(); // lowest f-score val
                 if (current.equals(end)) {
-                    return way;
+                    return reconstructWay(end);
                 }
 
                 closedset.add(current);
@@ -115,17 +118,18 @@ public class Pathfinder extends AbstractControl {
                 }
             }
             //failure
-            return way;
+            System.out.println("failure");
+            return null;
         }
     };
 
-    public Pathway reconstructWay(Tile node) {
+    private Pathway reconstructWay(Tile node) {
         LinkedList<Tile> path = new LinkedList<>();
         while (node.pathParent != null) {
             path.addFirst(node);
             node = node.pathParent;
         }
-        return new Pathway(path); //contains the lengths and number of turns to make
+        return new Pathway(path); //contains the tiles that lie on the path
     }
 
     @Override
