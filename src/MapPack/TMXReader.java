@@ -23,10 +23,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterInputStream;
-
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -392,8 +390,9 @@ public class TMXReader {
                             tile.setNumber(-1);
                         }
 
-                        tile.setLoc(x, y);
+                        tile.setLocVector(x * 16, (mapLayer.getHeight()-y) * 16);
                         tile.setLayer(mapLayer);
+                        tile.setLocArray(x, y);
                         tiles[x][y] = tile;
                     }
                 }

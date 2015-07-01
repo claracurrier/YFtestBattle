@@ -26,7 +26,6 @@ import java.util.logging.Logger;
 public class Pathfinder extends AbstractControl {
 
     private Tile start, end;
-    //The future that is used to check the execution status:
     private Future future = null;
     private Pathway way = null;
     private final ScheduledThreadPoolExecutor executor = MainMenu.getExecutor();
@@ -57,11 +56,11 @@ public class Pathfinder extends AbstractControl {
             }
         } catch (InterruptedException | ExecutionException e) {
             Logger.getLogger(JMEMap2d.class.getName()).log(Level.SEVERE, null, e);
+            future = null;
             spatial.removeControl(this);
         }
         if (way != null) {
-            //.... Success! Let's process the wayList and move the NPC...
-            //add a new MoveCont using the pathway
+            //.... Success! Add a new MoveCont using the pathway
             spatial.addControl(new MoveCont(way, spatial.getName()));
             spatial.removeControl(this);
         }
@@ -87,7 +86,7 @@ public class Pathfinder extends AbstractControl {
             PriorityList<Tile> openset = new PriorityList<>();
 
             start.costFromStart = 0;
-            start.estimatedCostToGoal = start.getEstimatedCost(end);
+            start.estimatedCostToGoal = start.getCost(end);
             start.pathParent = null;
             openset.add(start);
 
@@ -110,7 +109,7 @@ public class Pathfinder extends AbstractControl {
                         neighbor.pathParent = current;
                         neighbor.costFromStart = possibleNewCost;
                         neighbor.estimatedCostToGoal = neighbor.costFromStart
-                                + neighbor.getEstimatedCost(end);
+                                + neighbor.getCost(end);
                         if (!openset.contains(neighbor)) {
                             openset.add(neighbor);
                         }
@@ -129,6 +128,7 @@ public class Pathfinder extends AbstractControl {
             path.addFirst(node);
             node = node.pathParent;
         }
+        path.addFirst(start);
         return new Pathway(path); //contains the tiles that lie on the path
     }
 

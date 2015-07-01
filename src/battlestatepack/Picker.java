@@ -78,8 +78,8 @@ public class Picker implements ActionListener {
                 System.out.println(closest.getGeometry().toString());
                 if (closest.getGeometry() instanceof Tile) {
                     Tile start = new Tile(new Vector2f(
-                            activeChar.getLocalTranslation().x/16,
-                            activeChar.getLocalTranslation().y/16),
+                            activeChar.getLocalTranslation().x,
+                            activeChar.getLocalTranslation().y),
                             (Tile) closest.getGeometry());
                     Pathfinder pathfinder = new Pathfinder(start, (Tile) closest.getGeometry());
                     activeChar.addControl(pathfinder);

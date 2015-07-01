@@ -15,8 +15,6 @@
  */
 package MapPack;
 
-import com.jme3.math.FastMath;
-
 public class MapLayer {
 
     private String name;
@@ -53,7 +51,14 @@ public class MapLayer {
     }
 
     public Tile getTile(float x, float y) {
-        return tiles[(int) x][(int) y];
+        if (x < 0) {
+            x = 0;
+        }
+        if (y < 0) {
+            y = 0;
+        }
+
+        return tiles[(int) (x / 16)][(int) (height - (y / 16))];
     }
 
     public void setTileAt(int x, int y, Tile tile) {

@@ -25,6 +25,7 @@ public class Tile extends Geometry implements Comparable {
     private TileSet tileSet;
     private Properties properties;
     private Vector2f location = new Vector2f();
+    private int[][] arraylocation = new int[1][2];
     private MapLayer layer;
     //below are for pathfinding purposes
     public Tile pathParent;
@@ -36,7 +37,6 @@ public class Tile extends Geometry implements Comparable {
     }
 
     public Tile(boolean newMesh) {
-        //change the size when you find out what size tiles you'll use
         mesh = new Quad(16, 16);
     }
 
@@ -93,34 +93,32 @@ public class Tile extends Geometry implements Comparable {
         this.tileGID = Tn;
     }
 
-    public void setLoc(int x, int y) {
+    public void setLocVector(int x, int y) {
         location.set(x, y);
     }
 
-    public Vector2f getLocVec() {
+    public void setLocArray(int x, int y) {
+        arraylocation[0][1] = y;
+        arraylocation[0][0] = x;
+    }
+
+    public Vector2f getLocVector() {
         return location;
     }
 
-    public int[][] getLocArrayInt() {
-        int[][] newint = new int[1][1];
-        newint[0][1] = (int) location.y;
-        newint[1][0] = (int) location.x;
-        return newint;
+    public int[][] getLocArray() {
+        return arraylocation;
     }
 
-    public float[][] getLocArrayFloat() {
-        float[][] newint = new float[1][1];
-        newint[0][1] = (float) location.y * 16f;
-        newint[1][0] = (float) location.x * 16f;
+    public float[][] getTrueLocArray() {
+        float[][] newint = new float[0][1];
+        newint[0][1] = (float) location.y;
+        newint[0][0] = (float) location.x;
         return newint;
-    }
-
-    public Vector2f getWorldLocVec() {
-        return location.mult(16);
     }
 
     public float distBetween(Tile other) {
-        return this.getLocVec().distance(other.getLocVec());
+        return this.getLocVector().distance(other.getLocVector());
     }
 
     public void setLayer(MapLayer l) {
@@ -133,13 +131,14 @@ public class Tile extends Geometry implements Comparable {
 
     @Override
     public String toString() {
-        return "tile " + tilenumber + " at " + location;
+        return "tile " + tilenumber + " at " + location + ", " 
+                + arraylocation[0][0]+", "+arraylocation[0][1];
     }
 
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Tile) {
-            if (this.getLocVec().equals(((Tile) obj).getLocVec())) {
+            if (this.location.equals(((Tile) obj).getLocVector())) {
                 return true;
             } else {
                 return false;
@@ -156,20 +155,12 @@ public class Tile extends Geometry implements Comparable {
         return hash;
     }
 
-    public float getCost(Tile goal) {
-        //TODO
-        //cost of moving from one tile to adjacent one
-        return this.distBetween(goal);
+    public float getCost(Tile end) {
+        return this.distBetween(end);
     }
 
     public float getCost() {
-        //TODO
         return costFromStart + estimatedCostToGoal;
-    }
-
-    public float getEstimatedCost(Tile end) {
-        //TODO
-        return this.distBetween(end);
     }
 
     public Tile[] getNeighbors() {
@@ -178,35 +169,35 @@ public class Tile extends Geometry implements Comparable {
         //up
         neighbors[0] = layer.getTile(
                 location.x,
-                location.y + 1);
+                location.y + 16);
         //upright
         neighbors[1] = layer.getTile(
-                location.x + 1,
-                location.y + 1);
+                location.x + 16,
+                location.y + 16);
         //right
         neighbors[2] = layer.getTile(
-                location.x + 1,
+                location.x + 16,
                 location.y);
         //downright
         neighbors[3] = layer.getTile(
-                location.x + 1,
-                location.y - 1);
+                location.x + 16,
+                location.y - 16);
         //down
         neighbors[4] = layer.getTile(
                 location.x,
-                location.y - 1);
+                location.y - 16);
         //downleft
         neighbors[5] = layer.getTile(
-                location.x - 1,
-                location.y - 1);
+                location.x - 16,
+                location.y - 16);
         //left
         neighbors[6] = layer.getTile(
-                location.x - 1,
+                location.x - 16,
                 location.y);
         //upleft
         neighbors[7] = layer.getTile(
-                location.x - 1,
-                location.y + 1);
+                location.x - 16,
+                location.y + 16);
 
         return neighbors;
     }
