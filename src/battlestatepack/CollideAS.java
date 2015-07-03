@@ -21,7 +21,7 @@ public class CollideAS extends AbstractAppState {
     private final Vector2f xaxis = new Vector2f(1f, 0);
     private final Vector2f yaxis = new Vector2f(0, 1f);
     private boolean collided = false;
-    private Spatial atkchild, defchild, spatial, curChild;
+    private Spatial atkchild, defchild, spatial;
     private int val;
 
     public CollideAS() {
@@ -52,6 +52,34 @@ public class CollideAS extends AbstractAppState {
         if (isEnabled()) {
             moveCheck(spatial);
             attackCheck();
+            if (CameraOptions.options.getCamSetting().equals("AutoFollow")) {
+                camCheck(CameraOptions.options.getCamBox(), tpf);
+            }
+        }
+    }
+
+    private void camCheck(Node camBox, float tpf) {
+        //takes care of camera movement right here
+        // bit of a bad design, may want to refactor later
+        for (int i = 0; i < 4; i++) {
+            Spatial camBoxEdge = camBox.getChild("camBox" + i);
+            val = satTest(camBoxEdge, spatial);
+            if (val > 0) {
+                switch (val) {
+                    case 1: //left
+                        camBox.move(tpf * GVars.gvars.pspeed, 0, 0);
+                        break;
+                    case 2: //right
+                        camBox.move(-tpf * GVars.gvars.pspeed, 0, 0);
+                        break;
+                    case 3: //down
+                        camBox.move(0, -tpf * GVars.gvars.pspeed, 0);
+                        break;
+                    case 4: //up
+                        camBox.move(0, tpf * GVars.gvars.pspeed, 0);
+                        break;
+                }
+            }
         }
     }
 
@@ -103,7 +131,7 @@ public class CollideAS extends AbstractAppState {
         collided = false;
         //collision loop
         for (int i = 0; i < defNode.getQuantity(); i++) {
-            curChild = defNode.getChild(i);
+            Spatial curChild = defNode.getChild(i);
             if (!curChild.equals(player)) {
                 val = satTest(player, curChild);
                 if (val > 0) {

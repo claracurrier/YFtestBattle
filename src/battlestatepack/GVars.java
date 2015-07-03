@@ -8,15 +8,9 @@ import com.jme3.math.FastMath;
 
 /**
  *
- * @author PC
+ * @author Clara Currier
  */
 public class GVars {
-    /*
-     * A singleton class containing all of the fields with importance to gameplay
-     * balance for the alpha stages. Ultimately this will get abstracted into
-     * each mob's individual scripts, but this can also remain for Dan and Kirith
-     * and make it easier to manually adjust difficulty.
-     */
 
     public static final GVars gvars = new GVars();
 
@@ -31,6 +25,7 @@ public class GVars {
     public final float pdistancefrommob = 180;
     public final float pdistancefromrest = 120;
     public final float pdistancefromsafety = 230;
+    public final float camspeed = 450f;
     //Kirith's vars
     public final float kspinpower = 7;
     public final float kdizzytimer = 3;
