@@ -87,7 +87,7 @@ public class BattleMain extends AbstractAppState implements ActionListener {
         CameraOptions.options.setup(app.getCamera(), inputManager);
         CameraOptions.options.makeCamBox(app.getRootNode());
         CameraOptions.options.setCamSetting("Manual");
-       // CameraOptions.options.setAutoFollowCam(dan);
+        CameraOptions.options.setCamBoxLoc(dan);
         
         makeMap();
         switchCharKey(true);
@@ -121,7 +121,7 @@ public class BattleMain extends AbstractAppState implements ActionListener {
             stateManager.attach(kiAppState);
             picker.setActiveChar(kirith);
             
-            CameraOptions.options.setAutoFollowCam(kirith);
+            CameraOptions.options.setCamBoxLoc(kirith);
             battleGUI.setActiveHUD(kiCC);
             
         } else if (stateManager.hasState(kiAppState)) {
@@ -131,7 +131,7 @@ public class BattleMain extends AbstractAppState implements ActionListener {
             stateManager.attach(danAppState);
             picker.setActiveChar(dan);
             
-            CameraOptions.options.setAutoFollowCam(dan);
+            CameraOptions.options.setCamBoxLoc(dan);
             battleGUI.setActiveHUD(danCC);
         }
     }

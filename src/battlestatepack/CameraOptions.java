@@ -44,6 +44,7 @@ public class CameraOptions {
         return camBox;
     }
 
+    @SuppressWarnings("empty-statement")
     public void setCamSetting(String setting) {
         camSetting = setting;
         camBox.detachAllChildren(); //clears the Node
@@ -100,7 +101,7 @@ public class CameraOptions {
         }
     }
 
-    public void setAutoFollowCam(Spatial character) {
+    public void setCamBoxLoc(Spatial character) {
         camBox.setLocalTranslation(character.getLocalTranslation());
     }
 }

@@ -6,6 +6,8 @@ package MapPack;
 
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
+import com.jme3.material.RenderState.BlendMode;
+import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Quad;
 import com.jme3.system.AppSettings;
@@ -65,29 +67,31 @@ public class JMEMap2d {
         for (int i = 0; i < map.getNumLayers(); i++) {
             mapNode.attachChild(makeTileNodes(map.getLayer(i), map.getLayer(i).getName(), tileSet, i));
         }
-        
+
         rootNode.attachChild(mapNode);
     }
 
     private Node makeTileNodes(MapLayer layer, String name, TileSet tileSet, int zorder) {
         Node tileGeoms = new Node(name);
-
         Tile firstTile = layer.getTile(0, 0);
         firstTile.setMesh(new Quad(16, 16));
-        
+
         for (int j = 0; j < layer.getHeight(); j++) {
             for (int i = 0; i < layer.getWidth(); i++) {
                 if (layer.getTile(i, j).getNumber() >= 0) {
                     Tile tile = layer.getTile(i, j);
-                    tile.setMaterial(new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md"));
+                    Material tileMat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+                    tileMat.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
+                    tileMat.getAdditionalRenderState().setAlphaTest(true);
+                    tileMat.getAdditionalRenderState().setAlphaFallOff(1);
+                    tile.setMaterial(tileMat);
                     tile.setMesh(firstTile);
                     tile.setImage(tileSet.getTile(tile.getNumber()).getImage(), loader);
                     tileGeoms.attachChild(tile);
-                    tile.setLocalTranslation(i* 16, (layer.getHeight()-j)*16, zorder-3);
+                    tile.setLocalTranslation(i * 16, (layer.getHeight() - j) * 16, zorder - 3);
                 }
             }
         }
-
         return tileGeoms;
     }
 }

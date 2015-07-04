@@ -8,6 +8,7 @@ import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
+import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.debug.WireBox;
@@ -33,7 +34,8 @@ public class EntityMaker {
         float height = 80f;
 
         Material picMat = new Material(assetManager, "Common/MatDefs/Gui/Gui.j3md");
-        picMat.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.AlphaAdditive);
+        picMat.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
+        node.setQueueBucket(RenderQueue.Bucket.Transparent);
         node.setMaterial(picMat);
 
         node.setUserData("halfwidth", width / 2);
@@ -43,14 +45,12 @@ public class EntityMaker {
         node.setUserData("atkpower", 0f);
         node.setUserData("atkdirection", 0);
         node.setUserData("knockback", false);
-
-        //let the spatial move
+        
         node.setUserData("canR", true);
         node.setUserData("canL", true);
         node.setUserData("canU", true);
         node.setUserData("canD", true);
 
-        //set up the sprites
         makeSprites(name, node);
 
         //attach a hitbox 
@@ -76,7 +76,6 @@ public class EntityMaker {
         SpriteLibrary library = new SpriteLibrary(name, false, attach);
         BattleMain.sEngine.addLibrary(library);
 
-        //this could be generalized to search for any name
         if (name.equals("Dan")) {
             //adds all of dan's running sprites
             //number convention starts from UP=0 and goes clockwise

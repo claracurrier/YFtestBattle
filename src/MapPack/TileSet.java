@@ -48,7 +48,7 @@ public class TileSet {
     private int margin = 0;
     final private ArrayList<Tile> tiles = new ArrayList<>();
     private File tilebmpFile;
-    private Color transparentColor;
+    private Color transparentColor = Color.white;
     private Image tileSetImage;
     private Rectangle tileDimensions;
     private long tilebmpFileLastModified;
