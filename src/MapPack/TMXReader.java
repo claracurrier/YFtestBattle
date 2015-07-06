@@ -18,7 +18,6 @@ package MapPack;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.zip.GZIPInputStream;
@@ -90,22 +89,12 @@ public class TMXReader {
                 map.add(tileSet);
                 currentHandler = new TileSetHandler(this, tileSet, getInteger(atts, "firstgid"));
 
-            } else if (qName.equalsIgnoreCase("objectgroup")) {
-                ObjectGroup objectGroup = new ObjectGroup(getString(atts, "name"));
-                map.add(objectGroup);
-                currentHandler = new ObjectGroupHandler(this, objectGroup);
-
             } else if (qName.equalsIgnoreCase("layer")) {
                 MapLayer mapLayer = new MapLayer(getString(atts, "name"));
                 mapLayer.setWidth(getInteger(atts, "width"));
                 mapLayer.setHeight(getInteger(atts, "height"));
                 map.add(mapLayer);
                 currentHandler = new MapLayerHandler(this, mapLayer);
-
-            } else if (qName.equalsIgnoreCase("properties")) {
-                HashMap<String, String> properties = new HashMap<>();
-                map.setProperties(properties);
-                currentHandler = new PropertiesHandler(this, properties);
             } else {
                 throw new SAXException("unknown tag:" + qName);
             }
@@ -211,118 +200,6 @@ public class TMXReader {
         }
     }
 
-    private ArrayList<Vertex> getPoints(String pointsString) {
-        ArrayList<Vertex> vertices = new ArrayList<>();
-
-        String pointsArrayString[] = pointsString.split("\\ ");
-        for (int i = 0; i < pointsArrayString.length; i++) {
-            String pointCoordsArrayString[] = pointsArrayString[i].split("\\,");
-            double x = Double.valueOf(pointCoordsArrayString[0]);
-            double y = Double.valueOf(pointCoordsArrayString[1]);
-            vertices.add(new Vertex(x, y));
-        }
-        return vertices;
-    }
-
-    private class PropertiesHandler extends DefaultHandler {
-
-        private DefaultHandler previousHandler;
-        private HashMap<String, String> properties;
-
-        public PropertiesHandler(DefaultHandler previousHandler, HashMap<String, String> properties) {
-            this.previousHandler = previousHandler;
-            this.properties = properties;
-        }
-
-        @Override
-        public void startElement(String uri, String name, String qName, Attributes atts) throws SAXException {
-            if (qName.equalsIgnoreCase("property")) {
-                properties.put(getString(atts, "name"), getString(atts, "value"));
-            } else {
-                throw new SAXException("unknown tag:" + qName);
-            }
-        }
-
-        @Override
-        public void endElement(String uri, String name, String qName) throws SAXException {
-            if (qName.equalsIgnoreCase("properties")) {
-                currentHandler = previousHandler;
-            }
-        }
-    }
-
-    private class MapObjectHandler extends DefaultHandler {
-
-        private DefaultHandler previousHandler;
-        private MapObject mapObject;
-
-        public MapObjectHandler(DefaultHandler previousHandler, MapObject mapObject) {
-            this.previousHandler = previousHandler;
-            this.mapObject = mapObject;
-        }
-
-        @Override
-        public void startElement(String uri, String name, String qName, Attributes atts) throws SAXException {
-            if (qName.equalsIgnoreCase("polygon")) {
-                Polygon polygon = new Polygon(getPoints(getString(atts, "points")));
-                mapObject.add(polygon);
-            } else if (qName.equalsIgnoreCase("polyline")) {
-                Polyline polyline = new Polyline(getPoints(getString(atts, "points")));
-                mapObject.add(polyline);
-            } else if (qName.equalsIgnoreCase("properties")) {
-                HashMap<String, String> properties = new HashMap<>();
-                mapObject.setProperties(properties);
-                currentHandler = new PropertiesHandler(this, properties);
-            } else {
-                throw new SAXException("unknown tag:" + qName);
-            }
-        }
-
-        @Override
-        public void endElement(String uri, String name, String qName) throws SAXException {
-            if (qName.equalsIgnoreCase("object")) {
-                currentHandler = previousHandler;
-            }
-        }
-    }
-
-    private class ObjectGroupHandler extends DefaultHandler {
-
-        private DefaultHandler previousHandler;
-        private ObjectGroup objectGroup;
-        private ArrayList<MapObject> objects = new ArrayList<>();
-
-        public ObjectGroupHandler(DefaultHandler previousHandler, ObjectGroup objectGroup) {
-            this.previousHandler = previousHandler;
-            this.objectGroup = objectGroup;
-        }
-
-        @Override
-        public void startElement(String uri, String name, String qName, Attributes atts) throws SAXException {
-            if (qName.equalsIgnoreCase("object")) {
-                MapObject mapObject = new MapObject();
-                mapObject.setName(getString(atts, "name"));
-                mapObject.setType(getString(atts, "type"));
-                mapObject.setX(getInteger(atts, "x"));
-                mapObject.setY(getInteger(atts, "y"));
-                mapObject.setHeight(getInteger(atts, "height"));
-                mapObject.setWidth(getInteger(atts, "width"));
-                objects.add(mapObject);
-                currentHandler = new MapObjectHandler(this, mapObject);
-            } else {
-                throw new SAXException("unknown tag:" + qName);
-            }
-        }
-
-        @Override
-        public void endElement(String uri, String name, String qName) throws SAXException {
-            if (qName.equalsIgnoreCase("objectgroup")) {
-                currentHandler = previousHandler;
-            }
-            objectGroup.add(objects);
-        }
-    }
-
     private int getInteger(Attributes atts, String name) {
         String value = atts.getValue(name);
         if (value != null) {
@@ -390,48 +267,22 @@ public class TMXReader {
                             tile.setNumber(-1);
                         }
 
-                        tile.setLocVector(x * 16, (mapLayer.getHeight()-y) * 16);
+                        tile.setLocVector(x * 16, (mapLayer.getHeight() - y) * 16);
                         tile.setLayer(mapLayer);
                         tile.setLocArray(x, y);
                         tiles[x][y] = tile;
+
+                        if (!mapLayer.getName().equals("closed_tiles")) {
+                            if (map.getLayer("closed_tiles").getTile(x, y).getId() > -1) {
+                                tile.setClosed(true);
+                            } else {
+                                tile.setClosed(false);
+                            }
+                        }
                     }
                 }
             }
         }
         return (tiles);
     }
-    /*We're not doing animations right now
-     
-     private class AnimationHandler extends DefaultHandler {
-
-     private DefaultHandler previousHandler;
-     private Animation animation;
-     private HashMap<String, String> properties;
-
-     public AnimationHandler(DefaultHandler previousHandler, Animation animation) {
-     this.previousHandler = previousHandler;
-     this.animation = animation;
-     }
-
-     @Override
-     public void startElement(String uri, String name, String qName, Attributes atts) throws SAXException {
-     if (qName.equalsIgnoreCase("properties")) {
-     properties = new HashMap<>();
-     currentHandler = new PropertiesHandler(this, properties);
-     } else if (qName.equalsIgnoreCase("polygon")) {
-     Polygon polygon = new Polygon(getPoints(getString(atts, "points")));
-     animation.setCenters(polygon.getVertices());
-     } else {
-     throw new SAXException("unknown tag:" + qName);
-     }
-     }
-
-     @Override
-     public void endElement(String uri, String name, String qName) throws SAXException {
-     if (qName.equalsIgnoreCase("object")) {
-     currentHandler = previousHandler;
-     }
-     }
-     }
-     */
 }

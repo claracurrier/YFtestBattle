@@ -1,6 +1,6 @@
 package battlestatepack;
 
-import MapPack.JMEMap2d;
+import MapPack.MapLoader;
 import playerPack.PCollideCont;
 import playerPack.KirithAS;
 import playerPack.DanAS;
@@ -190,7 +190,7 @@ public class BattleMain extends AbstractAppState implements ActionListener {
     }
     
     private void makeMap() {
-        JMEMap2d mapMaker = new JMEMap2d(app.getRootNode(), assetManager, settings);
+        MapLoader mapMaker = new MapLoader(app.getRootNode(), assetManager, settings);
         mapMaker.makeMap("test1");
         app.getViewPort().setBackgroundColor(ColorRGBA.Brown);
     }

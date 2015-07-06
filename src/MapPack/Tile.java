@@ -17,7 +17,7 @@ import java.util.Properties;
  *
  * @author Clara Currier
  */
-public class Tile extends Geometry implements Comparable {
+public class Tile extends Geometry implements Comparable{
 
     private int tileGID = -1;
     private int tilenumber = -1;
@@ -31,6 +31,7 @@ public class Tile extends Geometry implements Comparable {
     public Tile pathParent;
     public float costFromStart;
     public float estimatedCostToGoal;
+    private boolean isClosed;
 
     public Tile() {
         properties = new Properties();
@@ -75,6 +76,14 @@ public class Tile extends Geometry implements Comparable {
 
     public void setTileSet(TileSet ts) {
         this.tileSet = ts;
+    }
+
+    public boolean isClosed() {
+        return isClosed;
+    }
+
+    public void setClosed(boolean closed) {
+        isClosed = closed;
     }
 
     public int getNumber() {
@@ -131,8 +140,8 @@ public class Tile extends Geometry implements Comparable {
 
     @Override
     public String toString() {
-        return "tile " + tilenumber + " at " + location + ", " 
-                + arraylocation[0][0]+", "+arraylocation[0][1];
+        return "tile " + tilenumber + " at " + location + ", "
+                + isClosed;
     }
 
     @Override

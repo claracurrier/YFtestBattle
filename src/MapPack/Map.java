@@ -17,8 +17,8 @@ public class Map {
     private int height = 0;
     private int tileWidth = 0;
     private int tileHeight = 0;
+    private int closedTileGID = -1;
     private ArrayList<TileSet> tileSets = new ArrayList<>();
-    private ArrayList<ObjectGroup> objectGroups = new ArrayList<>();
     private ArrayList<MapLayer> mapLayers = new ArrayList<>();
     private HashMap<String, String> properties = new HashMap<>();
 
@@ -78,23 +78,6 @@ public class Map {
         tileSets.add(tileSet);
     }
 
-    public void add(ObjectGroup objectGroup) {
-        objectGroups.add(objectGroup);
-    }
-
-    public ObjectGroup getObjectGroup(String name) {
-        for (int i = 0; i < objectGroups.size(); i++) {
-            if (this.objectGroups.get(i).getName().equals(name)) {
-                return this.objectGroups.get(i);
-            }
-        }
-        return null;
-    }
-
-    public ObjectGroup getObjectGroup(int index) {
-        return objectGroups.get(index);
-    }
-
     public TileSet getTileSet(int index) {
         return tileSets.get(index);
     }
@@ -107,11 +90,15 @@ public class Map {
         return mapLayers.size();
     }
 
-    public int getObjectGroups() {
-        return objectGroups.size();
-    }
-
     public void setProperties(HashMap<String, String> properties) {
         this.properties = properties;
+    }
+    
+    public void setClosedTileGID(int tileGID){
+        closedTileGID = tileGID;
+    }
+    
+    public int getClosedTileGID(){
+        return closedTileGID;
     }
 }

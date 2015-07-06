@@ -5,7 +5,6 @@
 package battlestatepack;
 
 import MapPack.Tile;
-import com.jme3.collision.CollisionResult;
 import com.jme3.collision.CollisionResults;
 import com.jme3.input.InputManager;
 import com.jme3.input.MouseInput;
@@ -15,6 +14,7 @@ import com.jme3.math.Ray;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
+import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.system.AppSettings;
@@ -74,14 +74,14 @@ public class Picker implements ActionListener {
             // 4. Use the results (we mark the hit object)
             if (results.size() > 0) {
                 // The closest collision point is what was truly hit:
-                CollisionResult closest = results.getClosestCollision();
-                System.out.println(closest.getGeometry().toString());
-                if (closest.getGeometry() instanceof Tile) {
+                Geometry pickedTile = results.getClosestCollision().getGeometry();
+                System.out.println(pickedTile.toString());
+                if (pickedTile instanceof Tile) {
                     Tile start = new Tile(new Vector2f(
                             activeChar.getLocalTranslation().x,
                             activeChar.getLocalTranslation().y),
-                            (Tile) closest.getGeometry());
-                    Pathfinder pathfinder = new Pathfinder(start, (Tile) closest.getGeometry());
+                            (Tile) pickedTile);
+                    Pathfinder pathfinder = new Pathfinder(start, (Tile) pickedTile);
                     activeChar.addControl(pathfinder);
                     start = null;
                 } else {
@@ -90,7 +90,6 @@ public class Picker implements ActionListener {
             } else {
                 // No hits? 
                 System.out.println("nothing");
-
             }
         }
     }

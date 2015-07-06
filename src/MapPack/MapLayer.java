@@ -50,14 +50,26 @@ public class MapLayer {
         return tiles[x][y];
     }
 
+    public boolean hasTile(int x, int y) {
+        try {
+            getTile(x, y);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     public Tile getTile(float x, float y) {
         if (x < 0) {
             x = 0;
+        } else if (x >= width * 16) {
+            x = width * 15;
         }
         if (y < 0) {
             y = 0;
+        } else if (y >= height * 16) {
+            y = height * 15;
         }
-
         return tiles[(int) (x / 16)][(int) (height - (y / 16))];
     }
 

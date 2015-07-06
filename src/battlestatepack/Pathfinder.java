@@ -4,7 +4,7 @@
  */
 package battlestatepack;
 
-import MapPack.JMEMap2d;
+import MapPack.MapLoader;
 import MapPack.Tile;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
@@ -55,7 +55,7 @@ public class Pathfinder extends AbstractControl {
                 }
             }
         } catch (InterruptedException | ExecutionException e) {
-            Logger.getLogger(JMEMap2d.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(MapLoader.class.getName()).log(Level.SEVERE, null, e);
             future = null;
             spatial.removeControl(this);
         }
@@ -98,6 +98,10 @@ public class Pathfinder extends AbstractControl {
 
                 closedset.add(current);
                 for (Tile neighbor : current.getNeighbors()) {
+                    if (neighbor.isClosed() && !closedset.contains(neighbor)) {
+                        closedset.add(neighbor);
+                        continue;
+                    }
                     if (closedset.contains(neighbor)) {
                         continue;
                     }
