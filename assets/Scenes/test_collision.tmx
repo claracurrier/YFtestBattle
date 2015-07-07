@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="60" height="42" tilewidth="16" tileheight="16" nextobjectid="16">
+ <tileset firstgid="1" name="Buch_Tiles" tilewidth="16" tileheight="16">
+  <image source="Buch_Tiles.png" trans="000000" width="256" height="256"/>
+ </tileset>
+ <layer name="closed_tiles" width="60" height="42">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAC+2VawoAIQiEu/85O8iy/0KsrW3ykQ4IQQ/nk6xaSqkZGRnXxKq0/UqyRuSVlDSvdm2i8XI+IvDOynv/7ip57xaC11NvIN4xJO/pWlnjbc87IdQ/5UXIv9mD0LzW65O8yWvZ/0icb0u8qPyjfVq8K3lnPNTOmJuTvqt/Wb94azOmc9w6Ce2wfvns8XL5pXSaV/Ntpbl3WbU4VkT76nbeVgheT8woXi/M0XhfeedF5PbGS/+clK4k74WFu0hzjzz96SF07/X2zp6P/Bd23prZmmj7leBdWWc5Wml7iRAP4iT1UmAnAAA=
+  </data>
+ </layer>
+ <layer name="transparent" width="60" height="42">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAC+3DQQ0AAAwDobNf13vPAySsmqqqqqqqqqqqqvoeP8DSwGAnAAA=
+  </data>
+ </layer>
+</map>

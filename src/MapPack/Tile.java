@@ -17,7 +17,7 @@ import java.util.Properties;
  *
  * @author Clara Currier
  */
-public class Tile extends Geometry implements Comparable{
+public class Tile extends Geometry implements Comparable {
 
     private int tileGID = -1;
     private int tilenumber = -1;
@@ -172,9 +172,34 @@ public class Tile extends Geometry implements Comparable{
         return costFromStart + estimatedCostToGoal;
     }
 
-    public Tile[] getNeighbors() {
-        Tile[] neighbors = new Tile[8];
-
+    public Tile[] getNeighbors(boolean sizeTesting) {
+        Tile[] neighbors;
+        if (sizeTesting) {
+            neighbors = new Tile[11];
+            //bottom additional 3
+            neighbors[8] = layer.getTile(
+                    location.x + 16,
+                    location.y - 32);
+            neighbors[9] = layer.getTile(
+                    location.x,
+                    location.y - 32);
+            neighbors[10] = layer.getTile(
+                    location.x - 16,
+                    location.y - 32);
+            //top additional 3
+           /* neighbors[11] = layer.getTile(
+                    location.x + 16,
+                    location.y + 32);
+            neighbors[12] = layer.getTile(
+                    location.x,
+                    location.y + 32);
+            neighbors[13] = layer.getTile(
+                    location.x - 16,
+                    location.y + 32);
+                    * */
+        } else {
+            neighbors = new Tile[8];
+        }
         //up
         neighbors[0] = layer.getTile(
                 location.x,

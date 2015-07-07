@@ -16,11 +16,24 @@ import java.util.LinkedList;
 public class Pathway {
 
     private LinkedList<Vector2f> coordPath = new LinkedList<>();
+    private float closenessScore = 1000; //zero means end was reached
 
     public Pathway(LinkedList<Tile> path) {
         for (Tile t : path) {
             coordPath.add(t.getLocVector());
         }
+    }
+
+    public Pathway() {
+        //does nothing, coordPath is empty
+    }
+
+    public float getClosenessScore() {
+        return closenessScore;
+    }
+
+    public void setClosenessScore(float score) {
+        closenessScore = score;
     }
 
     public Pathway(Vector3f curLoc, Vector3f goal) {

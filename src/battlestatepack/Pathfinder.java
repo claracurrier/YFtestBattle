@@ -60,8 +60,10 @@ public class Pathfinder extends AbstractControl {
             spatial.removeControl(this);
         }
         if (way != null) {
-            //.... Success! Add a new MoveCont using the pathway
-            spatial.addControl(new MoveCont(way, spatial.getName()));
+            if (!way.getPath().isEmpty()) {
+                //.... Success! Add a new MoveCont using the pathway
+                spatial.addControl(new MoveCont(way, spatial.getName()));
+            }
             spatial.removeControl(this);
         }
     }
@@ -82,6 +84,7 @@ public class Pathfinder extends AbstractControl {
         @Override
         public Pathway call() throws Exception {
             //... Now process data and find the way ...
+            Pathway bestWay = new Pathway();
             ArrayList<Tile> closedset = new ArrayList<>();
             PriorityList<Tile> openset = new PriorityList<>();
 
@@ -90,23 +93,35 @@ public class Pathfinder extends AbstractControl {
             start.pathParent = null;
             openset.add(start);
 
-            while (!openset.isEmpty()) {
+            while (!openset.isEmpty() && closedset.size() < 1500) {
                 Tile current = (Tile) openset.removeFirst(); // lowest f-score val
                 if (current.equals(end)) {
                     return reconstructWay(end);
                 }
 
                 closedset.add(current);
-                for (Tile neighbor : current.getNeighbors()) {
-                    if (neighbor.isClosed() && !closedset.contains(neighbor)) {
-                        closedset.add(neighbor);
-                        continue;
+                for (Tile neighbor : current.getNeighbors(false)) {
+                    for (Tile plusNeighbor : neighbor.getNeighbors(true)) {
+                        //checks to make sure character can fit
+                        if (plusNeighbor.isClosed()) {
+                            closedset.add(neighbor);
+                            break;
+                        }
                     }
                     if (closedset.contains(neighbor)) {
                         continue;
                     }
                     float possibleNewCost = current.costFromStart
                             + current.getCost(neighbor);
+
+                    //reporting everything
+                    float x = neighbor.getCost(end);
+                    x = current.getCost(end);
+                    x = current.costFromStart;
+                    x = current.estimatedCostToGoal;
+                    x = current.getCost();
+
+
 
                     if (!openset.contains(neighbor)
                             || possibleNewCost < neighbor.costFromStart) {
@@ -118,11 +133,21 @@ public class Pathfinder extends AbstractControl {
                             openset.add(neighbor);
                         }
                     }
+
+                    if (neighbor.getCost(end) < bestWay.getClosenessScore()) {
+                        bestWay = reconstructWay(neighbor);
+                        bestWay.setClosenessScore(neighbor.getCost(end));
+                    }
+
+                    //more reports
+                    x = neighbor.costFromStart;
+                    x = neighbor.estimatedCostToGoal;
+                    x = neighbor.getCost();
                 }
             }
             //failure
             System.out.println("failure");
-            return null;
+            return bestWay;
         }
     };
 

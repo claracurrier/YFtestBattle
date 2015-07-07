@@ -26,7 +26,7 @@ import spriteProject.SpriteEngine;
  * @author Clara Currier
  */
 public class BattleMain extends AbstractAppState implements ActionListener {
-    
+
     private final Node dan, kirith;
     private final EntityMaker maker;
     private final DanAS danAppState;
@@ -45,7 +45,7 @@ public class BattleMain extends AbstractAppState implements ActionListener {
     public static final Node ATKNODE = new Node("atkNode");
     public static final Node BATTLENODE = new Node("battleNode");
     private MobAS mob;
-    
+
     public BattleMain(SimpleApplication appl, AppSettings set, InputManager input, AppStateManager asm) {
         this.app = appl;
         settings = set;
@@ -64,16 +64,16 @@ public class BattleMain extends AbstractAppState implements ActionListener {
         dan.move(settings.getWidth() / 2, settings.getHeight() / 2, 0);
         danAppState = new DanAS(dan, settings);
         danCC = new PCollideCont();
-        
+
         kirith = maker.createSpatial("Kirith");
         kirith.move(settings.getWidth() / 3, settings.getHeight() / 3, 0);
         kiAppState = new KirithAS(kirith);
         kiCC = new PCollideCont();
-        
+
         battleGUI = new BattleGUI(settings.getWidth(), settings.getHeight(),
                 danCC, kiCC);
     }
-    
+
     @Override
     public void initialize(AppStateManager asm, Application appl) {
         //spawn a MobAS
@@ -88,7 +88,7 @@ public class BattleMain extends AbstractAppState implements ActionListener {
         CameraOptions.options.makeCamBox(app.getRootNode());
         CameraOptions.options.setCamSetting("Manual");
         CameraOptions.options.setCamBoxLoc(dan);
-        
+
         makeMap();
         switchCharKey(true);
         picker.mouseKey(true);
@@ -99,20 +99,20 @@ public class BattleMain extends AbstractAppState implements ActionListener {
         collideAS.setMovingSpatial(dan);
         stateManager.attach(battleGUI);
         stateManager.attach(mob);
-        
+
         picker.setActiveChar(dan);
         dan.addControl(danCC);
         kirith.addControl(kiCC);
         DEFNODE.attachChild(dan);
         DEFNODE.attachChild(kirith);
     }
-    
+
     @Override
     public void update(float tpf) {
         sEngine.update(tpf);
         checkComplete();
     }
-    
+
     private void switchChar() {
         if (stateManager.hasState(danAppState)) {
             //if kirith is now in control
@@ -120,29 +120,29 @@ public class BattleMain extends AbstractAppState implements ActionListener {
             stateManager.detach(danAppState);
             stateManager.attach(kiAppState);
             picker.setActiveChar(kirith);
-            
+
             CameraOptions.options.setCamBoxLoc(kirith);
             battleGUI.setActiveHUD(kiCC);
-            
+
         } else if (stateManager.hasState(kiAppState)) {
             //if dan is now in control
             collideAS.setMovingSpatial(dan);
             stateManager.detach(kiAppState);
             stateManager.attach(danAppState);
             picker.setActiveChar(dan);
-            
+
             CameraOptions.options.setCamBoxLoc(dan);
             battleGUI.setActiveHUD(danCC);
         }
     }
-    
+
     @Override
     public void onAction(String name, boolean isPressed, float tpf) {
         if (name.equals("switchChar") && !isPressed) {
             switchChar();
         }
     }
-    
+
     @Override
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
@@ -151,14 +151,14 @@ public class BattleMain extends AbstractAppState implements ActionListener {
         } else if (stateManager.hasState(kiAppState)) {
             kiAppState.setEnabled(enabled);
         }
-        
+
         collideAS.setEnabled(enabled);
         mob.setEnabled(enabled);
-        
+
         switchCharKey(enabled);
         picker.mouseKey(enabled);
     }
-    
+
     @Override
     public void cleanup() {
         app.getRootNode().detachAllChildren();
@@ -174,7 +174,7 @@ public class BattleMain extends AbstractAppState implements ActionListener {
         app.getViewPort().setBackgroundColor(ColorRGBA.Black);
         super.cleanup();
     }
-    
+
     protected void switchCharKey(boolean enabled) {
         if (enabled) {
             if (!inputManager.hasMapping("switchChar")) {
@@ -188,13 +188,14 @@ public class BattleMain extends AbstractAppState implements ActionListener {
             }
         }
     }
-    
+
     private void makeMap() {
-        MapLoader mapMaker = new MapLoader(app.getRootNode(), assetManager, settings);
-        mapMaker.makeMap("test1");
+        MapLoader mapMaker = new MapLoader(app.getRootNode(), assetManager);
+        mapMaker.makeTiledMap("test_collision");
+        mapMaker.makeImageMap("test1", 60 * 16, 42 * 16, 7, 10);
         app.getViewPort().setBackgroundColor(ColorRGBA.Brown);
     }
-    
+
     private void checkComplete() {
         //checks the health of dan, kirith, or the monster to see if it's below
         //threshold and if so, launch a victory or defeat screen
@@ -205,7 +206,7 @@ public class BattleMain extends AbstractAppState implements ActionListener {
             endGame(true);
         }
     }
-    
+
     private void endGame(boolean victory) {
         inputManager.deleteMapping("pause");
         setEnabled(false);
