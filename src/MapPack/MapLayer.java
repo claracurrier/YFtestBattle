@@ -60,16 +60,23 @@ public class MapLayer {
     }
 
     public Tile getTile(float x, float y) {
-        if (x < 0) {
-            x = 0;
+        if (x <= 0) {
+            x = 16;
         } else if (x >= width * 16) {
             x = width * 15;
         }
-        if (y < 0) {
-            y = 0;
+        if (y <= 0) {
+            y = 16;
         } else if (y >= height * 16) {
             y = height * 15;
         }
+
+        try{
+            Tile a = tiles[(int) (x / 16)][(int) (height - (y / 16))];
+        }catch(Exception e){
+            int i =0;
+        }
+
         return tiles[(int) (x / 16)][(int) (height - (y / 16))];
     }
 

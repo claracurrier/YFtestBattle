@@ -1,5 +1,6 @@
 package battlestatepack;
 
+import cameraPack.CameraOptions;
 import MapPack.MapLoader;
 import playerPack.PCollideCont;
 import playerPack.KirithAS;
@@ -57,7 +58,7 @@ public class BattleMain extends AbstractAppState implements ActionListener {
         BATTLENODE.attachChild(ATKNODE);
         collideAS = new CollideAS();
         maker = new EntityMaker(assetManager);
-        picker = new Picker(app.getCamera(), inputManager, set, app.getRootNode());
+        picker = new Picker(app.getCamera(), inputManager, app.getRootNode());
 
         //set up characters
         dan = maker.createSpatial("Dan");
@@ -84,10 +85,12 @@ public class BattleMain extends AbstractAppState implements ActionListener {
         mob.setEnabled(false);
 
         //camera
-        CameraOptions.options.setup(app.getCamera(), inputManager);
+        CameraOptions.options.setActive(true);
+        CameraOptions.options.setup(app.getCamera(), inputManager, dan);
         CameraOptions.options.makeCamBox(app.getRootNode());
-        CameraOptions.options.setCamSetting("Manual");
-        CameraOptions.options.setCamBoxLoc(dan);
+        CameraOptions.options.setChar(dan);
+        CameraOptions.options.setCamSetting(CameraOptions.options.getCamSetting());
+
 
         makeMap();
         switchCharKey(true);
@@ -121,7 +124,7 @@ public class BattleMain extends AbstractAppState implements ActionListener {
             stateManager.attach(kiAppState);
             picker.setActiveChar(kirith);
 
-            CameraOptions.options.setCamBoxLoc(kirith);
+            CameraOptions.options.setChar(kirith);
             battleGUI.setActiveHUD(kiCC);
 
         } else if (stateManager.hasState(kiAppState)) {
@@ -131,7 +134,7 @@ public class BattleMain extends AbstractAppState implements ActionListener {
             stateManager.attach(danAppState);
             picker.setActiveChar(dan);
 
-            CameraOptions.options.setCamBoxLoc(dan);
+            CameraOptions.options.setChar(dan);
             battleGUI.setActiveHUD(danCC);
         }
     }
@@ -172,6 +175,7 @@ public class BattleMain extends AbstractAppState implements ActionListener {
         stateManager.detach(mob);
         sEngine.destroyEngine();
         app.getViewPort().setBackgroundColor(ColorRGBA.Black);
+        CameraOptions.options.setActive(false);
         super.cleanup();
     }
 
@@ -191,8 +195,8 @@ public class BattleMain extends AbstractAppState implements ActionListener {
 
     private void makeMap() {
         MapLoader mapMaker = new MapLoader(app.getRootNode(), assetManager);
-        mapMaker.makeTiledMap("test_collision");
-        mapMaker.makeImageMap("test1", 60 * 16, 42 * 16, 7, 10);
+        mapMaker.makeTiledMap("test_large_collision");
+        mapMaker.makeImageMap("test_large", 120 * 16, 90 * 16, 15, 20);
         app.getViewPort().setBackgroundColor(ColorRGBA.Brown);
     }
 

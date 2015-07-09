@@ -63,6 +63,8 @@ public class Pathfinder extends AbstractControl {
             if (!way.getPath().isEmpty()) {
                 //.... Success! Add a new MoveCont using the pathway
                 spatial.addControl(new MoveCont(way, spatial.getName()));
+            } else{
+                System.out.println("empty");
             }
             spatial.removeControl(this);
         }
@@ -114,15 +116,6 @@ public class Pathfinder extends AbstractControl {
                     float possibleNewCost = current.costFromStart
                             + current.getCost(neighbor);
 
-                    //reporting everything
-                    float x = neighbor.getCost(end);
-                    x = current.getCost(end);
-                    x = current.costFromStart;
-                    x = current.estimatedCostToGoal;
-                    x = current.getCost();
-
-
-
                     if (!openset.contains(neighbor)
                             || possibleNewCost < neighbor.costFromStart) {
                         neighbor.pathParent = current;
@@ -135,18 +128,13 @@ public class Pathfinder extends AbstractControl {
                     }
 
                     if (neighbor.getCost(end) < bestWay.getClosenessScore()) {
+                        //Keeps track of approximate shortest route in case end is impossible
                         bestWay = reconstructWay(neighbor);
                         bestWay.setClosenessScore(neighbor.getCost(end));
                     }
-
-                    //more reports
-                    x = neighbor.costFromStart;
-                    x = neighbor.estimatedCostToGoal;
-                    x = neighbor.getCost();
                 }
             }
-            //failure
-            System.out.println("failure");
+            //Didn't reach goal
             return bestWay;
         }
     };

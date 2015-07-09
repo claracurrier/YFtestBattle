@@ -2,27 +2,24 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package battlestatepack;
+package cameraPack;
 
+import battlestatepack.GVars;
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
-import com.jme3.renderer.RenderManager;
-import com.jme3.renderer.ViewPort;
-import com.jme3.scene.control.AbstractControl;
 
 /**
  *
  * @author Clara Currier
  */
-public class CameraContManual extends AbstractControl implements ActionListener {
+public class CCManual extends CameraControl implements ActionListener {
 
-    private int width, height;
-    private boolean up, down, left, right, keying;
+    private boolean ku, kd, kl, kr, keying;
     private InputManager inputManager;
 
-    public CameraContManual(int w, int h, InputManager in) {
+    public CCManual(int w, int h, InputManager in) {
         width = w;
         height = h;
         inputManager = in;
@@ -30,9 +27,8 @@ public class CameraContManual extends AbstractControl implements ActionListener 
         enableCharMapping();
     }
 
-    public void refreshScreenDim(int w, int h) {
-        width = w;
-        height = h;
+    @Override
+    public void setup() {
     }
 
     @Override
@@ -73,75 +69,85 @@ public class CameraContManual extends AbstractControl implements ActionListener 
     protected void controlUpdate(float tpf) {
         if (!keying) { //check for mouse panning on edge of screen if not using keys
             if (inputManager.getCursorPosition().y > (height - 15)) {
-                up = true;
+                ku = true;
             } else if (inputManager.getCursorPosition().y < (height - 15)) {
-                up = false;
+                ku = false;
             }
             if (inputManager.getCursorPosition().y < 15) {
-                down = true;
+                kd = true;
             } else if (inputManager.getCursorPosition().y > 15) {
-                down = false;
+                kd = false;
             }
             if (inputManager.getCursorPosition().x > (width - 15)) {
-                right = true;
+                kr = true;
             } else if (inputManager.getCursorPosition().x < (width - 15)) {
-                right = false;
+                kr = false;
             }
             if (inputManager.getCursorPosition().x < 15) {
-                left = true;
+                kl = true;
             } else if (inputManager.getCursorPosition().x > 15) {
-                left = false;
+                kl = false;
             }
         }
 
         //move camera if true
-        if (up) {
+        if (ku && kl && !kr) {//upleft
+            spatial.move(-tpf * GVars.gvars.camspeed, tpf * GVars.gvars.camspeed, 0);
+
+        } else if (ku && kr && !kl) {//upright
+            spatial.move(tpf * GVars.gvars.camspeed, tpf * GVars.gvars.camspeed, 0);
+
+        } else if (ku && !kr && !kl) {//up
             spatial.move(0, tpf * GVars.gvars.camspeed, 0);
-        }
-        if (down) {
+
+        } else if (kd && kl && !kr) {//downleft
+            spatial.move(-tpf * GVars.gvars.camspeed, -tpf * GVars.gvars.camspeed, 0);
+
+        } else if (kd && kr && !kl) {//downright
+            spatial.move(tpf * GVars.gvars.camspeed, -tpf * GVars.gvars.camspeed, 0);
+
+        } else if (kd && !kl && !kr) {//down
             spatial.move(0, -tpf * GVars.gvars.camspeed, 0);
-        }
-        if (left) {
+
+        } else if (kl && !ku && !kd) {//left
             spatial.move(-tpf * GVars.gvars.camspeed, 0, 0);
-        }
-        if (right) {
+
+        } else if (kr && !ku && !kd) {//right
             spatial.move(tpf * GVars.gvars.camspeed, 0, 0);
         }
     }
 
-    @Override
-    protected void controlRender(RenderManager rm, ViewPort vp) {
+    public void move(String name, boolean isPressed) {
+        //this whole method is an elaborate way of checking for key combos
+        //ultimately setting the value of keyPressed will tell update which way to go
+        if (name.equals("UP") && isPressed) {
+            ku = true;
+        } else if (name.equals("UP") && !isPressed) {
+            ku = false;
+        }
+        if (name.equals("DOWN") && isPressed) {
+            kd = true;
+        } else if (name.equals("DOWN") && !isPressed) {
+            kd = false;
+        }
+        if (name.equals("LEFT") && isPressed) {
+            kl = true;
+        } else if (name.equals("LEFT") && !isPressed) {
+            kl = false;
+        }
+        if (name.equals("RIGHT") && isPressed) {
+            kr = true;
+        } else if (name.equals("RIGHT") && !isPressed) {
+            kr = false;
+        }
     }
 
     @Override
     public void onAction(String name, boolean isPressed, float tpf) {
+        move(name, isPressed);
         if (isPressed) {
-            if (name.equals("UP")) {
-                up = true;
-            }
-            if (name.equals("DOWN")) {
-                down = true;
-            }
-            if (name.equals("LEFT")) {
-                left = true;
-            }
-            if (name.equals("RIGHT")) {
-                right = true;
-            }
             keying = true;
         } else {
-            if (name.equals("UP")) {
-                up = false;
-            }
-            if (name.equals("LEFT")) {
-                left = false;
-            }
-            if (name.equals("DOWN")) {
-                down = false;
-            }
-            if (name.equals("RIGHT")) {
-                right = false;
-            }
             keying = false;
         }
     }

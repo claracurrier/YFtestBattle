@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package battlestatepack;
+package cameraPack;
 
 import com.jme3.input.InputManager;
 import com.jme3.math.FastMath;
@@ -23,17 +23,51 @@ public class CameraOptions {
     private Camera cam;
     private CameraNode camNode;
     private Node camBox = new Node("camBox");
-    private String camSetting = "AutoFollow";
+    private Node activeChar;
+    private String camSetting = "Manual";
     private final float frustumSize = 220f;
     private InputManager input;
+    private boolean active = false;
+    private CameraControl afBox, afMidpoint, afLocked, manual;
 
     private CameraOptions() { //singleton
     }
 
-    public void setup(Camera c, InputManager in) {
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public void setup(Camera c, InputManager in, Node firstChar) {
         cam = c;
         camNode = new CameraNode("Camera Node", cam);
         input = in;
+
+        int w = cam.getWidth();
+        int h = cam.getHeight();
+        afBox = new CCAutoFollowBox(w, h);
+        afMidpoint = new CCAutoFollowMidpoint(w, h);
+        afLocked = new CCAutoFollowLocked(w, h, firstChar);
+        manual = new CCManual(w, h, in);
+    }
+
+    public CameraControl getCamera(String c) {
+        if (c.equals("AutoFollowBox")) {
+            return afBox;
+        } else if (c.equals("AutoFollowMidpoint")) {
+            return afMidpoint;
+        } else if (c.equals("AutoFollowLocked")) {
+            return afLocked;
+        } else {
+            return manual;
+        }
+    }
+
+    public CameraControl getCurrentCamera() {
+        return getCamera(camSetting);
     }
 
     public String getCamSetting() {
@@ -44,22 +78,20 @@ public class CameraOptions {
         return camBox;
     }
 
-    @SuppressWarnings("empty-statement")
     public void setCamSetting(String setting) {
+        if (!active) {
+            camSetting = setting;
+            return;
+        }
+
+        camBox.removeControl(getCamera(camSetting));
         camSetting = setting;
         camBox.detachAllChildren(); //clears the Node
         camBox.attachChild(camNode);
-        try {
-            camBox.removeControl(camBox.getControl(0));
-        } catch (Exception e) {
-        };
 
-        if (setting.equals("AutoFollow")) {
-            makeAutoFollowCam();
-            camBox.addControl(new CameraContAutoFollow());
-        } else if (setting.equals("Manual")) {
-            camBox.addControl(new CameraContManual(cam.getWidth(), cam.getHeight(), input));
-        }
+        getCamera(setting).setup();
+        camBox.addControl(getCamera(setting));
+        resetLocation();
     }
 
     public void makeCamBox(Node rootNode) {
@@ -74,34 +106,26 @@ public class CameraOptions {
         camNode.lookAt(camBox.getWorldTranslation(), Vector3f.UNIT_Y);
         camNode.rotate(camNode.getLocalRotation().fromAngleAxis(-FastMath.PI / 2, Vector3f.UNIT_Y));
 
+        camBox.setUserData("moveLeft", false);
+        camBox.setUserData("moveRight", false);
+        camBox.setUserData("moveUp", false);
+        camBox.setUserData("moveDown", false);
+
         camBox.attachChild(camNode);
         rootNode.attachChild(camBox);
     }
 
-    private void makeAutoFollowCam() {
-        for (int i = 0; i < 4; i++) {
-            Node camBoxOutline = new Node("camBox" + i);
-            camBox.attachChild(camBoxOutline);
-            camBoxOutline.setUserData("halfwidth", 100f);
-            camBoxOutline.setUserData("halfheight", 100f);
-            switch (i) { //positioning
-                case 0: //left
-                    camBoxOutline.move(-200, 0, 0);
-                    break;
-                case 1: //right
-                    camBoxOutline.move(200, 0, 0);
-                    break;
-                case 2: //down
-                    camBoxOutline.move(0, -200, 0);
-                    break;
-                case 3: //up
-                    camBoxOutline.move(0, 200, 0);
-                    break;
-            } // the spacing and positions should be based on screen dimensions
-        }
+    public void setChar(Node character) {
+        activeChar = character;
+        ((CCAutoFollowLocked) afLocked).updateChar(character);
+        resetLocation();
     }
 
-    public void setCamBoxLoc(Spatial character) {
-        camBox.setLocalTranslation(character.getLocalTranslation());
+    public Spatial getChar() {
+        return activeChar;
+    }
+
+    public void resetLocation() {
+        camBox.setLocalTranslation(activeChar.getLocalTranslation());
     }
 }

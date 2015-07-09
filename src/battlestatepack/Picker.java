@@ -17,7 +17,6 @@ import com.jme3.renderer.Camera;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import com.jme3.system.AppSettings;
 
 /**
  *
@@ -28,14 +27,12 @@ public class Picker implements ActionListener {
     private final Camera cam;
     private final InputManager input;
     private Vector2f mouse;
-    private AppSettings settings;
     private Spatial activeChar;
     private Node rootNode;
 
-    public Picker(Camera c, InputManager in, AppSettings s, Node rootNode) {
+    public Picker(Camera c, InputManager in, Node rootNode) {
         cam = c;
         input = in;
-        settings = s;
         this.rootNode = rootNode;
     }
 
@@ -60,8 +57,12 @@ public class Picker implements ActionListener {
     @Override
     public void onAction(String name, boolean keyPressed, float tpf) {
         if (name.equals("click") && !keyPressed) {
-            mouse = input.getCursorPosition();
+            if (activeChar.getControl(MoveCont.class) != null) {
+                //cancel movement (don't bother cancelling pathfinding)
+                activeChar.removeControl(MoveCont.class);
+            }
 
+            mouse = input.getCursorPosition();
             Vector3f mousePosition3d = cam.getWorldCoordinates(mouse, 0).clone();
             Vector3f direction = cam.getWorldCoordinates(mouse, 1f).subtractLocal(mousePosition3d).normalizeLocal();
 
@@ -69,13 +70,11 @@ public class Picker implements ActionListener {
             CollisionResults results = new CollisionResults();
             // 2. Aim the ray from cam loc to cam direction.
             Ray ray = new Ray(mousePosition3d, direction);
-            // 3. Collect intersections between Ray and Shootables in results list.
+            // 3. Collect intersections between Ray and rootNode (where map is attached)
             rootNode.collideWith(ray, results);
-            // 4. Use the results (we mark the hit object)
             if (results.size() > 0) {
                 // The closest collision point is what was truly hit:
                 Geometry pickedTile = results.getClosestCollision().getGeometry();
-                System.out.println(pickedTile.toString());
                 if (pickedTile instanceof Tile) {
                     Tile start = new Tile(new Vector2f(
                             activeChar.getLocalTranslation().x,

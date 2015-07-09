@@ -45,7 +45,7 @@ public class EntityMaker {
         node.setUserData("atkpower", 0f);
         node.setUserData("atkdirection", 0);
         node.setUserData("knockback", false);
-        
+
         node.setUserData("canR", true);
         node.setUserData("canL", true);
         node.setUserData("canU", true);
@@ -97,11 +97,8 @@ public class EntityMaker {
             }
             //idle
             for (int i = 0; i < 8; i++) {
-                if (i % 2 == 0) {
-                    library.addSprite(new Sprite("Textures/kiidle" + i + ".png", "kiidle" + i, assetManager, false, true, 1, 1, 0.08f, "Loop", "Start"));
-                } else {
-                    library.addSprite(new Sprite("Textures/danidle" + i + ".png", "danidle" + i, assetManager, false, true, 1, 1, 0.08f, "Loop", "Start"));
-                }
+                library.addSprite(new Sprite("Textures/kiidle" + i + ".png", "kiidle" + i, assetManager, false, true, 1, 1, 0.08f, "Loop", "Start"));
+
             }
             library.setCurSprite(12);
         } else {

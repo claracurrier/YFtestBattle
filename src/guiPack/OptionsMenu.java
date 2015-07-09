@@ -5,6 +5,7 @@
 package guiPack;
 
 import battlestatepack.BattleGUI;
+import cameraPack.CameraOptions;
 import com.jme3.app.Application;
 import com.jme3.font.BitmapFont;
 import com.jme3.input.event.MouseButtonEvent;
@@ -20,7 +21,7 @@ import tonegod.gui.core.Screen;
 
 /**
  *
- * @author PC
+ * @author Clara Currier
  */
 public class OptionsMenu {
 
@@ -44,7 +45,7 @@ public class OptionsMenu {
         final GraphicsDevice device = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
         final DisplayMode[] modes = device.getDisplayModes();
 
-        //selectbox
+        //Resolution list
         SelectBox resList = new SelectBox(screen, "Resolutions", new Vector2f(15, 40)) {
             @Override
             public void onChange(int i, Object o) {
@@ -56,6 +57,9 @@ public class OptionsMenu {
                     win.setPosition(15, res[1] - 15 - win.getHeight());
                     if (mm.getStateManager().getState(BattleGUI.class) != null) {
                         mm.getStateManager().getState(BattleGUI.class).changeRes(res[0], res[1]);
+                    }
+                    if (CameraOptions.options.isActive()) {
+                        CameraOptions.options.getCurrentCamera().refreshScreenDim(res[0], res[1]);
                     }
                 }
             }
@@ -90,6 +94,9 @@ public class OptionsMenu {
                 if (mm.getStateManager().getState(BattleGUI.class) != null) {
                     mm.getStateManager().getState(BattleGUI.class).changeRes(mode.getWidth(), mode.getHeight());
                 }
+                if (CameraOptions.options.isActive()) {
+                    CameraOptions.options.getCurrentCamera().refreshScreenDim(mode.getWidth(), mode.getHeight());
+                }
             }
         };
         fullscreenBtn.setIsToggleButton(true);
@@ -115,9 +122,25 @@ public class OptionsMenu {
         vsyncBtn.setIsToggledNoCallback(settings.isVSync());
         win.addChild(vsyncBtn);
 
+        //Camera list
+        SelectBox camList = new SelectBox(screen, "Cameras", new Vector2f(15, 140)) {
+            @Override
+            public void onChange(int i, Object o) {
+                if (o != null) {
+                    CameraOptions.options.setCamSetting((String) o);
+                }
+            }
+        };
+        camList.addListItem("Camera", null);
+        camList.addListItem("Manual", "Manual");
+        camList.addListItem("Auto-follow (box)", "AutoFollowBox");
+        camList.addListItem("Auto-follow (midpoint)", "AutoFollowMidPoint");
+        camList.addListItem("Auto-follow (locked)", "AutoFollowLocked");
+        win.addChild(camList);
+
         //go back button
         MyButton goBackBtn = new MyButton(screen, "GoBack",
-                new Vector2f(15, 140)) {
+                new Vector2f(15, 175)) {
             @Override
             public void onButtonMouseLeftUp(MouseButtonEvent evt, boolean toggled) {
                 screen.removeElement(win);

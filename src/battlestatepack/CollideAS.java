@@ -4,6 +4,7 @@
  */
 package battlestatepack;
 
+import cameraPack.CameraOptions;
 import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
@@ -52,34 +53,41 @@ public class CollideAS extends AbstractAppState {
         if (isEnabled()) {
             moveCheck(spatial);
             attackCheck();
-            if (CameraOptions.options.getCamSetting().equals("AutoFollow")) {
-                camCheck(CameraOptions.options.getCamBox(), tpf);
+            if (CameraOptions.options.getCamSetting().equals("AutoFollowBox")) {
+                AutoFollowBoxCamCheck(CameraOptions.options.getCamBox(), tpf);
+                //the only camera setting that needs collision checking
             }
         }
     }
 
-    private void camCheck(Node camBox, float tpf) {
-        //takes care of camera movement right here
-        // bit of a bad design, may want to refactor later
+    private void AutoFollowBoxCamCheck(Node camBox, float tpf) {
+        collided = false;
         for (int i = 0; i < 4; i++) {
             Spatial camBoxEdge = camBox.getChild("camBox" + i);
-            val = satTest(camBoxEdge, spatial);
+            val = satTest(spatial, camBoxEdge);
             if (val > 0) {
                 switch (val) {
                     case 1: //left
-                        camBox.move(tpf * GVars.gvars.pspeed, 0, 0);
+                        camBox.setUserData("moveLeft", true);
                         break;
                     case 2: //right
-                        camBox.move(-tpf * GVars.gvars.pspeed, 0, 0);
+                        camBox.setUserData("moveRight", true);
                         break;
                     case 3: //down
-                        camBox.move(0, -tpf * GVars.gvars.pspeed, 0);
+                        camBox.setUserData("moveDown", true);
                         break;
                     case 4: //up
-                        camBox.move(0, tpf * GVars.gvars.pspeed, 0);
+                        camBox.setUserData("moveUp", true);
                         break;
                 }
+                collided = true;
             }
+        }
+        if (!collided) {
+            camBox.setUserData("moveLeft", false);
+            camBox.setUserData("moveRight", false);
+            camBox.setUserData("moveUp", false);
+            camBox.setUserData("moveDown", false);
         }
     }
 
