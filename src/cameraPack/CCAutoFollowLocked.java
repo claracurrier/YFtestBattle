@@ -4,6 +4,7 @@
  */
 package cameraPack;
 
+import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 
 /**
@@ -12,37 +13,37 @@ import com.jme3.scene.Node;
  */
 public class CCAutoFollowLocked extends CameraControl {
 
-    private Node activeChar;
+    private Node activeChar, rootNode;
     private Node camBox = CameraOptions.options.getCamBox();
 
-    public CCAutoFollowLocked(int w, int h, Node firstChar) {
+    public CCAutoFollowLocked(int w, int h, Node firstChar, Node root) {
         width = w;
         height = h;
         activeChar = firstChar;
+        rootNode = root;
     }
 
     public void updateChar(Node newchar) {
-        if (activeChar.hasChild(camBox)) {
-            activeChar.detachChild(camBox);
-        }
         activeChar = newchar;
         if (CameraOptions.options.getCamSetting().equals("AutoFollowLocked")) {
             activeChar.attachChild(camBox);
+            camBox.setLocalTranslation(Vector3f.ZERO);
         }
-
     }
 
     @Override
     protected void controlUpdate(float tpf) {
-        if (CameraOptions.options.getCamSetting().equals("AutoFollowLocked")) {
-            if (!camBox.getLocalTranslation().equals(activeChar.getLocalTranslation())) {
-                camBox.setLocalTranslation(activeChar.getLocalTranslation());
-            }
-        }
     }
 
     @Override
     public void setup() {
         activeChar.attachChild(camBox);
+        camBox.setLocalTranslation(Vector3f.ZERO);
+    }
+
+    @Override
+    public void takedown() {
+        rootNode.attachChild(camBox);
+        CameraOptions.options.resetLocation();
     }
 }

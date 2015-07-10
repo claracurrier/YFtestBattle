@@ -42,7 +42,7 @@ public class CCAutoFollowBox extends CameraControl {
                     break;
             } // the spacing and positions should be based on screen dimensions
         }
-        
+
     }
 
     @Override
@@ -58,6 +58,13 @@ public class CCAutoFollowBox extends CameraControl {
         }
         if (camBox.getUserData("moveDown")) {
             camBox.move(0, -tpf * GVars.gvars.camspeed, 0);
+        }
+    }
+
+    @Override
+    public void takedown() {
+        for (int i = 0; i < 4; i++) {
+            camBox.detachChildNamed("camBox" + i);
         }
     }
 }

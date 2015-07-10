@@ -5,6 +5,9 @@
 package cameraPack;
 
 import com.jme3.input.InputManager;
+import com.jme3.input.KeyInput;
+import com.jme3.input.controls.ActionListener;
+import com.jme3.input.controls.KeyTrigger;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
@@ -17,7 +20,7 @@ import com.jme3.scene.control.CameraControl.ControlDirection;
  *
  * @author Clara Currier
  */
-public class CameraOptions {
+public class CameraOptions implements ActionListener {
 
     public static CameraOptions options = new CameraOptions();
     private Camera cam;
@@ -26,7 +29,8 @@ public class CameraOptions {
     private Node activeChar;
     private String camSetting = "Manual";
     private final float frustumSize = 220f;
-    private InputManager input;
+    private Node rootNode;
+    private InputManager inputManager;
     private boolean active = false;
     private CameraControl afBox, afMidpoint, afLocked, manual;
 
@@ -41,20 +45,26 @@ public class CameraOptions {
         this.active = active;
     }
 
-    public void setup(Camera c, InputManager in, Node firstChar) {
+    public Camera getCamera() {
+        return cam;
+    }
+
+    public void setup(Camera c, InputManager in, Node firstChar, Node root) {
         cam = c;
+        rootNode = root;
         camNode = new CameraNode("Camera Node", cam);
-        input = in;
+        inputManager = in;
+        enableCharMapping(true);
 
         int w = cam.getWidth();
         int h = cam.getHeight();
         afBox = new CCAutoFollowBox(w, h);
         afMidpoint = new CCAutoFollowMidpoint(w, h);
-        afLocked = new CCAutoFollowLocked(w, h, firstChar);
+        afLocked = new CCAutoFollowLocked(w, h, firstChar, root);
         manual = new CCManual(w, h, in);
     }
 
-    public CameraControl getCamera(String c) {
+    public CameraControl getCameraControl(String c) {
         if (c.equals("AutoFollowBox")) {
             return afBox;
         } else if (c.equals("AutoFollowMidpoint")) {
@@ -67,7 +77,7 @@ public class CameraOptions {
     }
 
     public CameraControl getCurrentCamera() {
-        return getCamera(camSetting);
+        return getCameraControl(camSetting);
     }
 
     public String getCamSetting() {
@@ -84,17 +94,15 @@ public class CameraOptions {
             return;
         }
 
-        camBox.removeControl(getCamera(camSetting));
-        camSetting = setting;
-        camBox.detachAllChildren(); //clears the Node
-        camBox.attachChild(camNode);
+        camBox.removeControl(getCameraControl(camSetting));
+        getCameraControl(camSetting).takedown();
 
-        getCamera(setting).setup();
-        camBox.addControl(getCamera(setting));
-        resetLocation();
+        camSetting = setting;
+        getCameraControl(setting).setup();
+        camBox.addControl(getCameraControl(setting));
     }
 
-    public void makeCamBox(Node rootNode) {
+    public void makeCamBox() {
         float aspect = (float) cam.getWidth() / cam.getHeight();
         cam.setFrustum(-100, 100, -aspect * frustumSize, aspect * frustumSize, frustumSize, -frustumSize);
         //key: near, far, left, right, top, bottom
@@ -117,8 +125,8 @@ public class CameraOptions {
 
     public void setChar(Node character) {
         activeChar = character;
-        ((CCAutoFollowLocked) afLocked).updateChar(character);
         resetLocation();
+        ((CCAutoFollowLocked) afLocked).updateChar(character);
     }
 
     public Spatial getChar() {
@@ -127,5 +135,30 @@ public class CameraOptions {
 
     public void resetLocation() {
         camBox.setLocalTranslation(activeChar.getLocalTranslation());
+    }
+
+    public void enableCharMapping(boolean enabled) {
+        if (enabled) {
+            if (!inputManager.hasMapping("space")) {
+                inputManager.addListener(this, "space");
+                inputManager.addMapping("space", new KeyTrigger(KeyInput.KEY_SPACE));
+            }
+        } else {
+            if (!inputManager.hasMapping("space")) {
+                inputManager.removeListener(this);
+                inputManager.deleteMapping("space");
+            }
+        }
+    }
+
+    @Override
+    public void onAction(String name, boolean isPressed, float tpf) {
+        if (name.equals("space") && !isPressed) {
+            if (camSetting.equals("Manual")) {
+                setCamSetting("AutoFollowLocked");
+            } else {
+                setCamSetting("Manual");
+            }
+        }
     }
 }

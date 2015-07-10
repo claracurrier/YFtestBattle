@@ -20,6 +20,9 @@ public abstract class CameraControl extends AbstractControl {
     public abstract void setup();
     //Makes the camera when the options change
 
+    public abstract void takedown();
+    //removes all presence of the camera
+
     public void refreshScreenDim(int w, int h) {
         //Resets dimensions and relevant nodes when options change.
         width = w;

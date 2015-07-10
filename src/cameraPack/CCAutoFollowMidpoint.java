@@ -22,4 +22,8 @@ public class CCAutoFollowMidpoint extends CameraControl {
     @Override
     public void setup() {
     }
+
+    @Override
+    public void takedown() {
+    }
 }

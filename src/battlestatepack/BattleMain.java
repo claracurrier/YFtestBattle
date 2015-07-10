@@ -86,8 +86,8 @@ public class BattleMain extends AbstractAppState implements ActionListener {
 
         //camera
         CameraOptions.options.setActive(true);
-        CameraOptions.options.setup(app.getCamera(), inputManager, dan);
-        CameraOptions.options.makeCamBox(app.getRootNode());
+        CameraOptions.options.setup(app.getCamera(), inputManager, dan, app.getRootNode());
+        CameraOptions.options.makeCamBox();
         CameraOptions.options.setChar(dan);
         CameraOptions.options.setCamSetting(CameraOptions.options.getCamSetting());
 
@@ -157,7 +157,7 @@ public class BattleMain extends AbstractAppState implements ActionListener {
 
         collideAS.setEnabled(enabled);
         mob.setEnabled(enabled);
-
+        CameraOptions.options.enableCharMapping(enabled);
         switchCharKey(enabled);
         picker.mouseKey(enabled);
     }

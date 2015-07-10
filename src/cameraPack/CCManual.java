@@ -9,6 +9,7 @@ import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
+import com.jme3.renderer.Camera;
 
 /**
  *
@@ -18,21 +19,27 @@ public class CCManual extends CameraControl implements ActionListener {
 
     private boolean ku, kd, kl, kr, keying;
     private InputManager inputManager;
+    private Camera cam = CameraOptions.options.getCamera();
 
     public CCManual(int w, int h, InputManager in) {
         width = w;
         height = h;
         inputManager = in;
-
-        enableCharMapping();
     }
 
     @Override
     public void setup() {
+        enableCharMapping();
+    }
+
+    @Override
+    public void takedown() {
+        disableCharMapping();
     }
 
     @Override
     public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
         if (enabled) {
             enableCharMapping();
         } else {
@@ -67,7 +74,7 @@ public class CCManual extends CameraControl implements ActionListener {
 
     @Override
     protected void controlUpdate(float tpf) {
-        if (!keying) { //check for mouse panning on edge of screen if not using keys
+        if (!keying) { //check for mouse movt on edge of screen if not using keys
             if (inputManager.getCursorPosition().y > (height - 15)) {
                 ku = true;
             } else if (inputManager.getCursorPosition().y < (height - 15)) {
@@ -90,7 +97,21 @@ public class CCManual extends CameraControl implements ActionListener {
             }
         }
 
+        //check that camera isn't on the edge of the screen
+        //TODO: find a way to access the map width and height
+        if (cam.getLocation().x - width / 2 < 0) {
+            kl = false;
+        } else if (cam.getLocation().x + width / 2 > 120 * 16) {
+            kr = false;
+        }
+        if (cam.getLocation().y - height / 2 < 0) {
+            kd = false;
+        } else if (cam.getLocation().y + height / 2 > 90 * 16) {
+            ku = false;
+        }
+
         //move camera if true
+        //TODO: still not working...
         if (ku && kl && !kr) {//upleft
             spatial.move(-tpf * GVars.gvars.camspeed, tpf * GVars.gvars.camspeed, 0);
 
