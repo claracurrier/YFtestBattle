@@ -107,6 +107,7 @@ public class MapLoader {
                     tile.setMaterial(tileMat);
                     tile.setLocalTranslation(i * 16, (layer.getHeight() - j) * 16, zorder - 2);
                     tile.setImage(tileSet.getTile(tile.getNumber()).getImage(), loader);
+                    tile.setName("tile");
 
                     tileGeoms.attachChild(tile);
                 }

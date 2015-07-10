@@ -17,7 +17,7 @@ public class GVars {
     private GVars() {
     }
     //General vars
-    public final float pspeed = 350;
+    public final float pspeed = 420;
     public final float pspeedAI = 200; //unused
     public final float phealth = 100;
     public final float pAIactivate = 1;

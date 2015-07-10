@@ -58,7 +58,7 @@ public class BattleMain extends AbstractAppState implements ActionListener {
         BATTLENODE.attachChild(ATKNODE);
         collideAS = new CollideAS();
         maker = new EntityMaker(assetManager);
-        picker = new Picker(app.getCamera(), inputManager, app.getRootNode());
+        picker = new Picker(app.getCamera(), inputManager, app.getRootNode(), this);
 
         //set up characters
         dan = maker.createSpatial("Dan");
@@ -116,7 +116,7 @@ public class BattleMain extends AbstractAppState implements ActionListener {
         checkComplete();
     }
 
-    private void switchChar() {
+    public void switchChar() {
         if (stateManager.hasState(danAppState)) {
             //if kirith is now in control
             collideAS.setMovingSpatial(kirith);
@@ -137,6 +137,11 @@ public class BattleMain extends AbstractAppState implements ActionListener {
             CameraOptions.options.setChar(dan);
             battleGUI.setActiveHUD(danCC);
         }
+    }
+
+    public boolean getCurChar() {
+        //true for dan, false for ki
+        return stateManager.hasState(danAppState);
     }
 
     @Override
