@@ -10,17 +10,18 @@ import mobPack.MobSkill.mSkillCont;
 import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
+import com.jme3.export.JmeExporter;
+import com.jme3.export.JmeImporter;
+import com.jme3.export.Savable;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import java.io.IOException;
 
 /**
  *
- * @author PC
+ * @author Clara Currier
  */
-public class MobAS extends AbstractAppState {
-    /*
-     * Wrapper class for a mob. contains all relevant information and creation
-     */
+public class MobAS extends AbstractAppState implements Savable{
 
     private final String name;
     private final Spatial mob, dan, ki;
@@ -122,5 +123,13 @@ public class MobAS extends AbstractAppState {
 
     public Spatial getMobSpat() {
         return mob;
+    }
+    
+    @Override
+    public void write(JmeExporter ex) throws IOException {
+    }
+
+    @Override
+    public void read(JmeImporter im) throws IOException {
     }
 }

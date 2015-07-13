@@ -20,6 +20,7 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.system.AppSettings;
 import guiPack.MainMenu;
+import playerPack.Player;
 import spriteProject.SpriteEngine;
 
 /**
@@ -30,8 +31,7 @@ public class BattleMain extends AbstractAppState implements ActionListener {
 
     private final Node dan, kirith;
     private final EntityMaker maker;
-    private final DanAS danAppState;
-    private final KirithAS kiAppState;
+    private final Player danAppState, kiAppState;
     private final CollideAS collideAS;
     private final SimpleApplication app;
     private final AssetManager assetManager;
@@ -64,11 +64,13 @@ public class BattleMain extends AbstractAppState implements ActionListener {
         dan = maker.createSpatial("Dan");
         dan.move(settings.getWidth() / 2, settings.getHeight() / 2, 0);
         danAppState = new DanAS(dan, settings);
+        dan.setUserData("entity", danAppState);
         danCC = new PCollideCont();
 
         kirith = maker.createSpatial("Kirith");
         kirith.move(settings.getWidth() / 3, settings.getHeight() / 3, 0);
         kiAppState = new KirithAS(kirith);
+        kirith.setUserData("entity", kiAppState);
         kiCC = new PCollideCont();
 
         battleGUI = new BattleGUI(settings.getWidth(), settings.getHeight(),
@@ -80,18 +82,12 @@ public class BattleMain extends AbstractAppState implements ActionListener {
         //spawn a MobAS
         Spatial mobSpat = maker.createSpatial("Wanderer");
         mob = new MobAS(mobSpat, "Wanderer", dan, kirith);
-        mobSpat.move(500, 500, -1);
+        mobSpat.setLocalTranslation(500, 500, 0);
+        mobSpat.setUserData("entity", mob);
         //disabled mob for now
         mob.setEnabled(false);
 
-        //camera
-        CameraOptions.options.setActive(true);
-        CameraOptions.options.setup(app.getCamera(), inputManager, dan, app.getRootNode());
-        CameraOptions.options.makeCamBox();
-        CameraOptions.options.setChar(dan);
-        CameraOptions.options.setCamSetting(CameraOptions.options.getCamSetting());
-
-
+        makeCamera();
         makeMap();
         switchCharKey(true);
         picker.mouseKey(true);
@@ -103,7 +99,7 @@ public class BattleMain extends AbstractAppState implements ActionListener {
         stateManager.attach(battleGUI);
         stateManager.attach(mob);
 
-        picker.setActiveChar(dan);
+        picker.setActiveChar(danAppState);
         dan.addControl(danCC);
         kirith.addControl(kiCC);
         DEFNODE.attachChild(dan);
@@ -122,7 +118,7 @@ public class BattleMain extends AbstractAppState implements ActionListener {
             collideAS.setMovingSpatial(kirith);
             stateManager.detach(danAppState);
             stateManager.attach(kiAppState);
-            picker.setActiveChar(kirith);
+            picker.setActiveChar(kiAppState);
 
             CameraOptions.options.setChar(kirith);
             battleGUI.setActiveHUD(kiCC);
@@ -132,7 +128,7 @@ public class BattleMain extends AbstractAppState implements ActionListener {
             collideAS.setMovingSpatial(dan);
             stateManager.detach(kiAppState);
             stateManager.attach(danAppState);
-            picker.setActiveChar(dan);
+            picker.setActiveChar(danAppState);
 
             CameraOptions.options.setChar(dan);
             battleGUI.setActiveHUD(danCC);
@@ -199,10 +195,22 @@ public class BattleMain extends AbstractAppState implements ActionListener {
     }
 
     private void makeMap() {
+        GVars.gvars.mapheight = 90 * 16; //modified when loading map
+        GVars.gvars.mapwidth = 120 * 16;
+
         MapLoader mapMaker = new MapLoader(app.getRootNode(), assetManager);
         mapMaker.makeTiledMap("test_large_collision");
-        mapMaker.makeImageMap("test_large", 120 * 16, 90 * 16, 15, 20);
+        mapMaker.makeImageMap("test_large", GVars.gvars.mapwidth, GVars.gvars.mapheight, 15, 20);
         app.getViewPort().setBackgroundColor(ColorRGBA.Brown);
+    }
+
+    private void makeCamera() {
+        CameraOptions camOps = CameraOptions.options;
+        camOps.setActive(true);
+        camOps.setup(app.getCamera(), inputManager, dan, app.getRootNode());
+        camOps.makeCamBox();
+        camOps.setChar(dan);
+        camOps.setCamSetting(camOps.getCamSetting());
     }
 
     private void checkComplete() {

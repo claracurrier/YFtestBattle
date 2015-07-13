@@ -16,32 +16,35 @@ import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
-import com.jme3.scene.Spatial;
+import playerPack.AutoAttackCont;
+import playerPack.Player;
 
 /**
  *
  * @author Clara Currier
  */
 public class Picker implements ActionListener {
-
+    
     private final Camera cam;
     private final InputManager input;
     private Vector2f mouse;
-    private Spatial activeChar;
+    private Player activePlayer;
+    private Node activeNode;
     private Node rootNode;
     private BattleMain bmain;
-
+    
     public Picker(Camera c, InputManager in, Node rootNode, BattleMain bm) {
         cam = c;
         input = in;
         this.rootNode = rootNode;
         bmain = bm;
     }
-
-    public void setActiveChar(Spatial player) {
-        activeChar = player;
+    
+    public void setActiveChar(Player player) {
+        activePlayer = player;
+        activeNode = player.getNode();
     }
-
+    
     protected void mouseKey(boolean enabled) {
         if (enabled) {
             if (!input.hasMapping("LeftClick")) {
@@ -58,7 +61,7 @@ public class Picker implements ActionListener {
             }
         }
     }
-
+    
     @Override
     public void onAction(String name, boolean keyPressed, float tpf) {
         if (!keyPressed) {
@@ -73,7 +76,7 @@ public class Picker implements ActionListener {
             // 3. Collect intersections between Ray and rootNode (where map is attached)
             rootNode.collideWith(ray, results);
             Geometry picked = results.getClosestCollision().getGeometry();
-
+            
             if (results.size() > 0) {
                 if (name.equals("LeftClick")) {
                     if (picked.getName().contains("dan")) {
@@ -84,8 +87,9 @@ public class Picker implements ActionListener {
                         handleMovement(picked);
                     }
                 } else if (name.equals("RightClick")) {
-                    if (picked.getName().contains("mob")) {
-                        handleAttack();
+                    if (picked.getName().contains("monster")) {
+                        handleAttack(picked.getParent().getParent().getLocalTranslation());
+                        //ignore the sprites and get to the node
                     }
                 }
                 //TODO: add special triggers for skills that require mouse picking
@@ -96,34 +100,44 @@ public class Picker implements ActionListener {
             }
         }
     }
-
+    
     private void handleMovement(Geometry pickedGeom) {
-        if (activeChar.getControl(MoveCont.class) != null) {
+        if (activeNode.getControl(MoveCont.class) != null) {
             //cancel movement (don't bother cancelling pathfinding)
-            activeChar.removeControl(MoveCont.class);
+            activeNode.removeControl(MoveCont.class);
+        }
+        if (activeNode.getControl(AutoAttackCont.class) != null) {
+            //cancel attacking
+            activeNode.removeControl(AutoAttackCont.class);
         }
         // The closest collision point is what was truly hit:
         if (pickedGeom instanceof Tile) {
             Tile start = new Tile(new Vector2f(
-                    activeChar.getLocalTranslation().x,
-                    activeChar.getLocalTranslation().y),
+                    activeNode.getLocalTranslation().x,
+                    activeNode.getLocalTranslation().y),
                     (Tile) pickedGeom);
             Pathfinder pathfinder = new Pathfinder(start, (Tile) pickedGeom);
-            activeChar.addControl(pathfinder);
+            activeNode.addControl(pathfinder);
             start = null;
         } else {
             System.out.println("not a tile");
         }
     }
-
+    
     private void handleSwitch(String character) {
         if ((!bmain.getCurChar() && character.equals("dan"))
                 || (bmain.getCurChar() && character.equals("ki"))) {
             bmain.switchChar();
         }
     }
-
-    private void handleAttack() {
-        //TODO: put autoattack handler here
+    
+    private void handleAttack(Vector3f target) {
+        if (activeNode.getControl(AutoAttackCont.class) != null) {
+            activeNode.removeControl(AutoAttackCont.class);
+        }
+        activeNode.addControl(new AutoAttackCont(
+                activeNode.getName().equals("Dan")
+                ? GVars.gvars.dautocooldown : GVars.gvars.kautocooldown,
+                activePlayer, target));
     }
 }

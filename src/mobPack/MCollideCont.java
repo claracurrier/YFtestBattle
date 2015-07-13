@@ -14,17 +14,15 @@ import com.jme3.scene.control.AbstractControl;
 
 /**
  *
- * @author PC
+ * @author Clara Currier
  */
 public class MCollideCont extends AbstractControl {
 
     private Node atkNode;
     private Vector3f loc;
     private final MobAS mob;
-    private final float width = 1000f;
-    private final float height = 1000f;
-    private float stunThreshold = GVars.gvars.mstunthreshold;
-    //TODO: make the bounds either built into the map or change this
+    private final float width = GVars.gvars.mapwidth;
+    private final float height = GVars.gvars.mapheight;
 
     public MCollideCont(MobAS m) {
         mob = m;
@@ -77,32 +75,10 @@ public class MCollideCont extends AbstractControl {
 
                 if (spatial.getUserData("collided").equals("arrow")) {
                     movedir(dir, 0);
-
-                } else if (spatial.getUserData("collided").equals("pushback")) {
-                    movedir(dir, atkpower * GVars.gvars.mpushbackmod);
-                    mob.setEnabled(false);
-                    spatial.addControl(new MStunnedCont(atkpower
-                            * GVars.gvars.mpushstunmod, mob));
-
-                } else if (spatial.getUserData("collided").equals("stun")) {
-                    movedir(dir, 0);
-                    if (atkpower > stunThreshold) {
-                        mob.setEnabled(false);
-                        spatial.addControl(new MStunnedCont(atkpower
-                                * GVars.gvars.mstunmod, mob));
-                    }
-
-                } else if (spatial.getUserData("collided").equals("spin")) {
-                    movedir(dir, atkpower * GVars.gvars.mspinpushmod);
-                    mob.setEnabled(false);
-                    spatial.addControl(new MStunnedCont(
-                            atkpower * GVars.gvars.mspinstunmod, mob));
                 }
 
                 mob.reduceHealth((Float) spatial.getUserData("atkpower"));
-                //modifers can be added here depending on mob
-                //refactoring of health mechanism may be necessary
-                //especially if considering overhaul of inheritance
+                
                 spatial.setUserData("collided", "none");
             }
         }

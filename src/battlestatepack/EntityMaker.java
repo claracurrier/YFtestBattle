@@ -33,7 +33,7 @@ public class EntityMaker {
         float width = 50f;
         float height = 80f;
 
-        Material picMat = new Material(assetManager, "Common/MatDefs/Gui/Gui.j3md");
+        Material picMat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         picMat.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
         node.setQueueBucket(RenderQueue.Bucket.Transparent);
         node.setMaterial(picMat);
@@ -104,8 +104,6 @@ public class EntityMaker {
         } else {
             library.addSprite(new Sprite("Textures/monster.png", "monster", assetManager, true, true, 2, 1, 0.1f, "Loop", "Start"));
             library.setCurSprite(0);
-            //does a search on the monster's name
-            //adds the proper sprite
         }
     }
 }

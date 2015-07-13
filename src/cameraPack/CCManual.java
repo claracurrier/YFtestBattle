@@ -98,15 +98,14 @@ public class CCManual extends CameraControl implements ActionListener {
         }
 
         //check that camera isn't on the edge of the screen
-        //TODO: find a way to access the map width and height
         if (cam.getLocation().x - width / 2 < 0) {
             kl = false;
-        } else if (cam.getLocation().x + width / 2 > 120 * 16) {
+        } else if (cam.getLocation().x + width / 2 > GVars.gvars.mapwidth) {
             kr = false;
         }
         if (cam.getLocation().y - height / 2 < 0) {
             kd = false;
-        } else if (cam.getLocation().y + height / 2 > 90 * 16) {
+        } else if (cam.getLocation().y + height / 2 > GVars.gvars.mapheight) {
             ku = false;
         }
 

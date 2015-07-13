@@ -14,7 +14,7 @@ import com.jme3.scene.Spatial;
 
 /**
  *
- * @author PC
+ * @author Clara Currier
  */
 public class CollideAS extends AbstractAppState {
 

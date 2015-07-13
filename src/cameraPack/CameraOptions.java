@@ -43,6 +43,9 @@ public class CameraOptions implements ActionListener {
 
     public void setActive(boolean active) {
         this.active = active;
+        if (!active) {
+            cleanup();
+        }
     }
 
     public Camera getCamera() {
@@ -62,6 +65,13 @@ public class CameraOptions implements ActionListener {
         afMidpoint = new CCAutoFollowMidpoint(w, h);
         afLocked = new CCAutoFollowLocked(w, h, firstChar, root);
         manual = new CCManual(w, h, in);
+    }
+
+    public void cleanup() {
+        enableCharMapping(false);
+        camBox.detachAllChildren();
+        camNode = null;
+        camBox.removeFromParent();
     }
 
     public CameraControl getCameraControl(String c) {

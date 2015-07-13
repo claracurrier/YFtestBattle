@@ -62,30 +62,36 @@ public class Pathway {
             return newPath;
         }
 
-        //calculate special case of first point
-        CatmullRomSpline2D crs2Dfirst = new CatmullRomSpline2D(
+        CatmullRomSpline2D crs2D;
+        //calculate special first point
+        crs2D = new CatmullRomSpline2D(
                 coordPath.get(0), coordPath.get(0),
                 coordPath.get(1), coordPath.get(2));
-        newPath.add(crs2Dfirst.q(.333f));
-        newPath.add(crs2Dfirst.q(.667f));
+        newPath.add(crs2D.q(.25f));
+        newPath.add(crs2D.q(.5f));
+        newPath.add(crs2D.q(.75f));
         newPath.add(coordPath.get(1));
 
         //What CRS does is calculate a new "in between" points for p1 and p2
-        //for every point in coordPath, calculate t = .333, .667
+        //for every point in coordPath, calculate t = .25, .5, .75
+        //if character appears to walk too fast, just increase sample size
         for (int i = 1; i < coordPath.size() - 2; i++) {
-            CatmullRomSpline2D crs2D = new CatmullRomSpline2D(
+            crs2D = new CatmullRomSpline2D(
                     coordPath.get(i - 1), coordPath.get(i),
                     coordPath.get(i + 1), coordPath.get(i + 2));
-            newPath.add(crs2D.q(.333f));
-            newPath.add(crs2D.q(.667f));
+            newPath.add(crs2D.q(.25f));
+            newPath.add(crs2D.q(.5f));
+            newPath.add(crs2D.q(.75f));
             newPath.add(coordPath.get(i + 1));
         }
+
         //last point case
-        CatmullRomSpline2D crs2Dlast = new CatmullRomSpline2D(
+        crs2D = new CatmullRomSpline2D(
                 coordPath.get(coordPath.size() - 3), coordPath.get(coordPath.size() - 2),
                 coordPath.getLast(), coordPath.getLast());
-        newPath.add(crs2Dlast.q(.333f));
-        newPath.add(crs2Dlast.q(.667f));
+        newPath.add(crs2D.q(.25f));
+        newPath.add(crs2D.q(.5f));
+        newPath.add(crs2D.q(.75f));
         newPath.add(coordPath.getLast());
 
         return newPath;

@@ -4,36 +4,37 @@
  */
 package playerPack;
 
-import com.jme3.scene.Spatial;
+import com.jme3.math.Vector3f;
+import com.jme3.scene.Node;
 
 /**
  *
  * @author Clara Currier
  */
-public class KirithAS extends Player{
+public class KirithAS extends Player {
 
-    private final Spatial kirith;
+    private final Node kirith;
+    private float minAtkDist;
 
-    public KirithAS(Spatial ki) {
+    public KirithAS(Node ki) {
         this.kirith = ki;
-    }
-
-    private void pushback(float charge) {
-        System.out.println("pushed back with a power of " + charge);
-        
-    }
-
-    private void stun(float charge) {
-        System.out.println("stunned with a power of " + charge);
-        
-    }
-
-    private void spin(){
-        
     }
 
     @Override
     public void update(float tpf) {
-        
+    }
+
+    @Override
+    public void autoAttack(Vector3f target) {
+        //does a melee attack
+    }
+
+    @Override
+    public void takeDamage() {
+    }
+
+    @Override
+    public Node getNode() {
+        return kirith;
     }
 }
