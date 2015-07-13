@@ -79,18 +79,18 @@ public class BattleMain extends AbstractAppState implements ActionListener {
 
     @Override
     public void initialize(AppStateManager asm, Application appl) {
-        //spawn a MobAS
-        Spatial mobSpat = maker.createSpatial("Wanderer");
-        mob = new MobAS(mobSpat, "Wanderer", dan, kirith);
-        mobSpat.setLocalTranslation(500, 500, 0);
-        mobSpat.setUserData("entity", mob);
-        //disabled mob for now
-        mob.setEnabled(false);
-
         makeCamera();
         makeMap();
         switchCharKey(true);
         picker.mouseKey(true);
+        
+        //spawn a MobAS
+        Spatial mobSpat = maker.createSpatial("Wanderer");
+        mob = new MobAS(mobSpat, "Wanderer", dan, kirith);
+        mobSpat.setLocalTranslation(500, 240, 0);
+        mobSpat.setUserData("entity", mob);
+        //disabled mob for now
+        mob.setEnabled(false);
 
         //load all the states
         stateManager.attach(collideAS);

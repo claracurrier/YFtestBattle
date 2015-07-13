@@ -4,6 +4,7 @@
  */
 package battlestatepack;
 
+import MapPack.Map;
 import MapPack.Tile;
 import com.jme3.collision.CollisionResults;
 import com.jme3.input.InputManager;
@@ -24,7 +25,7 @@ import playerPack.Player;
  * @author Clara Currier
  */
 public class Picker implements ActionListener {
-    
+
     private final Camera cam;
     private final InputManager input;
     private Vector2f mouse;
@@ -32,19 +33,19 @@ public class Picker implements ActionListener {
     private Node activeNode;
     private Node rootNode;
     private BattleMain bmain;
-    
+
     public Picker(Camera c, InputManager in, Node rootNode, BattleMain bm) {
         cam = c;
         input = in;
         this.rootNode = rootNode;
         bmain = bm;
     }
-    
+
     public void setActiveChar(Player player) {
         activePlayer = player;
         activeNode = player.getNode();
     }
-    
+
     protected void mouseKey(boolean enabled) {
         if (enabled) {
             if (!input.hasMapping("LeftClick")) {
@@ -61,7 +62,7 @@ public class Picker implements ActionListener {
             }
         }
     }
-    
+
     @Override
     public void onAction(String name, boolean keyPressed, float tpf) {
         if (!keyPressed) {
@@ -76,7 +77,10 @@ public class Picker implements ActionListener {
             // 3. Collect intersections between Ray and rootNode (where map is attached)
             rootNode.collideWith(ray, results);
             Geometry picked = results.getClosestCollision().getGeometry();
-            
+
+            System.out.println(picked);
+            System.out.println(picked.getParent().getParent());
+
             if (results.size() > 0) {
                 if (name.equals("LeftClick")) {
                     if (picked.getName().contains("dan")) {
@@ -84,7 +88,7 @@ public class Picker implements ActionListener {
                     } else if (picked.getName().contains("ki")) {
                         handleSwitch("ki");
                     } else {
-                        handleMovement(picked);
+                        handleMovement(picked.getLocalTranslation());
                     }
                 } else if (name.equals("RightClick")) {
                     if (picked.getName().contains("monster")) {
@@ -100,8 +104,8 @@ public class Picker implements ActionListener {
             }
         }
     }
-    
-    private void handleMovement(Geometry pickedGeom) {
+
+    private void handleMovement(Vector3f target) {
         if (activeNode.getControl(MoveCont.class) != null) {
             //cancel movement (don't bother cancelling pathfinding)
             activeNode.removeControl(MoveCont.class);
@@ -110,31 +114,46 @@ public class Picker implements ActionListener {
             //cancel attacking
             activeNode.removeControl(AutoAttackCont.class);
         }
-        // The closest collision point is what was truly hit:
-        if (pickedGeom instanceof Tile) {
-            Tile start = new Tile(new Vector2f(
-                    activeNode.getLocalTranslation().x,
-                    activeNode.getLocalTranslation().y),
-                    (Tile) pickedGeom);
-            Pathfinder pathfinder = new Pathfinder(start, (Tile) pickedGeom);
-            activeNode.addControl(pathfinder);
-            start = null;
-        } else {
-            System.out.println("not a tile");
-        }
+        //move to the tile under the geometry that picker picked
+        Tile start = new Tile(new Vector2f(
+                activeNode.getLocalTranslation().x,
+                activeNode.getLocalTranslation().y),
+                Map.getTransparentLayer());
+        Tile end = new Tile(new Vector2f(target.x, target.y),
+                Map.getTransparentLayer());
+        Pathfinder pathfinder = new Pathfinder(start, end, 0);
+        activeNode.addControl(pathfinder);
+        start = null;
     }
-    
+
     private void handleSwitch(String character) {
         if ((!bmain.getCurChar() && character.equals("dan"))
                 || (bmain.getCurChar() && character.equals("ki"))) {
             bmain.switchChar();
         }
     }
-    
+
     private void handleAttack(Vector3f target) {
         if (activeNode.getControl(AutoAttackCont.class) != null) {
             activeNode.removeControl(AutoAttackCont.class);
         }
+        if (activeNode.getLocalTranslation().distance(target)
+                > (activeNode.getName().equals("Dan")
+                ? GVars.gvars.dminatkdist : GVars.gvars.kminatkdist)) {
+            //if character is too far to attack
+            Tile start = new Tile(new Vector2f(
+                    activeNode.getLocalTranslation().x,
+                    activeNode.getLocalTranslation().y),
+                    Map.getTransparentLayer());
+            Tile end = new Tile(new Vector2f(target.x, target.y),
+                    Map.getTransparentLayer());
+            Pathfinder pathfinder = new Pathfinder(start, end, 
+                    (activeNode.getName().equals("Dan")
+                    ? GVars.gvars.dminatkdist : GVars.gvars.kminatkdist));
+            activeNode.addControl(pathfinder);
+            start = null;
+        }
+
         activeNode.addControl(new AutoAttackCont(
                 activeNode.getName().equals("Dan")
                 ? GVars.gvars.dautocooldown : GVars.gvars.kautocooldown,

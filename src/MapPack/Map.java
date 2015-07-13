@@ -19,7 +19,7 @@ public class Map {
     private int tileHeight = 0;
     private int closedTileGID = -1;
     private ArrayList<TileSet> tileSets = new ArrayList<>();
-    private ArrayList<MapLayer> mapLayers = new ArrayList<>();
+    private static ArrayList<MapLayer> mapLayers = new ArrayList<>();
     private HashMap<String, String> properties = new HashMap<>();
 
     public Map() {
@@ -27,11 +27,15 @@ public class Map {
 
     public MapLayer getLayer(String name) {
         for (int i = 0; i < mapLayers.size(); i++) {
-            if (this.mapLayers.get(i).getName().equals(name)) {
-                return this.mapLayers.get(i);
+            if (mapLayers.get(i).getName().equals(name)) {
+                return mapLayers.get(i);
             }
         }
         return null;
+    }
+
+    public static MapLayer getTransparentLayer() {
+        return mapLayers.get(1); //always the transparent layer
     }
 
     public MapLayer getLayer(int index) {
@@ -93,12 +97,12 @@ public class Map {
     public void setProperties(HashMap<String, String> properties) {
         this.properties = properties;
     }
-    
-    public void setClosedTileGID(int tileGID){
+
+    public void setClosedTileGID(int tileGID) {
         closedTileGID = tileGID;
     }
-    
-    public int getClosedTileGID(){
+
+    public int getClosedTileGID() {
         return closedTileGID;
     }
 }

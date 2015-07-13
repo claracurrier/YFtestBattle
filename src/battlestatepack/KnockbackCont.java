@@ -4,6 +4,9 @@
  */
 package battlestatepack;
 
+import MapPack.Map;
+import MapPack.Tile;
+import com.jme3.math.Vector2f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.control.AbstractControl;
@@ -29,6 +32,19 @@ public class KnockbackCont extends AbstractControl {
 
     @Override
     protected void controlUpdate(float tpf) {
+        //tests for closed tiles
+        Tile curTile = new Tile(new Vector2f(
+                spatial.getLocalTranslation().x,
+                spatial.getLocalTranslation().y),
+                Map.getTransparentLayer());
+        for (Tile neighbor : curTile.getNeighbors(true)) {
+            if (neighbor.isClosed()) {
+                spatial.setUserData("knockback", false);
+                spatial.removeControl(this);
+                return;
+            }
+        }
+
         if (dtimer < Math.abs(distance)) {
             switch (dir) { //moves the node opposite of the direction it was it
                 //right now SATtest only gives 4 cardinal directions

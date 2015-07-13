@@ -27,15 +27,6 @@ public class CatmullRomSpline {
                 + (2 * p0 - 5 * p1 + 4 * p2 - p3) * t * t
                 + (3 * p1 - p0 - 3 * p2 + p3) * t * t * t);
     }
-    
-    public static void main(String[] args) {
-        CatmullRomSpline crs = new CatmullRomSpline(1f, 3f, 2f, 1f);
-        System.out.println(crs.q(0f));
-        System.out.println(crs.q(0.25f));
-        System.out.println(crs.q(0.5f));
-        System.out.println(crs.q(0.75f));
-        System.out.println(crs.q(1f));
-    }
 
     /**
      * @return the p0

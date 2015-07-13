@@ -41,10 +41,10 @@ public class Tile extends Geometry implements Comparable {
         mesh = new Quad(16, 16);
     }
 
-    public Tile(Vector2f location, Tile mimic) {
+    public Tile(Vector2f location, MapLayer layer) {
         //for navigational purposes, meant to be destroyed after use
         this.location = location;
-        layer = mimic.getLayer();
+        this.layer = layer;
     }
 
     public void setMesh(Geometry clone) {
@@ -188,15 +188,15 @@ public class Tile extends Geometry implements Comparable {
                     location.y - 32);
             //top additional 3
            /* neighbors[11] = layer.getTile(
-                    location.x + 16,
-                    location.y + 32);
-            neighbors[12] = layer.getTile(
-                    location.x,
-                    location.y + 32);
-            neighbors[13] = layer.getTile(
-                    location.x - 16,
-                    location.y + 32);
-                    * */
+             location.x + 16,
+             location.y + 32);
+             neighbors[12] = layer.getTile(
+             location.x,
+             location.y + 32);
+             neighbors[13] = layer.getTile(
+             location.x - 16,
+             location.y + 32);
+             * */
         } else {
             neighbors = new Tile[8];
         }

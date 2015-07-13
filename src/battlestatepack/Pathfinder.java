@@ -26,13 +26,15 @@ import java.util.logging.Logger;
 public class Pathfinder extends AbstractControl {
 
     private Tile start, end;
+    private float proximity = 0; //defaults to being on top of the tile
     private Future future = null;
     private Pathway way = null;
     private final ScheduledThreadPoolExecutor executor = MainMenu.getExecutor();
 
-    public Pathfinder(Tile s, Tile e) {
+    public Pathfinder(Tile s, Tile e, float proximity) {
         start = s;
         end = e;
+        this.proximity = proximity;
     }
 
     @Override
@@ -63,7 +65,7 @@ public class Pathfinder extends AbstractControl {
             if (!way.getPath().isEmpty()) {
                 //.... Success! Add a new MoveCont using the pathway
                 spatial.addControl(new MoveCont(way, spatial.getName()));
-            } else{
+            } else {
                 System.out.println("empty");
             }
             spatial.removeControl(this);
@@ -95,7 +97,8 @@ public class Pathfinder extends AbstractControl {
             start.pathParent = null;
             openset.add(start);
 
-            while (!openset.isEmpty() && closedset.size() < 2200) {
+            while (!openset.isEmpty() && closedset.size() < 2200
+                    && bestWay.getClosenessScore() > proximity) {
                 Tile current = (Tile) openset.removeFirst(); // lowest f-score val
                 if (current.equals(end)) {
                     return reconstructWay(end);

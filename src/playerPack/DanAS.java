@@ -105,8 +105,9 @@ public class DanAS extends Player {
         if (playerPos.distance(target) > GVars.gvars.dminatkdist) {
             //move closer
             System.out.println("too far");
+        } else {
+            fireArrow(target);
         }
-        fireArrow(target);
     }
 
     @Override

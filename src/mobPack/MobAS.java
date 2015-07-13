@@ -55,7 +55,7 @@ public class MobAS extends AbstractAppState implements Savable{
     }
 
     @Override
-    public void update(float tpf) {
+    public void update(float tpf) {        
         if (mob.getControl(mSkillCont.class) == null) {
             pickTarget();
             pickSkill(targ);
