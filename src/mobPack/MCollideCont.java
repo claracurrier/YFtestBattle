@@ -74,9 +74,9 @@ public class MCollideCont extends AbstractControl {
                 int dir = (Integer) spatial.getUserData("atkdirection");
 
                 if (spatial.getUserData("collided").equals("arrow")) {
-                    movedir(dir, 0);
+                    //movedir(dir, 0);
                 } else if (spatial.getUserData("collided").equals("kiautoattack")) {
-                    movedir(dir, 0);
+                    //movedir(dir, 0);
                 }
 
                 mob.reduceHealth((Float) spatial.getUserData("atkpower"));

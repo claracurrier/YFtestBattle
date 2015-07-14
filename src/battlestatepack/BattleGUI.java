@@ -4,7 +4,6 @@
  */
 package battlestatepack;
 
-import playerPack.PCollideCont;
 import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
@@ -12,18 +11,19 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector4f;
 import guiPack.MainMenu;
+import playerPack.Player;
 import tonegod.gui.controls.extras.Indicator;
 import tonegod.gui.controls.windows.Panel;
 import tonegod.gui.core.Screen;
 
 /**
  *
- * @author PC
+ * @author Clara Currier
  */
 public class BattleGUI extends AbstractAppState {
 
-    private final PCollideCont dan, ki;
-    private float danHealth, kiHealth, a;
+    private final Player dan, ki;
+    private float danHealth, kiHealth, aspect;
     private final Screen screen;
     private int w, h;
     private String curChar = "dan";
@@ -31,13 +31,13 @@ public class BattleGUI extends AbstractAppState {
     private Panel curPic, altPic;
     private final ColorRGBA green = new ColorRGBA(50f / 255f, 143f / 255f, 50f / 255f, 1f);
 
-    public BattleGUI(int w, int h, PCollideCont d, PCollideCont k) {
+    public BattleGUI(int w, int h, Player dan, Player ki) {
         screen = MainMenu.getScreen();
         this.w = w;
         this.h = h;
-        dan = d;
-        ki = k;
-        a = 1;
+        this.dan = dan;
+        this.ki = ki;
+        aspect = 1;
     }
 
     @Override
@@ -49,10 +49,10 @@ public class BattleGUI extends AbstractAppState {
     public void changeRes(int w, int h) {
         this.w = w;
         this.h = h;
-        curPic.setPosition(w - (150 * a + 5), 5);
-        curHealth.setPosition(w - (190 * a + 5 + curPic.getWidth()), 5);
-        altPic.setPosition(w - (100 * a + 5 + curPic.getWidth()), 5 + curHealth.getHeight());
-        altHealth.setPosition(w - (110 * a + altPic.getWidth() + curPic.getWidth()),
+        curPic.setPosition(w - (150 * aspect + 5), 5);
+        curHealth.setPosition(w - (190 * aspect + 5 + curPic.getWidth()), 5);
+        altPic.setPosition(w - (100 * aspect + 5 + curPic.getWidth()), 5 + curHealth.getHeight());
+        altHealth.setPosition(w - (110 * aspect + altPic.getWidth() + curPic.getWidth()),
                 10 + curHealth.getHeight());
     }
 
@@ -93,7 +93,7 @@ public class BattleGUI extends AbstractAppState {
         screen.removeElement(altPic);
     }
 
-    public void setActiveHUD(PCollideCont player) {
+    public void setActiveHUD(Player player) {
         if (player.equals(dan)) {
             curPic.setColorMap("Textures/danPortrait.png");
             altPic.setColorMap("Textures/kiPortrait.png");
@@ -116,8 +116,8 @@ public class BattleGUI extends AbstractAppState {
     private void makeHUD() {
         //for ref: screen, name, position, dimensions, resize, img
         curPic = new Panel(screen, "curpanel",
-                new Vector2f(w - (150 * a + 5), h - (150 * a + 5)),
-                new Vector2f(150 * a, 150 * a),
+                new Vector2f(w - (150 * aspect + 5), h - (150 * aspect + 5)),
+                new Vector2f(150 * aspect, 150 * aspect),
                 new Vector4f(1, 1, 1, 1), "Textures/danPortrait.png");
         screen.addElement(curPic);
         curPic.setIsResizable(false);
@@ -126,8 +126,8 @@ public class BattleGUI extends AbstractAppState {
 
         //for ref: screen, name, position, dimentions, orientation
         curHealth = new Indicator(screen, "curindicator",
-                new Vector2f(w - (190 * a + 5 + curPic.getWidth()), h - (35 * a + 5)),
-                new Vector2f(190 * a, 35 * a),
+                new Vector2f(w - (190 * aspect + 5 + curPic.getWidth()), h - (35 * aspect + 5)),
+                new Vector2f(190 * aspect, 35 * aspect),
                 Indicator.Orientation.HORIZONTAL) {
             @Override
             public void onChange(float f, float f1) {
@@ -144,8 +144,8 @@ public class BattleGUI extends AbstractAppState {
         curHealth.setIgnoreMouse(true);
 
         altPic = new Panel(screen, "altpanel",
-                new Vector2f(w - (100 * a + 5 + curPic.getWidth()), h - (100 * a + 5 + curHealth.getHeight())),
-                new Vector2f(100 * a, 100 * a),
+                new Vector2f(w - (100 * aspect + 5 + curPic.getWidth()), h - (100 * aspect + 5 + curHealth.getHeight())),
+                new Vector2f(100 * aspect, 100 * aspect),
                 new Vector4f(1, 1, 1, 1), "Textures/kiPortrait.png");
         screen.addElement(altPic);
         altPic.setIsResizable(false);
@@ -153,9 +153,9 @@ public class BattleGUI extends AbstractAppState {
         altPic.setIgnoreMouse(true);
 
         altHealth = new Indicator(screen, "altindicator",
-                new Vector2f(w - (110 * a + altPic.getWidth() + curPic.getWidth()),
-                h - (25 * a + 5 + curHealth.getHeight())),
-                new Vector2f(100 * a, 22 * a),
+                new Vector2f(w - (110 * aspect + altPic.getWidth() + curPic.getWidth()),
+                h - (25 * aspect + 5 + curHealth.getHeight())),
+                new Vector2f(100 * aspect, 22 * aspect),
                 Indicator.Orientation.HORIZONTAL) {
             @Override
             public void onChange(float f, float f1) {

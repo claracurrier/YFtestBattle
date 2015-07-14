@@ -119,8 +119,9 @@ public class CollideAS extends AbstractAppState {
             return false;
         }
         if (atkchild.getName().equals("mobatkbox")
-                && defchild.getUserData("type").equals("mob")) {
-            //mob and its atkbox case
+                && (defchild.getUserData("type").equals("mob")
+                || defchild.getName().equals("Kirith"))) {
+            //mob and its atkbox or kirith (immune to bump) case
             return false;
         }
         if (atkchild.getUserData("type").equals("kiatkbox")

@@ -13,7 +13,7 @@ import com.jme3.scene.control.AbstractControl;
 
 /**
  *
- * @author PC
+ * @author Clara Currier
  */
 public class KnockbackCont extends AbstractControl {
 
@@ -23,11 +23,11 @@ public class KnockbackCont extends AbstractControl {
     private float dtimer;
     private int dir;
 
-    public KnockbackCont(float d, float i, String lName, int spriteI, int dir) {
-        distance = d;
-        intensity = i;
+    public KnockbackCont(float distance, float intensity, String libraryName, int spriteIndex, int dir) {
+        this.distance = distance;
+        this.intensity = intensity;
         this.dir = dir;
-        BattleMain.sEngine.getLibrary(lName).activateSprite(spriteI);
+        BattleMain.sEngine.getLibrary(libraryName).activateSprite(spriteIndex);
     }
 
     @Override

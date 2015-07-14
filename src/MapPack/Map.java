@@ -37,6 +37,10 @@ public class Map {
     public static MapLayer getTransparentLayer() {
         return mapLayers.get(1); //always the transparent layer
     }
+    
+    public static void clearLayers(){
+        mapLayers.removeAll(mapLayers);
+    }
 
     public MapLayer getLayer(int index) {
         return mapLayers.get(index);

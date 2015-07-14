@@ -59,6 +59,7 @@ public class MapLoader {
         TMXReader tmxReader = new TMXReader();
         InputStream is = null;
         Map map = null;
+        Map.clearLayers();
         try {
             is = new BufferedInputStream(new FileInputStream("assets/Scenes/" + name + ".tmx"));
         } catch (FileNotFoundException ex) {

@@ -32,6 +32,7 @@ public class Tile extends Geometry implements Comparable {
     public float costFromStart;
     public float estimatedCostToGoal;
     private boolean isClosed;
+    private boolean tempClosed = false;
 
     public Tile() {
         properties = new Properties();
@@ -79,11 +80,15 @@ public class Tile extends Geometry implements Comparable {
     }
 
     public boolean isClosed() {
-        return isClosed;
+        return isClosed || tempClosed;
     }
 
     public void setClosed(boolean closed) {
         isClosed = closed;
+    }
+
+    public void setTempClosed(boolean closed) {
+        tempClosed = closed;
     }
 
     public int getNumber() {
@@ -175,7 +180,7 @@ public class Tile extends Geometry implements Comparable {
     public Tile[] getNeighbors(boolean sizeTesting) {
         Tile[] neighbors;
         if (sizeTesting) {
-            neighbors = new Tile[11];
+            neighbors = new Tile[14];
             //bottom additional 3
             neighbors[8] = layer.getTile(
                     location.x + 16,
@@ -187,16 +192,16 @@ public class Tile extends Geometry implements Comparable {
                     location.x - 16,
                     location.y - 32);
             //top additional 3
-           /* neighbors[11] = layer.getTile(
-             location.x + 16,
-             location.y + 32);
-             neighbors[12] = layer.getTile(
-             location.x,
-             location.y + 32);
-             neighbors[13] = layer.getTile(
-             location.x - 16,
-             location.y + 32);
-             * */
+            neighbors[11] = layer.getTile(
+                    location.x + 16,
+                    location.y + 32);
+            neighbors[12] = layer.getTile(
+                    location.x,
+                    location.y + 32);
+            neighbors[13] = layer.getTile(
+                    location.x - 16,
+                    location.y + 32);
+
         } else {
             neighbors = new Tile[8];
         }

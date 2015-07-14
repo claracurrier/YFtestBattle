@@ -46,7 +46,7 @@ public class Picker implements ActionListener {
         activeNode = player.getNode();
     }
 
-    protected void mouseKey(boolean enabled) {
+    protected void enableMouseMapping(boolean enabled) {
         if (enabled) {
             if (!input.hasMapping("LeftClick")) {
                 input.addMapping("LeftClick", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
@@ -78,9 +78,6 @@ public class Picker implements ActionListener {
             rootNode.collideWith(ray, results);
             Geometry picked = results.getClosestCollision().getGeometry();
 
-            System.out.println(picked);
-            System.out.println(picked.getParent().getParent());
-
             if (results.size() > 0) {
                 if (name.equals("LeftClick")) {
                     if (picked.getName().contains("dan")) {
@@ -88,7 +85,13 @@ public class Picker implements ActionListener {
                     } else if (picked.getName().contains("ki")) {
                         handleSwitch("ki");
                     } else {
-                        handleMovement(picked.getLocalTranslation());
+                        if (picked instanceof Tile) {
+                            handleMovement(picked.getLocalTranslation(), 0);
+                        } else {
+                            handleMovement(picked.getParent().getParent().getLocalTranslation(),
+                                    (activeNode.getName().equals("Dan")
+                                    ? GVars.gvars.dminatkdist : GVars.gvars.kminatkdist));
+                        }
                     }
                 } else if (name.equals("RightClick")) {
                     if (picked.getName().contains("monster")) {
@@ -105,7 +108,7 @@ public class Picker implements ActionListener {
         }
     }
 
-    private void handleMovement(Vector3f target) {
+    private void handleMovement(Vector3f target, float distanceAway) {
         if (activeNode.getControl(MoveCont.class) != null) {
             //cancel movement (don't bother cancelling pathfinding)
             activeNode.removeControl(MoveCont.class);
@@ -119,9 +122,11 @@ public class Picker implements ActionListener {
                 activeNode.getLocalTranslation().x,
                 activeNode.getLocalTranslation().y),
                 Map.getTransparentLayer());
+        
         Tile end = new Tile(new Vector2f(target.x, target.y),
                 Map.getTransparentLayer());
-        Pathfinder pathfinder = new Pathfinder(start, end, 0);
+        
+        Pathfinder pathfinder = new Pathfinder(start, end, distanceAway);
         activeNode.addControl(pathfinder);
         start = null;
     }
@@ -137,23 +142,15 @@ public class Picker implements ActionListener {
         if (activeNode.getControl(AutoAttackCont.class) != null) {
             activeNode.removeControl(AutoAttackCont.class);
         }
+
         if (activeNode.getLocalTranslation().distance(target)
                 > (activeNode.getName().equals("Dan")
                 ? GVars.gvars.dminatkdist : GVars.gvars.kminatkdist)) {
             //if character is too far to attack
-            Tile start = new Tile(new Vector2f(
-                    activeNode.getLocalTranslation().x,
-                    activeNode.getLocalTranslation().y),
-                    Map.getTransparentLayer());
-            Tile end = new Tile(new Vector2f(target.x, target.y),
-                    Map.getTransparentLayer());
-            Pathfinder pathfinder = new Pathfinder(start, end, 
-                    (activeNode.getName().equals("Dan")
-                    ? GVars.gvars.dminatkdist : GVars.gvars.kminatkdist));
-            activeNode.addControl(pathfinder);
-            start = null;
+            handleMovement(target, activeNode.getName().equals("Dan")
+                    ? GVars.gvars.dminatkdist : GVars.gvars.kminatkdist);
         }
-
+        
         activeNode.addControl(new AutoAttackCont(
                 activeNode.getName().equals("Dan")
                 ? GVars.gvars.dautocooldown : GVars.gvars.kautocooldown,

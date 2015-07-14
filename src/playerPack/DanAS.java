@@ -10,7 +10,6 @@ import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.material.Material;
-import com.jme3.material.RenderState;
 import com.jme3.scene.Node;
 import com.jme3.asset.AssetManager;
 import com.jme3.input.InputManager;
@@ -67,11 +66,6 @@ public class DanAS extends Player {
         float height = tex.getImage().getHeight();
 
         node.setLocalTranslation(playerPos);
-
-        Material picMat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        picMat.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.AlphaAdditive);
-        node.setMaterial(picMat);
-
         node.setUserData("halfwidth", width / 2);
         node.setUserData("halfheight", height / 2);
         node.setUserData("collided", false);
@@ -85,11 +79,10 @@ public class DanAS extends Player {
     private Vector2f getAimDirection() {
         //aims bullets at the direction of the mouse click
         Vector2f mouse = inputManager.getCursorPosition();
-
         Vector2f newvec = new Vector2f((playerPos.x) - (settings.getWidth() / 2),
                 (playerPos.y) - (settings.getHeight() / 2));
 
-        mouse = mouse.add(newvec);
+        mouse.addLocal(newvec);
 
         Vector2f dif = new Vector2f(mouse.x - playerPos.x, mouse.y - playerPos.y);
         return dif.normalizeLocal();
@@ -102,16 +95,9 @@ public class DanAS extends Player {
 
     @Override
     public void autoAttack(Vector3f target) {
-        if (playerPos.distance(target) > GVars.gvars.dminatkdist) {
-            //move closer
-            System.out.println("too far");
-        } else {
+        if (playerPos.distance(target) <= GVars.gvars.dminatkdist) {
             fireArrow(target);
         }
-    }
-
-    @Override
-    public void takeDamage() {
     }
 
     @Override

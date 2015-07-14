@@ -5,6 +5,7 @@
 package playerPack;
 
 import battlestatepack.GVars;
+import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
@@ -23,7 +24,7 @@ public class ArrowControl extends AbstractControl {
 
     public ArrowControl(Vector3f direction) {
         this.direction = direction;
-        aim = direction.angleBetween(Vector3f.ZERO);
+        aim = new Vector2f(direction.x, direction.y).getAngle();
     }
 
     @Override

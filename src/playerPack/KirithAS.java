@@ -12,6 +12,7 @@ import com.jme3.app.state.AppStateManager;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
+import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
@@ -39,7 +40,7 @@ public class KirithAS extends Player {
 
         if (attacking) {
             Node box = (Node) BattleMain.ATKNODE.getChild("kiautoattack");
-            if (hbtimer > .02f || !box.getUserData("collided").equals("none")) {
+            if (hbtimer > .1f || !box.getUserData("collided").equals("none")) {
                 attacking = false;
                 BattleMain.ATKNODE.detachChildNamed(box.getName());
                 hbtimer = 0;
@@ -51,18 +52,10 @@ public class KirithAS extends Player {
 
     @Override
     public void autoAttack(Vector3f target) {
-        if (playerPos.distance(target) > GVars.gvars.kminatkdist) {
-            //move closer
-            System.out.println("too far");
-        } else {
-            System.out.println("kirith attacked");
+        if (playerPos.distance(target) <= GVars.gvars.kminatkdist) {
             attacking = true;
             makeAttackBox(findAttackDir(playerPos, target));
         }
-    }
-
-    @Override
-    public void takeDamage() {
     }
 
     @Override
@@ -76,20 +69,14 @@ public class KirithAS extends Player {
     }
 
     private void makeAttackBox(int dir) {
-        int direction = dir; //current direction
-
         Node node = new Node("kiautoattack");
-
-        node.setUserData("type", "kiatkbox");
-        node.setUserData("collided", "none");
-        node.setUserData("atkpower", 10f);
 
         float x = kirith.getWorldTranslation().x;
         float y = kirith.getWorldTranslation().y;
         float boxw = 0;
         float boxh = 0;
 
-        switch (direction) {
+        switch (dir) {
             //moves the node to appropriate location relative to ki
             case 0: //up
                 node.setLocalTranslation(x, y + 81f, 0);
@@ -133,6 +120,9 @@ public class KirithAS extends Player {
                 break;
         }
 
+        node.setUserData("type", "kiatkbox");
+        node.setUserData("collided", "none");
+        node.setUserData("atkpower", 10f);
         node.setUserData("halfwidth", boxw / 2);
         node.setUserData("halfheight", boxh / 2);
         node.attachChild(tempWireBox(boxw, boxh));
@@ -149,8 +139,9 @@ public class KirithAS extends Player {
         return g;
     }
 
-    private int findAttackDir(Vector3f cur, Vector3f targ) {
-        float aim = cur.normalize().angleBetween(targ.normalize());
+    private int findAttackDir(Vector3f targ, Vector3f cur) {
+        Vector2f newvec = new Vector2f(cur.x, cur.y).subtractLocal(targ.x, targ.y);
+        float aim = newvec.normalizeLocal().getAngle();
 
         if (aim <= 5 * FastMath.PI / 6 && aim > 2 * FastMath.PI / 3) {
             //up left
