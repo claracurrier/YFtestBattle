@@ -7,13 +7,16 @@ package battlestatepack;
 import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
+import com.jme3.input.event.MouseButtonEvent;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector4f;
 import guiPack.MainMenu;
+import guiPack.MyButton;
 import playerPack.Player;
 import tonegod.gui.controls.extras.Indicator;
 import tonegod.gui.controls.windows.Panel;
+import tonegod.gui.core.Element;
 import tonegod.gui.core.Screen;
 
 /**
@@ -27,8 +30,8 @@ public class BattleGUI extends AbstractAppState {
     private final Screen screen;
     private int w, h;
     private String curChar = "dan";
-    private Indicator curHealth, altHealth;
-    private Panel curPic, altPic;
+    private Element HUDNode;
+    private Indicator danIndicator, kiIndicator;
     private final ColorRGBA green = new ColorRGBA(50f / 255f, 143f / 255f, 50f / 255f, 1f);
 
     public BattleGUI(int w, int h, Player dan, Player ki) {
@@ -49,11 +52,8 @@ public class BattleGUI extends AbstractAppState {
     public void changeRes(int w, int h) {
         this.w = w;
         this.h = h;
-        curPic.setPosition(w - (150 * aspect + 5), 5);
-        curHealth.setPosition(w - (190 * aspect + 5 + curPic.getWidth()), 5);
-        altPic.setPosition(w - (100 * aspect + 5 + curPic.getWidth()), 5 + curHealth.getHeight());
-        altHealth.setPosition(w - (110 * aspect + altPic.getWidth() + curPic.getWidth()),
-                10 + curHealth.getHeight());
+
+        HUDNode.setPosition(w / 2, 90);
     }
 
     @Override
@@ -64,22 +64,22 @@ public class BattleGUI extends AbstractAppState {
     @Override
     public void update(float tpf) {
         if (curChar.equals("dan")) {
-            if (dan.getHealth() != curHealth.getCurrentValue()) {
+            if (dan.getHealth() != danIndicator.getCurrentValue()) {
                 danHealth = dan.getHealth();
-                curHealth.setCurrentValue(danHealth);
+                danIndicator.setCurrentValue(danHealth);
             }
-            if (ki.getHealth() != altHealth.getCurrentValue()) {
+            if (ki.getHealth() != kiIndicator.getCurrentValue()) {
                 kiHealth = ki.getHealth();
-                altHealth.setCurrentValue(kiHealth);
+                kiIndicator.setCurrentValue(kiHealth);
             }
         } else if (curChar.equals("kirith")) {
-            if (dan.getHealth() != altHealth.getCurrentValue()) {
+            if (dan.getHealth() != kiIndicator.getCurrentValue()) {
                 danHealth = dan.getHealth();
-                altHealth.setCurrentValue(danHealth);
+                kiIndicator.setCurrentValue(danHealth);
             }
-            if (ki.getHealth() != curHealth.getCurrentValue()) {
+            if (ki.getHealth() != danIndicator.getCurrentValue()) {
                 kiHealth = ki.getHealth();
-                curHealth.setCurrentValue(kiHealth);
+                danIndicator.setCurrentValue(kiHealth);
             }
         }
     }
@@ -87,87 +87,134 @@ public class BattleGUI extends AbstractAppState {
     @Override
     public void cleanup() {
         //destroy the HUD
-        screen.removeElement(curHealth);
-        screen.removeElement(altHealth);
-        screen.removeElement(curPic);
-        screen.removeElement(altPic);
+        screen.removeElement(HUDNode);
     }
 
     public void setActiveHUD(Player player) {
         if (player.equals(dan)) {
-            curPic.setColorMap("Textures/danPortrait.png");
-            altPic.setColorMap("Textures/kiPortrait.png");
-            curHealth.setIndicatorColor(green);
-            altHealth.setIndicatorColor(ColorRGBA.Red);
-            curHealth.setCurrentValue(danHealth);
-            altHealth.setCurrentValue(kiHealth);
             curChar = "dan";
         } else if (player.equals(ki)) {
-            curPic.setColorMap("Textures/kiPortrait.png");
-            altPic.setColorMap("Textures/danPortrait.png");
-            curHealth.setIndicatorColor(ColorRGBA.Red);
-            altHealth.setIndicatorColor(green);
-            curHealth.setCurrentValue(kiHealth);
-            altHealth.setCurrentValue(danHealth);
             curChar = "kirith";
         }
     }
 
     private void makeHUD() {
+        //remember that GUI orientation is top-left = 0,0
+        HUDNode = new Element(screen, "danHUDNode",
+                new Vector2f(w / 2, h - 90), new Vector2f(0, 0), new Vector4f(0, 0, 0, 0),
+                "Textures/transparent.png");
+        screen.addElement(HUDNode);
+
+        /*
+         * Dan's side
+         */
         //for ref: screen, name, position, dimensions, resize, img
-        curPic = new Panel(screen, "curpanel",
-                new Vector2f(w - (150 * aspect + 5), h - (150 * aspect + 5)),
-                new Vector2f(150 * aspect, 150 * aspect),
+        Panel danPic = new Panel(screen, "danpanel",
+                new Vector2f(-330, -30),
+                new Vector2f(120 * aspect, 120 * aspect),
                 new Vector4f(1, 1, 1, 1), "Textures/danPortrait.png");
-        screen.addElement(curPic);
-        curPic.setIsResizable(false);
-        curPic.setIsMovable(false);
-        curPic.setIgnoreMouse(true);
+        HUDNode.addChild(danPic);
+        danPic.setIsResizable(false);
+        danPic.setIsMovable(false);
+        danPic.setIgnoreMouse(true);
 
         //for ref: screen, name, position, dimentions, orientation
-        curHealth = new Indicator(screen, "curindicator",
-                new Vector2f(w - (190 * aspect + 5 + curPic.getWidth()), h - (35 * aspect + 5)),
-                new Vector2f(190 * aspect, 35 * aspect),
+        danIndicator = new Indicator(screen, "danindicator",
+                new Vector2f(-200, 70),
+                new Vector2f(190 * aspect, 20 * aspect),
                 Indicator.Orientation.HORIZONTAL) {
             @Override
             public void onChange(float f, float f1) {
                 //this is where you could add in changing portraits
             }
         };
-        curHealth.setBaseImage(screen.getStyle("Window").getString("defaultImg"));
-        curHealth.setIndicatorColor(green);
-        curHealth.setAlphaMap(screen.getStyle("Indicator").getString("alphaImg"));
-        curHealth.setMaxValue(100f);
-        screen.addElement(curHealth);
-        curHealth.setIsResizable(false);
-        curHealth.setIsMovable(false);
-        curHealth.setIgnoreMouse(true);
+        danIndicator.setBaseImage(screen.getStyle("Window").getString("defaultImg"));
+        danIndicator.setIndicatorColor(green);
+        danIndicator.setAlphaMap(screen.getStyle("Indicator").getString("alphaImg"));
+        danIndicator.setMaxValue(100f);
+        HUDNode.addChild(danIndicator);
+        danIndicator.setIsResizable(false);
+        danIndicator.setIsMovable(false);
+        danIndicator.setIgnoreMouse(true);
 
-        altPic = new Panel(screen, "altpanel",
-                new Vector2f(w - (100 * aspect + 5 + curPic.getWidth()), h - (100 * aspect + 5 + curHealth.getHeight())),
-                new Vector2f(100 * aspect, 100 * aspect),
+        MyButton dbuttonleft = new MyButton(screen, "dbuttonleft",
+                new Vector2f(-190, 0), new Vector2f(55, 55),
+                new Vector4f(1, 1, 1, 1), "Textures/danPortrait.png") {
+            @Override
+            public void onButtonMouseLeftUp(MouseButtonEvent evt, boolean toggled) {
+            }
+        };
+        MyButton dbuttonmid = new MyButton(screen, "dbuttonmid",
+                new Vector2f(-130, 0), new Vector2f(55, 55),
+                new Vector4f(1, 1, 1, 1), "Textures/danPortrait.png") {
+            @Override
+            public void onButtonMouseLeftUp(MouseButtonEvent evt, boolean toggled) {
+            }
+        };
+        MyButton dbuttonright = new MyButton(screen, "dbuttonright",
+                new Vector2f(-70, 0), new Vector2f(55, 55),
+                new Vector4f(1, 1, 1, 1), "Textures/danPortrait.png") {
+            @Override
+            public void onButtonMouseLeftUp(MouseButtonEvent evt, boolean toggled) {
+            }
+        };
+        HUDNode.addChild(dbuttonleft);
+        HUDNode.addChild(dbuttonmid);
+        HUDNode.addChild(dbuttonright);
+
+        /*
+         * Kirith's side
+         */
+        //for ref: screen, name, position, dimensions, resize, img
+        Panel kiPic = new Panel(screen, "kipanel",
+                new Vector2f(200, -30),
+                new Vector2f(120 * aspect, 120 * aspect),
                 new Vector4f(1, 1, 1, 1), "Textures/kiPortrait.png");
-        screen.addElement(altPic);
-        altPic.setIsResizable(false);
-        altPic.setIsMovable(false);
-        altPic.setIgnoreMouse(true);
+        HUDNode.addChild(kiPic);
+        kiPic.setIsResizable(false);
+        kiPic.setIsMovable(false);
+        kiPic.setIgnoreMouse(true);
 
-        altHealth = new Indicator(screen, "altindicator",
-                new Vector2f(w - (110 * aspect + altPic.getWidth() + curPic.getWidth()),
-                h - (25 * aspect + 5 + curHealth.getHeight())),
-                new Vector2f(100 * aspect, 22 * aspect),
+        kiIndicator = new Indicator(screen, "kiindicator",
+                new Vector2f(10, 70),
+                new Vector2f(190 * aspect, 20 * aspect),
                 Indicator.Orientation.HORIZONTAL) {
             @Override
             public void onChange(float f, float f1) {
             }
         };
-        altHealth.setBaseImage(screen.getStyle("Window").getString("defaultImg"));
-        altHealth.setIndicatorColor(ColorRGBA.Red);
-        altHealth.setAlphaMap(screen.getStyle("Indicator").getString("alphaImg"));
-        altHealth.setMaxValue(100f);
-        screen.addElement(altHealth);
-        altHealth.setIsResizable(false);
-        altHealth.setIsMovable(false);
-        altHealth.setIgnoreMouse(true);
+        kiIndicator.setBaseImage(screen.getStyle("Window").getString("defaultImg"));
+        kiIndicator.setIndicatorColor(ColorRGBA.Red);
+        kiIndicator.setAlphaMap(screen.getStyle("Indicator").getString("alphaImg"));
+        kiIndicator.setMaxValue(100f);
+        HUDNode.addChild(kiIndicator);
+        kiIndicator.setIsResizable(false);
+        kiIndicator.setIsMovable(false);
+        kiIndicator.setIgnoreMouse(true);
+
+        MyButton kbuttonleft = new MyButton(screen, "kbuttonleft",
+                new Vector2f(135, 0), new Vector2f(55, 55),
+                new Vector4f(1, 1, 1, 1), "Textures/kiPortrait.png") {
+            @Override
+            public void onButtonMouseLeftUp(MouseButtonEvent evt, boolean toggled) {
+            }
+        };
+        MyButton kbuttonmid = new MyButton(screen, "kbuttonmid",
+                new Vector2f(75, 0), new Vector2f(55, 55),
+                new Vector4f(1, 1, 1, 1), "Textures/kiPortrait.png") {
+            @Override
+            public void onButtonMouseLeftUp(MouseButtonEvent evt, boolean toggled) {
+            }
+        };
+        MyButton kbuttonright = new MyButton(screen, "kbuttonright",
+                new Vector2f(15, 0), new Vector2f(55, 55),
+                new Vector4f(1, 1, 1, 1), "Textures/kiPortrait.png") {
+            @Override
+            public void onButtonMouseLeftUp(MouseButtonEvent evt, boolean toggled) {
+            }
+        };
+        HUDNode.addChild(kbuttonleft);
+        HUDNode.addChild(kbuttonmid);
+        HUDNode.addChild(kbuttonright);
     }
 }

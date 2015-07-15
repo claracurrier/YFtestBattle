@@ -16,10 +16,10 @@ public class GVars {
     private GVars() {
     }
     //General vars
-    public final float phealth = 10000;
+    public final float phealth = 500;
     public final float camspeed = 300f;
     //Kirith's vars
-    public final float kminatkdist = 65f;
+    public final float kminatkdist = 80f;
     public float kautocooldown = 1.2f;
     //Dan's vars
     public final float dminatkdist = 300f;

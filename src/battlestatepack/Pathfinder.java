@@ -97,7 +97,7 @@ public class Pathfinder extends AbstractControl {
             start.pathParent = null;
             openset.add(start);
 
-            while (!openset.isEmpty() && closedset.size() < 2200
+            while (!openset.isEmpty() && closedset.size() < 2800
                     && bestWay.getClosenessScore() > proximity) {
                 Tile current = (Tile) openset.removeFirst(); // lowest f-score val
                 if (current.equals(end)) {
