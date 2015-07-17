@@ -14,15 +14,13 @@ import java.util.Random;
 
 /**
  *
- * @author PC
+ * @author Clara Currier
  */
 public class MobSkill {
 
     public static final MobSkill mobSkill = new MobSkill();
     /*
-     * singleton class containing all hard-coded skills and abilities
-     * whether a mob uses these skills or not depends on the mob at instantiation
-     * every skill is an update()-able loop
+     * TODO: this class needs a major overhaul
      */
     private float speed = GVars.gvars.mspeed;
 
@@ -147,16 +145,17 @@ public class MobSkill {
                     }
                 }
             }
-
-            @Override
-            public void setEnabled(boolean enabled) {
-                super.setEnabled(enabled);
-                if (enabled) {
-                    if (!menuPack.MainMenu.isPaused()) {
-                        mob.removeControl(this);
-                    }
-                }
-            }
+            /*
+             @Override
+             public void setEnabled(boolean enabled) {
+             super.setEnabled(enabled);
+             if (enabled) {
+             if (!menuPack.MainMenu.isPaused()) {
+             mob.removeControl(this);
+             }
+             }
+             }
+             */
         });
     }
 }

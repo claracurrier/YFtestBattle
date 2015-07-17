@@ -5,6 +5,7 @@
 package menuPack;
 
 import battlestatepack.BattleMain;
+import battlestatepack.ReferenceRegistry;
 import com.jme3.app.SimpleApplication;
 import com.jme3.font.BitmapFont;
 import com.jme3.input.event.MouseButtonEvent;
@@ -32,15 +33,16 @@ public class MainMenu extends SimpleApplication {
     private PauseMenu pauseMenu;
     private ControlMenu controlMenu;
     private OptionsMenu optionsMenu;
-    public static EndGame endGame;
+    private EndGame endGame;
     private Credits credits;
     private Node tgGuiNode;
-    private static boolean ispaused = false;
-    private static ScheduledThreadPoolExecutor executor;
+    private boolean ispaused = false;
+    private ScheduledThreadPoolExecutor executor;
 
     @Override
     public void simpleInitApp() {
         getFlyByCamera().setEnabled(false); //enables mouse
+        ReferenceRegistry.registry.register(MainMenu.class, this);
 
         tgGuiNode = new Node("tgGuiNode");
         screen = new Screen(this);
@@ -155,7 +157,7 @@ public class MainMenu extends SimpleApplication {
         ispaused = false;
     }
 
-    private void pause() {
+    public void pause() {
         BattleMain bM = stateManager.getState(BattleMain.class);
         if (bM != null) {
             bM.setEnabled(false);
@@ -164,7 +166,7 @@ public class MainMenu extends SimpleApplication {
         }
     }
 
-    public static boolean isPaused() {
+    public boolean isPaused() {
         return ispaused;
     }
 
@@ -190,7 +192,11 @@ public class MainMenu extends SimpleApplication {
         executor.shutdown();
     }
 
-    public static ScheduledThreadPoolExecutor getExecutor() {
+    public ScheduledThreadPoolExecutor getExecutor() {
         return executor;
+    }
+
+    public EndGame getEndGameMenu() {
+        return endGame;
     }
 }

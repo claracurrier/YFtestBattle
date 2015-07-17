@@ -5,6 +5,8 @@
 package menuPack;
 
 import battlestatepack.BattleGUI;
+import battlestatepack.ReferenceRegistry;
+import cameraPack.CCManual;
 import com.jme3.app.Application;
 import com.jme3.font.BitmapFont;
 import com.jme3.input.event.MouseButtonEvent;
@@ -57,6 +59,9 @@ public class OptionsMenu {
                     if (mm.getStateManager().getState(BattleGUI.class) != null) {
                         mm.getStateManager().getState(BattleGUI.class).changeRes(res[0], res[1]);
                     }
+                    if (ReferenceRegistry.registry.hasRegistry(CCManual.class)) {
+                        ((CCManual) ReferenceRegistry.registry.get(CCManual.class)).refreshScreenDim(res[0], res[1]);
+                    }
                 }
             }
         };
@@ -89,6 +94,10 @@ public class OptionsMenu {
                 win.setPosition(15, mode.getHeight() - 15 - win.getHeight());
                 if (mm.getStateManager().getState(BattleGUI.class) != null) {
                     mm.getStateManager().getState(BattleGUI.class).changeRes(mode.getWidth(), mode.getHeight());
+                }
+                if (ReferenceRegistry.registry.hasRegistry(CCManual.class)) {
+                    ((CCManual) ReferenceRegistry.registry.get(CCManual.class))
+                            .refreshScreenDim(mode.getWidth(), mode.getHeight());
                 }
             }
         };
@@ -147,7 +156,7 @@ public class OptionsMenu {
     }
 
     private void goBack() {
-        if (MainMenu.isPaused()) {
+        if (((MainMenu) ReferenceRegistry.registry.get(MainMenu.class)).isPaused()) {
             mm.getPM().makePauseMenu();
         } else {
             mm.makeStartMenu();

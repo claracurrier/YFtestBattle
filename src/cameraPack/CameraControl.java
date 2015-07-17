@@ -14,8 +14,8 @@ import com.jme3.scene.control.AbstractControl;
  */
 public abstract class CameraControl extends AbstractControl {
 
-    int width = 0;
-    int height = 0;
+    protected int width = 0;
+    protected int height = 0;
 
     public abstract void setup();
     //Makes the camera when the options change
@@ -27,7 +27,6 @@ public abstract class CameraControl extends AbstractControl {
         //Resets dimensions and relevant nodes when options change.
         width = w;
         height = h;
-        setup();
     }
 
     @Override

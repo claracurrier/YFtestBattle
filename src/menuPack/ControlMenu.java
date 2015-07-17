@@ -4,6 +4,7 @@
  */
 package menuPack;
 
+import battlestatepack.ReferenceRegistry;
 import com.jme3.app.Application;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.font.BitmapFont;
@@ -16,7 +17,7 @@ import tonegod.gui.core.Screen;
 
 /**
  *
- * @author PC
+ * @author Clara Currier
  */
 public class ControlMenu {
 
@@ -71,7 +72,7 @@ public class ControlMenu {
     }
 
     private void goBack() {
-        if (MainMenu.isPaused()) {
+        if (((MainMenu) ReferenceRegistry.registry.get(MainMenu.class)).isPaused()) {
             mm.getPM().makePauseMenu();
         } else {
             mm.makeStartMenu();

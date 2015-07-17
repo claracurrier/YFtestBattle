@@ -5,6 +5,7 @@
 package cameraPack;
 
 import battlestatepack.GVars;
+import battlestatepack.ReferenceRegistry;
 import com.jme3.input.InputManager;
 
 /**
@@ -24,10 +25,12 @@ public class CCManual extends CameraControl {
 
     @Override
     public void setup() {
+        ReferenceRegistry.registry.register(CCManual.class, this);
     }
 
     @Override
     public void takedown() {
+        ReferenceRegistry.registry.remove(CCManual.class);
     }
 
     @Override
@@ -98,31 +101,31 @@ public class CCManual extends CameraControl {
     public void move(String name, boolean isPressed) {
         //this whole method is an elaborate way of checking for key combos
         //ultimately setting the value of keyPressed will tell update which way to go
-        if (name.equals("UP") && isPressed) {
+        if (name.equals("up") && isPressed) {
             ku = true;
             keying = true;
-        } else if (name.equals("UP") && !isPressed) {
+        } else if (name.equals("up") && !isPressed) {
             ku = false;
             keying = false;
         }
-        if (name.equals("DOWN") && isPressed) {
+        if (name.equals("down") && isPressed) {
             kd = true;
             keying = true;
-        } else if (name.equals("DOWN") && !isPressed) {
+        } else if (name.equals("down") && !isPressed) {
             kd = false;
             keying = false;
         }
-        if (name.equals("LEFT") && isPressed) {
+        if (name.equals("left") && isPressed) {
             kl = true;
             keying = true;
-        } else if (name.equals("LEFT") && !isPressed) {
+        } else if (name.equals("left") && !isPressed) {
             kl = false;
             keying = false;
         }
-        if (name.equals("RIGHT") && isPressed) {
+        if (name.equals("right") && isPressed) {
             kr = true;
             keying = true;
-        } else if (name.equals("RIGHT") && !isPressed) {
+        } else if (name.equals("right") && !isPressed) {
             kr = false;
             keying = false;
         }

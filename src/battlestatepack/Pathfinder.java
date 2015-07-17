@@ -29,9 +29,11 @@ public class Pathfinder extends AbstractControl {
     private float proximity = 0; //defaults to being on top of the tile
     private Future future = null;
     private Pathway way = null;
-    private final ScheduledThreadPoolExecutor executor = MainMenu.getExecutor();
+    private final ScheduledThreadPoolExecutor executor =
+            ((MainMenu) ReferenceRegistry.registry.get(MainMenu.class)).getExecutor();
 
     public Pathfinder(Tile s, Tile e, float proximity) {
+        //TODO: go through this and thread-proof it with clones, etc.
         start = s;
         end = e;
         this.proximity = proximity;

@@ -56,7 +56,6 @@ public class BattleMain extends AbstractAppState {
         collideAS = new CollideAS();
         maker = new EntityMaker(assetManager);
         picker = new Picker(app.getCamera(), app.getRootNode(), this);
-        makeInput();
 
         //set up characters
         danNode = maker.createSpatial("Dan");
@@ -68,18 +67,19 @@ public class BattleMain extends AbstractAppState {
         kiNode.move(settings.getWidth() / 3, settings.getHeight() / 3, 0);
         kiLogic = new KirithAS(kiNode);
         kiCC = new PCollideCont(kiLogic);
-
+        
+        makeInput();
         camOps = new CameraOptions(app.getCamera(), input, danNode, app.getRootNode());
         new SkillGraphicFactory().setup(app.getRootNode(), assetManager, danLogic, kiLogic);
         battleGUI = new BattleGUI(settings.getWidth(), settings.getHeight(),
                 danLogic, kiLogic, inputSystem);
+        register();
+        makeCamera();
+        makeMap();
     }
 
     @Override
     public void initialize(AppStateManager asm, Application appl) {
-        makeCamera();
-        makeMap();
-
         //spawn a MobAS
         Spatial mobSpat = maker.createSpatial("Wanderer");
         mob = new MobAS(mobSpat, "Wanderer", danNode, kiNode);
@@ -191,7 +191,6 @@ public class BattleMain extends AbstractAppState {
 
     private void makeCamera() {
         camOps.setActive(true);
-        camOps.makeCamBox();
         camOps.setChar(danNode);
         camOps.setCamSetting(camOps.getCamSetting());
     }
@@ -199,6 +198,7 @@ public class BattleMain extends AbstractAppState {
     private void makeInput() {
         PSkills pskill = new PSkills(danLogic, kiLogic, app.getCamera());
         inputSystem = new InputSystem(inputManager, pskill);
+        inputSystem.setEnabled(true);
 
         inputSystem.setSkillMapping("dbuttonleft", PSkills.Skills.tripleShot);
         inputSystem.setSkillMapping("dbuttonmid", PSkills.Skills.nothing);
@@ -206,7 +206,14 @@ public class BattleMain extends AbstractAppState {
         inputSystem.setSkillMapping("kbuttonleft", PSkills.Skills.nothing);
         inputSystem.setSkillMapping("kbuttonmid", PSkills.Skills.nothing);
         inputSystem.setSkillMapping("kbuttonright", PSkills.Skills.nothing);
+    }
 
+    private void register() {
+        ReferenceRegistry reg = ReferenceRegistry.registry;
+
+        reg.register(CameraOptions.class, camOps);
+        reg.register(BattleMain.class, this);
+        reg.register(Picker.class, picker);
     }
 
     private void checkComplete() {
@@ -223,6 +230,7 @@ public class BattleMain extends AbstractAppState {
     private void endGame(boolean victory) {
         inputManager.deleteMapping("pause");
         setEnabled(false);
-        MainMenu.endGame.makeEndGameScreen(victory);
+        ((MainMenu) ReferenceRegistry.registry.get(MainMenu.class))
+                .getEndGameMenu().makeEndGameScreen(victory);
     }
 }

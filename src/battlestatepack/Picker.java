@@ -52,7 +52,7 @@ public class Picker {
         Geometry picked = results.getClosestCollision().getGeometry();
 
         if (results.size() > 0) {
-            if (mouseEvent.equals("LeftClick")) {
+            if (mouseEvent.equals("leftclick")) {
                 if (picked.getName().contains("dan")) {
                     handleSwitch("dan");
                 } else if (picked.getName().contains("ki")) {
@@ -66,14 +66,12 @@ public class Picker {
                                 ? GVars.gvars.dminatkdist : GVars.gvars.kminatkdist));
                     }
                 }
-            } else if (mouseEvent.equals("RightClick")) {
+            } else if (mouseEvent.equals("rightclick")) {
                 if (picked.getName().contains("monster")) {
                     handleAttack(picked.getParent().getParent().getLocalTranslation());
                     //ignore the sprites and get to the node
                 }
             }
-            //TODO: add special triggers for skills that require mouse picking
-
         } else {
             // No hits? 
             System.out.println("nothing");
@@ -105,6 +103,7 @@ public class Picker {
 
     private void handleAttack(Vector3f target) {
         if (activeNode.getControl(AutoAttackCont.class) != null) {
+            //cancel attacking
             activeNode.removeControl(AutoAttackCont.class);
         }
 

@@ -33,7 +33,7 @@ public class PSkills {
         cam = c;
     }
 
-    public static enum Skills {
+    public enum Skills {
 
         tripleShot, stun, push, headshot, nothing;
     }

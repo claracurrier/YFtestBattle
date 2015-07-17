@@ -33,6 +33,7 @@ public class CameraOptions {
         cam = c;
         rootNode = root;
         camNode = new CameraNode("Camera Node", cam);
+        makeCamBox();
 
         int w = cam.getWidth();
         int h = cam.getHeight();
@@ -101,7 +102,7 @@ public class CameraOptions {
         camBox.addControl(getCameraControl(setting));
     }
 
-    public void makeCamBox() {
+    private void makeCamBox() {
         float aspect = (float) cam.getWidth() / cam.getHeight();
         cam.setFrustum(-100, 100, -aspect * frustumSize, aspect * frustumSize, frustumSize, -frustumSize);
         //key: near, far, left, right, top, bottom

@@ -4,6 +4,8 @@
  */
 package battlestatepack;
 
+import cameraPack.CCManual;
+import cameraPack.CameraOptions;
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
@@ -11,6 +13,7 @@ import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
 import java.util.HashMap;
+import menuPack.MainMenu;
 import playerPack.PSkills;
 import playerPack.SkillMapper;
 
@@ -20,9 +23,10 @@ import playerPack.SkillMapper;
  */
 public class InputSystem implements ActionListener {
 
-    InputManager inputManager;
+    private InputManager inputManager;
     private HashMap<String, Integer> mappings = new HashMap<>();
     private SkillMapper skillmap; //just for maintaining skills
+    private ReferenceRegistry reg = ReferenceRegistry.registry;
 
     public InputSystem(InputManager input, PSkills pskill) {
         inputManager = input;
@@ -31,7 +35,7 @@ public class InputSystem implements ActionListener {
         defaultShortcuts();
     }
 
-    public static enum Keys {
+    public enum Keys {
         //a list of every possible command that can be issued in battle
 
         leftclick, rightclick, pause, switchChar,
@@ -42,8 +46,8 @@ public class InputSystem implements ActionListener {
 
     public void setEnabled(boolean enabled) {
         if (enabled) {
-            inputManager.addListener(this, "leftClick");
-            inputManager.addListener(this, "rightClick");
+            inputManager.addListener(this, "leftclick");
+            inputManager.addListener(this, "rightclick");
             inputManager.addListener(this, "switchChar");
             inputManager.addListener(this, "pause");
 
@@ -65,7 +69,7 @@ public class InputSystem implements ActionListener {
     }
 
     public void setSkillMapping(String buttonName, PSkills.Skills skill) {
-        skillmap.setMapping(buttonName, skill);
+        skillmap.setSkillMapping(buttonName, skill);
     }
 
     public void setMapping(String buttonName, Integer key) {
@@ -81,6 +85,8 @@ public class InputSystem implements ActionListener {
     }
 
     public final void defaultShortcuts() {
+        setMapping("switchChar", KeyInput.KEY_TAB);
+        setMapping("pause", KeyInput.KEY_P);
         setMapping("leftclick", (MouseInput.BUTTON_LEFT));
         setMapping("rightclick", (MouseInput.BUTTON_RIGHT));
 
@@ -96,47 +102,108 @@ public class InputSystem implements ActionListener {
         setMapping("right", KeyInput.KEY_RIGHT);
         setMapping("left", KeyInput.KEY_LEFT);
         setMapping("space", KeyInput.KEY_SPACE);
-
-        setMapping("switchChar", KeyInput.KEY_TAB);
-        setMapping("pause", KeyInput.KEY_P);
     }
 
     public void manualFire(String name) {
+        //for the buttons
         manualFire(name, false);
     }
 
     public void manualFire(String name, boolean isPressed) {
-        switch (Keys.valueOf(name)) {
-            case pause: //reach mainmenu
-                break;
-            case switchChar: //reach battleMain
-                break;
-            case dbuttonleft:
-                break;
-            case dbuttonmid:
-                break;
-            case dbuttonright:
-                break;
-            case kbuttonleft:
-                break;
-            case kbuttonmid:
-                break;
-            case kbuttonright:
-                break;
-            case up:
-                break;
-            case down:
-                break;
-            case right:
-                break;
-            case left:
-                break;
-            case space: //camoptions
-                break;
-            case leftclick: //depends
-                break;
-            case rightclick: //reach autoattack
-                break;
+        if (!isPressed) { //the abstraction is in the shortcut
+            //calling pause will pause regardless of key
+            switch (Keys.valueOf(name)) {
+                case pause:
+                    ((MainMenu) reg.get(MainMenu.class)).pause();
+                    break;
+                case switchChar:
+                    ((BattleMain) reg.get(BattleMain.class)).switchChar();
+                    break;
+                case dbuttonleft:
+                    if (skillmap.skillIsWaiting()) {
+                        skillmap.cancelSkill();
+                    } else {
+                        skillmap.doSkill(name);
+                    }
+                    break;
+                case dbuttonmid:
+                    if (skillmap.skillIsWaiting()) {
+                        skillmap.cancelSkill();
+                    } else {
+                        skillmap.doSkill(name);
+                    }
+                    break;
+                case dbuttonright:
+                    if (skillmap.skillIsWaiting()) {
+                        skillmap.cancelSkill();
+                    } else {
+                        skillmap.doSkill(name);
+                    }
+                    break;
+                case kbuttonleft:
+                    if (skillmap.skillIsWaiting()) {
+                        skillmap.cancelSkill();
+                    } else {
+                        skillmap.doSkill(name);
+                    }
+                    break;
+                case kbuttonmid:
+                    if (skillmap.skillIsWaiting()) {
+                        skillmap.cancelSkill();
+                    } else {
+                        skillmap.doSkill(name);
+                    }
+                    break;
+                case kbuttonright:
+                    if (skillmap.skillIsWaiting()) {
+                        skillmap.cancelSkill();
+                    } else {
+                        skillmap.doSkill(name);
+                    }
+                    break;
+                case up:
+                    if (reg.hasRegistry(CCManual.class)) {
+                        ((CCManual) reg.get(CCManual.class)).move(name, isPressed);
+                    }
+                    break;
+                case down:
+                    if (reg.hasRegistry(CCManual.class)) {
+                        ((CCManual) reg.get(CCManual.class)).move(name, isPressed);
+                    }
+                    break;
+                case right:
+                    if (reg.hasRegistry(CCManual.class)) {
+                        ((CCManual) reg.get(CCManual.class)).move(name, isPressed);
+                    }
+                    break;
+                case left:
+                    if (reg.hasRegistry(CCManual.class)) {
+                        ((CCManual) reg.get(CCManual.class)).move(name, isPressed);
+                    }
+                    break;
+                case space: //switch between AutoFollowLocked and Manual cameras
+                    CameraOptions camOps = ((CameraOptions) reg.get(CameraOptions.class));
+                    if (camOps.getCamSetting().equals("Manual")) {
+                        camOps.setCamSetting("AutoFollowLocked");
+                    } else {
+                        camOps.setCamSetting("Manual");
+                    }
+                    break;
+                case rightclick: //auto-attacks (cancels waiting skills too)
+                    if (skillmap.skillIsWaiting()) {
+                        skillmap.cancelSkill();
+                    }
+                    ((Picker) reg.get(Picker.class)).pick(name, inputManager.getCursorPosition());
+                    break;
+            }
+        }
+        if (name.equals("leftclick")) {
+            //dragging may want to listen for isPressed
+            if (skillmap.skillIsWaiting() && !isPressed) {
+                skillmap.doSkill(name);
+            } else if (!isPressed) { //handle regular picking (picker class takes over actions)
+                ((Picker) reg.get(Picker.class)).pick(name, inputManager.getCursorPosition());
+            }
         }
     }
 

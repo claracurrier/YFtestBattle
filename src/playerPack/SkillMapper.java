@@ -28,22 +28,28 @@ public class SkillMapper {
     public static void setAutoCast(boolean enabled) {
         autoCast = enabled;
     }
-
-    public void setMapping(String buttonName, PSkills.Skills skill) {
-        skillMap.put(buttonName, skill);
+    
+    public boolean skillIsWaiting(){
+        return waiting;
     }
 
     public void setSkillMapping(String buttonName, PSkills.Skills skill) {
         skillMap.put(buttonName, skill);
     }
+    
+    public void cancelSkill(){
+        waiting = false;
+        waitingForSkill = PSkills.Skills.nothing;
+        //when user hits the skill button/shortcut twice, skill gets canceled
+    }
 
     public void doSkill(String name) {
         if (autoCast) { //skip the graphic and fire
             pskills.useSkill(skillMap.get(name), inputManager.getCursorPosition(), true);
-        } else if (waiting) { //init the graphic, wait for second click
+        } else if (waiting) { //removes the graphic, fires
             pskills.useSkill(waitingForSkill, inputManager.getCursorPosition(), true);
             waiting = false;
-        } else { //removes the graphic, fires
+        } else {  //init the graphic, wait for second click
             pskills.useSkill(skillMap.get(name), inputManager.getCursorPosition(), false);
             waitingForSkill = skillMap.get(name);
             waiting = true;
