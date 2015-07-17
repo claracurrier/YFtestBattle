@@ -11,21 +11,18 @@ import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetManager;
 import com.jme3.input.InputManager;
-import com.jme3.input.KeyInput;
-import com.jme3.input.controls.ActionListener;
-import com.jme3.input.controls.KeyTrigger;
 import com.jme3.math.ColorRGBA;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.system.AppSettings;
-import guiPack.MainMenu;
+import menuPack.MainMenu;
 import spriteProject.SpriteEngine;
 
 /**
  *
  * @author Clara Currier
  */
-public class BattleMain extends AbstractAppState implements ActionListener {
+public class BattleMain extends AbstractAppState {
 
     private final Node danNode, kiNode;
     private final EntityMaker maker;
@@ -36,6 +33,7 @@ public class BattleMain extends AbstractAppState implements ActionListener {
     private final AppStateManager stateManager;
     private final InputManager inputManager;
     private final PCollideCont danCC, kiCC;
+    private final CameraOptions camOps;
     private final BattleGUI battleGUI;
     private final Picker picker;
     public static AppSettings settings;
@@ -44,6 +42,7 @@ public class BattleMain extends AbstractAppState implements ActionListener {
     public static final Node ATKNODE = new Node("atkNode");
     public static final Node BATTLENODE = new Node("battleNode");
     private MobAS mob;
+    private InputSystem inputSystem;
 
     public BattleMain(SimpleApplication appl, AppSettings set, InputManager input, AppStateManager asm) {
         this.app = appl;
@@ -56,12 +55,13 @@ public class BattleMain extends AbstractAppState implements ActionListener {
         BATTLENODE.attachChild(ATKNODE);
         collideAS = new CollideAS();
         maker = new EntityMaker(assetManager);
-        picker = new Picker(app.getCamera(), inputManager, app.getRootNode(), this);
+        picker = new Picker(app.getCamera(), app.getRootNode(), this);
+        makeInput();
 
         //set up characters
         danNode = maker.createSpatial("Dan");
         danNode.move(settings.getWidth() / 2, settings.getHeight() / 2, 0);
-        danLogic = new DanAS(danNode, settings);
+        danLogic = new DanAS(danNode);
         danCC = new PCollideCont(danLogic);
 
         kiNode = maker.createSpatial("Kirith");
@@ -69,17 +69,16 @@ public class BattleMain extends AbstractAppState implements ActionListener {
         kiLogic = new KirithAS(kiNode);
         kiCC = new PCollideCont(kiLogic);
 
-
+        camOps = new CameraOptions(app.getCamera(), input, danNode, app.getRootNode());
+        new SkillGraphicFactory().setup(app.getRootNode(), assetManager, danLogic, kiLogic);
         battleGUI = new BattleGUI(settings.getWidth(), settings.getHeight(),
-                danLogic, kiLogic);
+                danLogic, kiLogic, inputSystem);
     }
 
     @Override
     public void initialize(AppStateManager asm, Application appl) {
         makeCamera();
         makeMap();
-        switchCharKey(true);
-        picker.enableMouseMapping(true);
 
         //spawn a MobAS
         Spatial mobSpat = maker.createSpatial("Wanderer");
@@ -119,7 +118,7 @@ public class BattleMain extends AbstractAppState implements ActionListener {
             picker.setActiveChar(kiLogic);
             stateManager.getState(MapAppState.class).setActiveChar(kiNode);
 
-            CameraOptions.options.setChar(kiNode);
+            camOps.setChar(kiNode);
             battleGUI.setActiveHUD(kiLogic);
 
         } else if (stateManager.hasState(kiLogic)) {
@@ -130,7 +129,7 @@ public class BattleMain extends AbstractAppState implements ActionListener {
             picker.setActiveChar(danLogic);
             stateManager.getState(MapAppState.class).setActiveChar(danNode);
 
-            CameraOptions.options.setChar(danNode);
+            camOps.setChar(danNode);
             battleGUI.setActiveHUD(danLogic);
         }
     }
@@ -138,13 +137,6 @@ public class BattleMain extends AbstractAppState implements ActionListener {
     public boolean getCurChar() {
         //true for dan, false for ki
         return stateManager.hasState(danLogic);
-    }
-
-    @Override
-    public void onAction(String name, boolean isPressed, float tpf) {
-        if (name.equals("switchChar") && !isPressed) {
-            switchChar();
-        }
     }
 
     @Override
@@ -163,13 +155,10 @@ public class BattleMain extends AbstractAppState implements ActionListener {
             kiNode.getControl(AutoAttackCont.class).setEnabled(enabled);
         }
 
+        inputSystem.setEnabled(enabled);
         collideAS.setEnabled(enabled);
         mob.setEnabled(enabled);
-        CameraOptions.options.enableCharMapping(enabled);
-        CameraOptions.options.getCurrentCamera().setEnabled(enabled);
         stateManager.getState(MapAppState.class).setEnabled(enabled);
-        switchCharKey(enabled);
-        picker.enableMouseMapping(enabled);
     }
 
     @Override
@@ -177,31 +166,16 @@ public class BattleMain extends AbstractAppState implements ActionListener {
         app.getRootNode().detachAllChildren();
         ATKNODE.detachAllChildren();
         DEFNODE.detachAllChildren();
-        picker.enableMouseMapping(false);
-        inputManager.removeListener(this);
         stateManager.detach(stateManager.getState(MapAppState.class));
         stateManager.detach(kiLogic);
         stateManager.detach(danLogic);
         stateManager.detach(battleGUI);
         stateManager.detach(mob);
         sEngine.destroyEngine();
+        inputSystem.setEnabled(false);
         app.getViewPort().setBackgroundColor(ColorRGBA.Black);
-        CameraOptions.options.setActive(false);
+        camOps.setActive(false);
         super.cleanup();
-    }
-
-    protected void switchCharKey(boolean enabled) {
-        if (enabled) {
-            if (!inputManager.hasMapping("switchChar")) {
-                inputManager.addMapping("switchChar", new KeyTrigger(KeyInput.KEY_G));
-                inputManager.addListener(this, "switchChar");
-            }
-        } else {
-            if (inputManager.hasMapping("switchChar")) {
-                inputManager.deleteMapping("switchChar");
-                inputManager.removeListener(this);
-            }
-        }
     }
 
     private void makeMap() {
@@ -216,12 +190,23 @@ public class BattleMain extends AbstractAppState implements ActionListener {
     }
 
     private void makeCamera() {
-        CameraOptions camOps = CameraOptions.options;
         camOps.setActive(true);
-        camOps.setup(app.getCamera(), inputManager, danNode, app.getRootNode());
         camOps.makeCamBox();
         camOps.setChar(danNode);
         camOps.setCamSetting(camOps.getCamSetting());
+    }
+
+    private void makeInput() {
+        PSkills pskill = new PSkills(danLogic, kiLogic, app.getCamera());
+        inputSystem = new InputSystem(inputManager, pskill);
+
+        inputSystem.setSkillMapping("dbuttonleft", PSkills.Skills.tripleShot);
+        inputSystem.setSkillMapping("dbuttonmid", PSkills.Skills.nothing);
+        inputSystem.setSkillMapping("dbuttonright", PSkills.Skills.nothing);
+        inputSystem.setSkillMapping("kbuttonleft", PSkills.Skills.nothing);
+        inputSystem.setSkillMapping("kbuttonmid", PSkills.Skills.nothing);
+        inputSystem.setSkillMapping("kbuttonright", PSkills.Skills.nothing);
+
     }
 
     private void checkComplete() {

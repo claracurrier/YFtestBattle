@@ -13,11 +13,12 @@ import com.jme3.scene.Node;
  */
 public class CCAutoFollowBox extends CameraControl {
 
-    private Node camBox = CameraOptions.options.getCamBox();
+    private Node camBox;
 
-    public CCAutoFollowBox(int w, int h) {
+    public CCAutoFollowBox(int w, int h, Node camBox) {
         width = w;
         height = h;
+        this.camBox = camBox;
     }
 
     @Override

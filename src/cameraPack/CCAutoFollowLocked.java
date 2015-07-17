@@ -13,19 +13,21 @@ import com.jme3.scene.Node;
  */
 public class CCAutoFollowLocked extends CameraControl {
 
-    private Node activeChar, rootNode;
-    private Node camBox = CameraOptions.options.getCamBox();
+    private Node activeChar, rootNode, camBox;
+    private CameraOptions camOps;
 
-    public CCAutoFollowLocked(int w, int h, Node firstChar, Node root) {
+    public CCAutoFollowLocked(int w, int h, Node firstChar, Node root, CameraOptions camops) {
         width = w;
         height = h;
         activeChar = firstChar;
         rootNode = root;
+        camOps = camops;
+        camBox = camops.getCamBox();
     }
 
     public void updateChar(Node newchar) {
         activeChar = newchar;
-        if (CameraOptions.options.getCamSetting().equals("AutoFollowLocked")) {
+        if (camOps.getCamSetting().equals("AutoFollowLocked")) {
             activeChar.attachChild(camBox);
             camBox.setLocalTranslation(Vector3f.ZERO);
         }
@@ -44,6 +46,6 @@ public class CCAutoFollowLocked extends CameraControl {
     @Override
     public void takedown() {
         rootNode.attachChild(camBox);
-        CameraOptions.options.resetLocation();
+        camOps.resetLocation();
     }
 }

@@ -4,7 +4,6 @@
  */
 package battlestatepack;
 
-
 /**
  *
  * @author Clara Currier

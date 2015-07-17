@@ -6,20 +6,15 @@ package cameraPack;
 
 import battlestatepack.GVars;
 import com.jme3.input.InputManager;
-import com.jme3.input.KeyInput;
-import com.jme3.input.controls.ActionListener;
-import com.jme3.input.controls.KeyTrigger;
-import com.jme3.renderer.Camera;
 
 /**
  *
  * @author Clara Currier
  */
-public class CCManual extends CameraControl implements ActionListener {
+public class CCManual extends CameraControl {
 
     private boolean ku, kd, kl, kr, keying;
     private InputManager inputManager;
-    private Camera cam = CameraOptions.options.getCamera();
 
     public CCManual(int w, int h, InputManager in) {
         width = w;
@@ -29,47 +24,10 @@ public class CCManual extends CameraControl implements ActionListener {
 
     @Override
     public void setup() {
-        enableCharMapping();
     }
 
     @Override
     public void takedown() {
-        disableCharMapping();
-    }
-
-    @Override
-    public void setEnabled(boolean enabled) {
-        super.setEnabled(enabled);
-        if (enabled) {
-            enableCharMapping();
-        } else {
-            disableCharMapping();
-        }
-    }
-
-    private void enableCharMapping() {
-        if (!inputManager.hasMapping("LEFT")) {
-            inputManager.addListener(this, "LEFT");
-            inputManager.addListener(this, "RIGHT");
-            inputManager.addListener(this, "UP");
-            inputManager.addListener(this, "DOWN");
-
-            inputManager.addMapping("LEFT", new KeyTrigger(KeyInput.KEY_LEFT));
-            inputManager.addMapping("RIGHT", new KeyTrigger(KeyInput.KEY_RIGHT));
-            inputManager.addMapping("UP", new KeyTrigger(KeyInput.KEY_UP));
-            inputManager.addMapping("DOWN", new KeyTrigger(KeyInput.KEY_DOWN));
-        }
-    }
-
-    private void disableCharMapping() {
-        if (inputManager.hasMapping("LEFT")) {
-            inputManager.removeListener(this);
-
-            inputManager.deleteMapping("LEFT");
-            inputManager.deleteMapping("RIGHT");
-            inputManager.deleteMapping("UP");
-            inputManager.deleteMapping("DOWN");
-        }
     }
 
     @Override
@@ -98,14 +56,14 @@ public class CCManual extends CameraControl implements ActionListener {
         }
 
         //check that camera isn't on the edge of the screen
-        if (cam.getLocation().x - width / 2 < 0) {
+        if (spatial.getLocalTranslation().x - width / 2 < 0) {
             kl = false;
-        } else if (cam.getLocation().x + width / 2 > GVars.gvars.mapwidth) {
+        } else if (spatial.getLocalTranslation().x + width / 2 > GVars.gvars.mapwidth) {
             kr = false;
         }
-        if (cam.getLocation().y - height / 2 < 0) {
+        if (spatial.getLocalTranslation().y - height / 2 < 0) {
             kd = false;
-        } else if (cam.getLocation().y + height / 2 > GVars.gvars.mapheight) {
+        } else if (spatial.getLocalTranslation().y + height / 2 > GVars.gvars.mapheight) {
             ku = false;
         }
 
@@ -142,32 +100,30 @@ public class CCManual extends CameraControl implements ActionListener {
         //ultimately setting the value of keyPressed will tell update which way to go
         if (name.equals("UP") && isPressed) {
             ku = true;
+            keying = true;
         } else if (name.equals("UP") && !isPressed) {
             ku = false;
+            keying = false;
         }
         if (name.equals("DOWN") && isPressed) {
             kd = true;
+            keying = true;
         } else if (name.equals("DOWN") && !isPressed) {
             kd = false;
+            keying = false;
         }
         if (name.equals("LEFT") && isPressed) {
             kl = true;
+            keying = true;
         } else if (name.equals("LEFT") && !isPressed) {
             kl = false;
+            keying = false;
         }
         if (name.equals("RIGHT") && isPressed) {
             kr = true;
+            keying = true;
         } else if (name.equals("RIGHT") && !isPressed) {
             kr = false;
-        }
-    }
-
-    @Override
-    public void onAction(String name, boolean isPressed, float tpf) {
-        move(name, isPressed);
-        if (isPressed) {
-            keying = true;
-        } else {
             keying = false;
         }
     }

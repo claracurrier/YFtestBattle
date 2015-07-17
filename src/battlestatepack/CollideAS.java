@@ -4,7 +4,6 @@
  */
 package battlestatepack;
 
-import cameraPack.CameraOptions;
 import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
@@ -53,14 +52,11 @@ public class CollideAS extends AbstractAppState {
         if (isEnabled()) {
             moveCheck(spatial);
             attackCheck();
-            if (CameraOptions.options.getCamSetting().equals("AutoFollowBox")) {
-                AutoFollowBoxCamCheck(CameraOptions.options.getCamBox(), tpf);
-                //the only camera setting that needs collision checking
-            }
         }
     }
 
     private void AutoFollowBoxCamCheck(Node camBox, float tpf) {
+        //may be scrapped later
         collided = false;
         for (int i = 0; i < 4; i++) {
             Spatial camBoxEdge = camBox.getChild("camBox" + i);

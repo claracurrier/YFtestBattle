@@ -11,8 +11,8 @@ import com.jme3.input.event.MouseButtonEvent;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector4f;
-import guiPack.MainMenu;
-import guiPack.MyButton;
+import menuPack.MainMenu;
+import menuPack.MyButton;
 import playerPack.Player;
 import tonegod.gui.controls.extras.Indicator;
 import tonegod.gui.controls.windows.Panel;
@@ -32,15 +32,17 @@ public class BattleGUI extends AbstractAppState {
     private String curChar = "dan";
     private Element HUDNode;
     private Indicator danIndicator, kiIndicator;
+    private InputSystem inputSystem;
     private final ColorRGBA green = new ColorRGBA(50f / 255f, 143f / 255f, 50f / 255f, 1f);
 
-    public BattleGUI(int w, int h, Player dan, Player ki) {
+    public BattleGUI(int w, int h, Player dan, Player ki, InputSystem input) {
         screen = MainMenu.getScreen();
         this.w = w;
         this.h = h;
         this.dan = dan;
         this.ki = ki;
         aspect = 1;
+        inputSystem = input;
     }
 
     @Override
@@ -139,23 +141,26 @@ public class BattleGUI extends AbstractAppState {
 
         MyButton dbuttonleft = new MyButton(screen, "dbuttonleft",
                 new Vector2f(-190, 0), new Vector2f(55, 55),
-                new Vector4f(1, 1, 1, 1), "Textures/danPortrait.png") {
+                new Vector4f(1, 1, 1, 1), "Textures/tripleShot.png") {
             @Override
             public void onButtonMouseLeftUp(MouseButtonEvent evt, boolean toggled) {
+                inputSystem.manualFire("dbuttonleft");
             }
         };
         MyButton dbuttonmid = new MyButton(screen, "dbuttonmid",
                 new Vector2f(-130, 0), new Vector2f(55, 55),
-                new Vector4f(1, 1, 1, 1), "Textures/danPortrait.png") {
+                new Vector4f(1, 1, 1, 1), "Textures/headshot.png") {
             @Override
             public void onButtonMouseLeftUp(MouseButtonEvent evt, boolean toggled) {
+                inputSystem.manualFire("dbuttonmid");
             }
         };
         MyButton dbuttonright = new MyButton(screen, "dbuttonright",
                 new Vector2f(-70, 0), new Vector2f(55, 55),
-                new Vector4f(1, 1, 1, 1), "Textures/danPortrait.png") {
+                new Vector4f(1, 1, 1, 1), "Textures/greybox.png") {
             @Override
             public void onButtonMouseLeftUp(MouseButtonEvent evt, boolean toggled) {
+                inputSystem.manualFire("dbuttonright");
             }
         };
         HUDNode.addChild(dbuttonleft);
@@ -193,24 +198,27 @@ public class BattleGUI extends AbstractAppState {
         kiIndicator.setIgnoreMouse(true);
 
         MyButton kbuttonleft = new MyButton(screen, "kbuttonleft",
-                new Vector2f(135, 0), new Vector2f(55, 55),
-                new Vector4f(1, 1, 1, 1), "Textures/kiPortrait.png") {
+                new Vector2f(15, 0), new Vector2f(55, 55),
+                new Vector4f(1, 1, 1, 1), "Textures/stun.png") {
             @Override
             public void onButtonMouseLeftUp(MouseButtonEvent evt, boolean toggled) {
+                inputSystem.manualFire("kbuttonleft");
             }
         };
         MyButton kbuttonmid = new MyButton(screen, "kbuttonmid",
                 new Vector2f(75, 0), new Vector2f(55, 55),
-                new Vector4f(1, 1, 1, 1), "Textures/kiPortrait.png") {
+                new Vector4f(1, 1, 1, 1), "Textures/pushback.png") {
             @Override
             public void onButtonMouseLeftUp(MouseButtonEvent evt, boolean toggled) {
+                inputSystem.manualFire("kbuttonmid");
             }
         };
         MyButton kbuttonright = new MyButton(screen, "kbuttonright",
-                new Vector2f(15, 0), new Vector2f(55, 55),
-                new Vector4f(1, 1, 1, 1), "Textures/kiPortrait.png") {
+                new Vector2f(135, 0), new Vector2f(55, 55),
+                new Vector4f(1, 1, 1, 1), "Textures/greybox.png") {
             @Override
             public void onButtonMouseLeftUp(MouseButtonEvent evt, boolean toggled) {
+                inputSystem.manualFire("kbuttonright");
             }
         };
         HUDNode.addChild(kbuttonleft);

@@ -152,7 +152,7 @@ public class MobSkill {
             public void setEnabled(boolean enabled) {
                 super.setEnabled(enabled);
                 if (enabled) {
-                    if (!guiPack.MainMenu.isPaused()) {
+                    if (!menuPack.MainMenu.isPaused()) {
                         mob.removeControl(this);
                     }
                 }
