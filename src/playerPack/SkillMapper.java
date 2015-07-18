@@ -6,6 +6,7 @@ package playerPack;
 
 import com.jme3.input.InputManager;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 /**
  *
@@ -28,18 +29,28 @@ public class SkillMapper {
     public static void setAutoCast(boolean enabled) {
         autoCast = enabled;
     }
-    
-    public boolean skillIsWaiting(){
+
+    public boolean skillIsWaiting() {
         return waiting;
+    }
+
+    public String getAssignedButton(PSkills.Skills value) {
+        for (Entry<String, PSkills.Skills> entry : skillMap.entrySet()) {
+            if (value.equals(skillMap.get(entry.getKey()))) {
+                return entry.getKey();
+            }
+        }
+        return null;
     }
 
     public void setSkillMapping(String buttonName, PSkills.Skills skill) {
         skillMap.put(buttonName, skill);
     }
-    
-    public void cancelSkill(){
+
+    public void cancelSkill() {
         waiting = false;
         waitingForSkill = PSkills.Skills.nothing;
+        pskills.getGraphic().removeTargetCursor();
         //when user hits the skill button/shortcut twice, skill gets canceled
     }
 

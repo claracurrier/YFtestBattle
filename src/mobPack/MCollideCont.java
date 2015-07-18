@@ -20,15 +20,15 @@ public class MCollideCont extends AbstractControl {
 
     private Node atkNode;
     private Vector3f loc;
-    private final MobAS mob;
+    private final MobWrapper mob;
     private final float width = GVars.gvars.mapwidth;
     private final float height = GVars.gvars.mapheight;
 
-    public MCollideCont(MobAS m) {
+    public MCollideCont(MobWrapper m) {
         mob = m;
     }
 
-    public MCollideCont(Node atk, MobAS m) {
+    public MCollideCont(Node atk, MobWrapper m) {
         atkNode = atk;
         mob = m;
     }

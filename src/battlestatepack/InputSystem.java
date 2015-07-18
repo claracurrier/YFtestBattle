@@ -28,9 +28,9 @@ public class InputSystem implements ActionListener {
     private SkillMapper skillmap; //just for maintaining skills
     private ReferenceRegistry reg = ReferenceRegistry.registry;
 
-    public InputSystem(InputManager input, PSkills pskill) {
+    public InputSystem(InputManager input, SkillMapper skillmap) {
         inputManager = input;
-        skillmap = new SkillMapper(input, pskill);
+        this.skillmap = skillmap;
 
         defaultShortcuts();
     }

@@ -4,6 +4,7 @@
  */
 package playerPack;
 
+import battlestatepack.EntityWrapper;
 import battlestatepack.GVars;
 import battlestatepack.KnockbackCont;
 import com.jme3.renderer.RenderManager;
@@ -16,9 +17,9 @@ import com.jme3.scene.control.AbstractControl;
  */
 public class PCollideCont extends AbstractControl {
 
-    private Player player;
+    private EntityWrapper player;
 
-    public PCollideCont(Player player) {
+    public PCollideCont(EntityWrapper player) {
         this.player = player;
     }
 

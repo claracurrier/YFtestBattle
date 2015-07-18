@@ -15,16 +15,18 @@ public class GVars {
     private GVars() {
     }
     //General vars
-    public final float phealth = 500;
     public final float camspeed = 300f;
     //Kirith's vars
     public final float kminatkdist = 80f;
+    public final float kbaseatkpower = 8f;
     public float kautocooldown = 1.2f;
+    public final float khealth = 900;
     //Dan's vars
     public final float dminatkdist = 300f;
     public final float arrowspeed = 1100f;
-    public final float arrowpower = 10f; //may need to be modified
+    public final float dbaseatkpower = 10f;
     public float dautocooldown = 1.4f;
+    public final float dhealth = 500;
     //Standard Mob vars
     public final float mspeed = 200;
     public final float matkpwr = 10;

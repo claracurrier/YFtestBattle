@@ -14,7 +14,6 @@ import com.jme3.renderer.Camera;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import playerPack.AutoAttackCont;
-import playerPack.Player;
 
 /**
  *
@@ -23,7 +22,7 @@ import playerPack.Player;
 public class Picker {
 
     private final Camera cam;
-    private Player activePlayer;
+    private EntityWrapper activePlayer;
     private Node activeNode;
     private Node rootNode;
     private BattleMain bmain;
@@ -34,7 +33,7 @@ public class Picker {
         bmain = bm;
     }
 
-    public void setActiveChar(Player player) {
+    public void setActiveChar(EntityWrapper player) {
         activePlayer = player;
         activeNode = player.getNode();
     }

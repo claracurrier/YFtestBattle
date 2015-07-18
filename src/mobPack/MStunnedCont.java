@@ -16,9 +16,9 @@ public class MStunnedCont extends AbstractControl {
 
     private float timecount = 0;
     private final float atkpower;
-    private final MobAS mob;
+    private final MobWrapper mob;
 
-    public MStunnedCont(float ap, MobAS m) {
+    public MStunnedCont(float ap, MobWrapper m) {
         atkpower = ap;
         mob = m;
     }

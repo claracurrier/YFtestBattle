@@ -11,13 +11,17 @@ import com.jme3.input.event.MouseButtonEvent;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector4f;
+import com.jme3.renderer.RenderManager;
+import com.jme3.renderer.ViewPort;
+import com.jme3.scene.control.AbstractControl;
+import java.util.HashMap;
 import menuPack.MainMenu;
 import menuPack.MyButton;
-import playerPack.Player;
 import tonegod.gui.controls.extras.Indicator;
 import tonegod.gui.controls.windows.Panel;
 import tonegod.gui.core.Element;
 import tonegod.gui.core.Screen;
+import tonegod.gui.effects.Effect;
 
 /**
  *
@@ -25,9 +29,10 @@ import tonegod.gui.core.Screen;
  */
 public class BattleGUI extends AbstractAppState {
 
-    private final Player dan, ki;
+    private final EntityWrapper dan, ki;
     private float danHealth, kiHealth, aspect;
     private final Screen screen;
+    private HashMap<String, MyButton> buttons = new HashMap<>();
     private int w, h;
     private String curChar = "dan";
     private Element HUDNode;
@@ -35,7 +40,7 @@ public class BattleGUI extends AbstractAppState {
     private InputSystem inputSystem;
     private final ColorRGBA green = new ColorRGBA(50f / 255f, 143f / 255f, 50f / 255f, 1f);
 
-    public BattleGUI(int w, int h, Player dan, Player ki, InputSystem input) {
+    public BattleGUI(int w, int h, EntityWrapper dan, EntityWrapper ki, InputSystem input) {
         screen = MainMenu.getScreen();
         this.w = w;
         this.h = h;
@@ -56,11 +61,6 @@ public class BattleGUI extends AbstractAppState {
         this.h = h;
 
         HUDNode.setPosition(w / 2, 90);
-    }
-
-    @Override
-    public void setEnabled(boolean enabled) {
-        super.setEnabled(enabled);
     }
 
     @Override
@@ -92,7 +92,8 @@ public class BattleGUI extends AbstractAppState {
         screen.removeElement(HUDNode);
     }
 
-    public void setActiveHUD(Player player) {
+    public void setActiveHUD(EntityWrapper player) {
+        //TODO: make some kind of indicator for when the player is active
         if (player.equals(dan)) {
             curChar = "dan";
         } else if (player.equals(ki)) {
@@ -101,7 +102,7 @@ public class BattleGUI extends AbstractAppState {
     }
 
     private void makeHUD() {
-        //remember that GUI orientation is top-left = 0,0
+        //remember that tonegodgui orientation is top-left = 0,0
         HUDNode = new Element(screen, "danHUDNode",
                 new Vector2f(w / 2, h - 90), new Vector2f(0, 0), new Vector4f(0, 0, 0, 0),
                 "Textures/transparent.png");
@@ -224,5 +225,52 @@ public class BattleGUI extends AbstractAppState {
         HUDNode.addChild(kbuttonleft);
         HUDNode.addChild(kbuttonmid);
         HUDNode.addChild(kbuttonright);
+
+        buttons.put("dbuttonleft", dbuttonleft);
+        buttons.put("dbuttonmid", dbuttonmid);
+        buttons.put("dbuttonright", dbuttonright);
+        buttons.put("kbuttonleft", kbuttonleft);
+        buttons.put("kbuttonmid", kbuttonmid);
+        buttons.put("kbuttonright", kbuttonright);
+    }
+
+    public void displayButtonCooldown(String buttonName, int time) {
+        //changes the button appearance to reflect cooldown
+        buttons.get(buttonName).addControl(
+                new buttonCooldown(time, buttons.get(buttonName)));
+    }
+
+    private class buttonCooldown extends AbstractControl {
+
+        private float countdown;
+        private MyButton button;
+        private Effect buttondim;
+
+        public buttonCooldown(int length, MyButton button) {
+            this.countdown = length;
+            this.button = button;
+            button.setFontColor(ColorRGBA.White);
+            button.setFontSize(36);
+            buttondim = new Effect(Effect.EffectType.ColorSwap, Effect.EffectEvent.Show, countdown);
+            buttondim.setColor(ColorRGBA.Black);
+            buttondim.setElement(button);
+            screen.getEffectManager().applyEffect(buttondim);
+        }
+
+        @Override
+        protected void controlUpdate(float tpf) {
+            if (countdown > 0) {
+                countdown -= tpf;
+                button.setText(new Integer((int) countdown + 1).toString());
+            } else {
+                button.setText("");
+                buttondim.setIsActive(false);
+                spatial.removeControl(this);
+            }
+        }
+
+        @Override
+        protected void controlRender(RenderManager rm, ViewPort vp) {
+        }
     }
 }

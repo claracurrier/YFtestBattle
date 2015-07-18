@@ -4,6 +4,7 @@
  */
 package playerPack;
 
+import battlestatepack.EntityWrapper;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
@@ -17,10 +18,10 @@ public class AutoAttackCont extends AbstractControl {
 
     private float cooldown;
     private float counter = 50; //always start
-    private Player activeChar;
+    private EntityWrapper activeChar;
     private Vector3f target;
 
-    public AutoAttackCont(float cooldown, Player activeChar, Vector3f target) {
+    public AutoAttackCont(float cooldown, EntityWrapper activeChar, Vector3f target) {
         this.cooldown = cooldown;
         this.activeChar = activeChar;
         this.target = target;

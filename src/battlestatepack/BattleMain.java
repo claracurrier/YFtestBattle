@@ -3,7 +3,7 @@ package battlestatepack;
 import MapPack.MapAppState;
 import MapPack.MapLoader;
 import playerPack.*;
-import mobPack.MobAS;
+import mobPack.MobWrapper;
 import cameraPack.CameraOptions;
 import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
@@ -13,7 +13,6 @@ import com.jme3.asset.AssetManager;
 import com.jme3.input.InputManager;
 import com.jme3.math.ColorRGBA;
 import com.jme3.scene.Node;
-import com.jme3.scene.Spatial;
 import com.jme3.system.AppSettings;
 import menuPack.MainMenu;
 import spriteProject.SpriteEngine;
@@ -26,14 +25,14 @@ public class BattleMain extends AbstractAppState {
 
     private final Node danNode, kiNode;
     private final EntityMaker maker;
-    private final Player danLogic, kiLogic;
+    private final EntityWrapper danLogic, kiLogic;
     private final CollideAS collideAS;
     private final SimpleApplication app;
     private final AssetManager assetManager;
     private final AppStateManager stateManager;
     private final InputManager inputManager;
     private final PCollideCont danCC, kiCC;
-    private final CameraOptions camOps;
+    private CameraOptions camOps;
     private final BattleGUI battleGUI;
     private final Picker picker;
     public static AppSettings settings;
@@ -41,7 +40,7 @@ public class BattleMain extends AbstractAppState {
     public static final Node DEFNODE = new Node("defNode");
     public static final Node ATKNODE = new Node("atkNode");
     public static final Node BATTLENODE = new Node("battleNode");
-    private MobAS mob;
+    private MobWrapper mob;
     private InputSystem inputSystem;
 
     public BattleMain(SimpleApplication appl, AppSettings set, InputManager input, AppStateManager asm) {
@@ -57,32 +56,45 @@ public class BattleMain extends AbstractAppState {
         maker = new EntityMaker(assetManager);
         picker = new Picker(app.getCamera(), app.getRootNode(), this);
 
+
         //set up characters
         danNode = maker.createSpatial("Dan");
         danNode.move(settings.getWidth() / 2, settings.getHeight() / 2, 0);
-        danLogic = new DanAS(danNode);
+        danLogic = new DanWrapper(danNode);
         danCC = new PCollideCont(danLogic);
 
         kiNode = maker.createSpatial("Kirith");
         kiNode.move(settings.getWidth() / 3, settings.getHeight() / 3, 0);
-        kiLogic = new KirithAS(kiNode);
+        kiLogic = new KirithWrapper(kiNode);
         kiCC = new PCollideCont(kiLogic);
-        
-        makeInput();
-        camOps = new CameraOptions(app.getCamera(), input, danNode, app.getRootNode());
-        new SkillGraphicFactory().setup(app.getRootNode(), assetManager, danLogic, kiLogic);
+
+        SkillBehavior behavior = new SkillBehavior();
+        SkillGraphic graphic = new SkillGraphic(app.getGuiNode(), app.getRootNode(),
+                assetManager, danLogic, kiLogic, input);
+        SkillCooldown cooldown = new SkillCooldown();
+        PSkills pskill = new PSkills(danLogic, kiLogic, app.getCamera(),
+                graphic, cooldown, behavior);
+        SkillMapper skillmap = new SkillMapper(input, pskill);
+
+        inputSystem = new InputSystem(inputManager, skillmap);
         battleGUI = new BattleGUI(settings.getWidth(), settings.getHeight(),
                 danLogic, kiLogic, inputSystem);
+
         register();
         makeCamera();
         makeMap();
+        makeInput();
+
+        ((DanWrapper) danLogic).setGraphic(graphic);
+        cooldown.setSkillmap(skillmap);
+        cooldown.setBattleGUI(battleGUI);
     }
 
     @Override
     public void initialize(AppStateManager asm, Application appl) {
-        //spawn a MobAS
-        Spatial mobSpat = maker.createSpatial("Wanderer");
-        mob = new MobAS(mobSpat, "Wanderer", danNode, kiNode);
+        //spawn a MobWrapper
+        Node mobSpat = maker.createSpatial("Wanderer");
+        mob = new MobWrapper(mobSpat, "Wanderer", danNode, kiNode);
         mobSpat.setLocalTranslation(500, 240, 0);
         //disabled mob for now
         mob.setEnabled(false);
@@ -190,21 +202,20 @@ public class BattleMain extends AbstractAppState {
     }
 
     private void makeCamera() {
+        camOps = new CameraOptions(app.getCamera(), inputManager, danNode, app.getRootNode());
         camOps.setActive(true);
         camOps.setChar(danNode);
         camOps.setCamSetting(camOps.getCamSetting());
     }
 
     private void makeInput() {
-        PSkills pskill = new PSkills(danLogic, kiLogic, app.getCamera());
-        inputSystem = new InputSystem(inputManager, pskill);
         inputSystem.setEnabled(true);
 
         inputSystem.setSkillMapping("dbuttonleft", PSkills.Skills.tripleShot);
-        inputSystem.setSkillMapping("dbuttonmid", PSkills.Skills.nothing);
+        inputSystem.setSkillMapping("dbuttonmid", PSkills.Skills.headshot);
         inputSystem.setSkillMapping("dbuttonright", PSkills.Skills.nothing);
-        inputSystem.setSkillMapping("kbuttonleft", PSkills.Skills.nothing);
-        inputSystem.setSkillMapping("kbuttonmid", PSkills.Skills.nothing);
+        inputSystem.setSkillMapping("kbuttonleft", PSkills.Skills.stun);
+        inputSystem.setSkillMapping("kbuttonmid", PSkills.Skills.push);
         inputSystem.setSkillMapping("kbuttonright", PSkills.Skills.nothing);
     }
 
