@@ -4,12 +4,12 @@
  */
 package battlestatepack;
 
-import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
-import com.jme3.app.state.AppStateManager;
 import com.jme3.math.Vector2f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import mapPack.Map;
+import mapPack.Tile;
 
 /**
  *
@@ -21,7 +21,7 @@ public class CollideAS extends AbstractAppState {
     private final Vector2f xaxis = new Vector2f(1f, 0);
     private final Vector2f yaxis = new Vector2f(0, 1f);
     private boolean collided = false;
-    private Spatial atkchild, defchild, spatial;
+    private Spatial atkchild, defchild;
     private int val;
 
     public CollideAS() {
@@ -30,60 +30,11 @@ public class CollideAS extends AbstractAppState {
     }
 
     @Override
-    public void initialize(AppStateManager asm, Application app) {
-    }
-
-    @Override
-    public void cleanup() {
-        super.cleanup();
-    }
-
-    @Override
-    public void setEnabled(boolean enabled) {
-        super.setEnabled(enabled);
-    }
-
-    public void setMovingSpatial(Spatial spat) {
-        spatial = spat;
-    }
-
-    @Override
     public void update(float tpf) {
         if (isEnabled()) {
-            moveCheck(spatial);
+            moveCheck();
+            tileCheck();
             attackCheck();
-        }
-    }
-
-    private void AutoFollowBoxCamCheck(Node camBox, float tpf) {
-        //may be scrapped later
-        collided = false;
-        for (int i = 0; i < 4; i++) {
-            Spatial camBoxEdge = camBox.getChild("camBox" + i);
-            val = satTest(spatial, camBoxEdge);
-            if (val > 0) {
-                switch (val) {
-                    case 1: //left
-                        camBox.setUserData("moveLeft", true);
-                        break;
-                    case 2: //right
-                        camBox.setUserData("moveRight", true);
-                        break;
-                    case 3: //down
-                        camBox.setUserData("moveDown", true);
-                        break;
-                    case 4: //up
-                        camBox.setUserData("moveUp", true);
-                        break;
-                }
-                collided = true;
-            }
-        }
-        if (!collided) {
-            camBox.setUserData("moveLeft", false);
-            camBox.setUserData("moveRight", false);
-            camBox.setUserData("moveUp", false);
-            camBox.setUserData("moveDown", false);
         }
     }
 
@@ -132,35 +83,79 @@ public class CollideAS extends AbstractAppState {
         return true;
     }
 
-    public void moveCheck(Spatial player) {
+    public void moveCheck() {
         collided = false;
         //collision loop
         for (int i = 0; i < defNode.getQuantity(); i++) {
-            Spatial curChild = defNode.getChild(i);
-            if (!curChild.equals(player)) {
-                val = satTest(player, curChild);
-                if (val > 0) {
-                    switch (val) {
-                        case 1: //no left
-                            player.setUserData("canL", false);
-                            break;
-                        case 2: //no right
-                            player.setUserData("canR", false);
-                            break;
-                        case 3: //no down
-                            player.setUserData("canU", false);
-                            break;
-                        case 4: //no up
-                            player.setUserData("canD", false);
-                            break;
+            for (int j = 0; j < defNode.getQuantity(); j++) {
+                Spatial curChild = defNode.getChild(i);
+                Spatial testingChild = defNode.getChild(j);
+                if (!testingChild.equals(curChild)) {
+                    val = satTest(curChild, testingChild);
+                    if (val > 0) {
+                        switch (val) {
+                            case 1: //no left
+                                curChild.setUserData("canL", false);
+                                break;
+                            case 2: //no right
+                                curChild.setUserData("canR", false);
+                                break;
+                            case 3: //no down
+                                curChild.setUserData("canU", false);
+                                break;
+                            case 4: //no up
+                                curChild.setUserData("canD", false);
+                                break;
+                        }
+                        collided = true;
                     }
-                    collided = true;
+                } else if (!collided) {
+                    curChild.setUserData("canU", true);
+                    curChild.setUserData("canD", true);
+                    curChild.setUserData("canR", true);
+                    curChild.setUserData("canL", true);
                 }
-            } else if (!collided) {
-                player.setUserData("canU", true);
-                player.setUserData("canD", true);
-                player.setUserData("canR", true);
-                player.setUserData("canL", true);
+            }
+        }
+    }
+
+    private void tileCheck() {
+        for (Spatial entity : defNode.getChildren()) {
+            Tile startTile = new Tile(new Vector2f(
+                    entity.getLocalTranslation().x,
+                    entity.getLocalTranslation().y),
+                    Map.getTransparentLayer());
+            if (startTile.getNeighbor(-16, 48).isClosed()
+                    || startTile.getNeighbor(0, 48).isClosed()
+                    || startTile.getNeighbor(16, 48).isClosed()) {
+                entity.setUserData("canU", false);
+            } else {
+                entity.setUserData("canU", true);
+            }
+            if (startTile.getNeighbor(-16, -48).isClosed()
+                    || startTile.getNeighbor(0, -48).isClosed()
+                    || startTile.getNeighbor(16, -48).isClosed()) {
+                entity.setUserData("canD", false);
+            } else {
+                entity.setUserData("canD", true);
+            }
+            if (startTile.getNeighbor(-32, -32).isClosed()
+                    || startTile.getNeighbor(-32, -16).isClosed()
+                    || startTile.getNeighbor(-32, 0).isClosed()
+                    || startTile.getNeighbor(-32, 16).isClosed()
+                    || startTile.getNeighbor(-32, 32).isClosed()) {
+                entity.setUserData("canL", false);
+            } else {
+                entity.setUserData("canL", true);
+            }
+            if (startTile.getNeighbor(32, -32).isClosed()
+                    || startTile.getNeighbor(32, -16).isClosed()
+                    || startTile.getNeighbor(32, 0).isClosed()
+                    || startTile.getNeighbor(32, 16).isClosed()
+                    || startTile.getNeighbor(32, 32).isClosed()) {
+                entity.setUserData("canR", false);
+            } else {
+                entity.setUserData("canr", true);
             }
         }
     }

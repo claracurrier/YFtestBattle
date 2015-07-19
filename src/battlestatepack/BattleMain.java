@@ -1,7 +1,10 @@
 package battlestatepack;
 
-import MapPack.MapAppState;
-import MapPack.MapLoader;
+import pathfindingPack.Picker;
+import skillPack.*;
+import mapPack.MapAppState;
+import mapPack.MapLoader;
+import mapPack.Map;
 import playerPack.*;
 import mobPack.MobWrapper;
 import cameraPack.CameraOptions;
@@ -33,6 +36,7 @@ public class BattleMain extends AbstractAppState {
     private final InputManager inputManager;
     private final PCollideCont danCC, kiCC;
     private CameraOptions camOps;
+    private Map map;
     private final BattleGUI battleGUI;
     private final Picker picker;
     public static AppSettings settings;
@@ -56,15 +60,12 @@ public class BattleMain extends AbstractAppState {
         maker = new EntityMaker(assetManager);
         picker = new Picker(app.getCamera(), app.getRootNode(), this);
 
-
         //set up characters
         danNode = maker.createSpatial("Dan");
-        danNode.move(settings.getWidth() / 2, settings.getHeight() / 2, 0);
         danLogic = new DanWrapper(danNode);
         danCC = new PCollideCont(danLogic);
 
         kiNode = maker.createSpatial("Kirith");
-        kiNode.move(settings.getWidth() / 3, settings.getHeight() / 3, 0);
         kiLogic = new KirithWrapper(kiNode);
         kiCC = new PCollideCont(kiLogic);
 
@@ -72,7 +73,7 @@ public class BattleMain extends AbstractAppState {
         SkillGraphic graphic = new SkillGraphic(app.getGuiNode(), app.getRootNode(),
                 assetManager, danLogic, kiLogic, input);
         SkillCooldown cooldown = new SkillCooldown();
-        PSkills pskill = new PSkills(danLogic, kiLogic, app.getCamera(),
+        PlayerSkills pskill = new PlayerSkills(danLogic, kiLogic, app.getCamera(),
                 graphic, cooldown, behavior);
         SkillMapper skillmap = new SkillMapper(input, pskill);
 
@@ -80,10 +81,10 @@ public class BattleMain extends AbstractAppState {
         battleGUI = new BattleGUI(settings.getWidth(), settings.getHeight(),
                 danLogic, kiLogic, inputSystem);
 
-        register();
         makeCamera();
         makeMap();
         makeInput();
+        register();
 
         ((DanWrapper) danLogic).setGraphic(graphic);
         cooldown.setSkillmap(skillmap);
@@ -94,8 +95,9 @@ public class BattleMain extends AbstractAppState {
     public void initialize(AppStateManager asm, Application appl) {
         //spawn a MobWrapper
         Node mobSpat = maker.createSpatial("Wanderer");
-        mob = new MobWrapper(mobSpat, "Wanderer", danNode, kiNode);
-        mobSpat.setLocalTranslation(500, 240, 0);
+        mob = new MobWrapper(mobSpat, "Wanderer", danNode, kiNode, new MobBehavior());
+        mobSpat.setLocalTranslation(map.getSpecialTile(2).getLocalTranslation().x,
+                map.getSpecialTile(2).getLocalTranslation().y, 0);
         //disabled mob for now
         mob.setEnabled(false);
 
@@ -107,12 +109,17 @@ public class BattleMain extends AbstractAppState {
 
         stateManager.getState(MapAppState.class).setActiveChar(danNode);
         picker.setActiveChar(danLogic);
-        collideAS.setMovingSpatial(danNode);
 
         danNode.addControl(danCC);
+        danNode.setLocalTranslation(map.getSpecialTile(0).getLocalTranslation().x,
+                map.getSpecialTile(0).getLocalTranslation().y, 0);
         kiNode.addControl(kiCC);
+        kiNode.setLocalTranslation(map.getSpecialTile(1).getLocalTranslation().x,
+                map.getSpecialTile(1).getLocalTranslation().y, 0);
         DEFNODE.attachChild(danNode);
         DEFNODE.attachChild(kiNode);
+
+        camOps.setChar(danNode);
     }
 
     @Override
@@ -124,7 +131,6 @@ public class BattleMain extends AbstractAppState {
     public void switchChar() {
         if (stateManager.hasState(danLogic)) {
             //if kirith is now in control
-            collideAS.setMovingSpatial(kiNode);
             stateManager.detach(danLogic);
             stateManager.attach(kiLogic);
             picker.setActiveChar(kiLogic);
@@ -135,7 +141,6 @@ public class BattleMain extends AbstractAppState {
 
         } else if (stateManager.hasState(kiLogic)) {
             //if dan is now in control
-            collideAS.setMovingSpatial(danNode);
             stateManager.detach(kiLogic);
             stateManager.attach(danLogic);
             picker.setActiveChar(danLogic);
@@ -195,7 +200,7 @@ public class BattleMain extends AbstractAppState {
         GVars.gvars.mapwidth = 120 * 16;
 
         MapLoader mapMaker = new MapLoader(app.getRootNode(), assetManager);
-        mapMaker.makeTiledMap("test_large_collision");
+        map = mapMaker.makeTiledMap("test_large_collision");
         mapMaker.makeImageMap("test_large", GVars.gvars.mapwidth, GVars.gvars.mapheight, 15, 20);
         stateManager.attach(new MapAppState());
         app.getViewPort().setBackgroundColor(ColorRGBA.Brown);
@@ -204,19 +209,18 @@ public class BattleMain extends AbstractAppState {
     private void makeCamera() {
         camOps = new CameraOptions(app.getCamera(), inputManager, danNode, app.getRootNode());
         camOps.setActive(true);
-        camOps.setChar(danNode);
         camOps.setCamSetting(camOps.getCamSetting());
     }
 
     private void makeInput() {
         inputSystem.setEnabled(true);
 
-        inputSystem.setSkillMapping("dbuttonleft", PSkills.Skills.tripleShot);
-        inputSystem.setSkillMapping("dbuttonmid", PSkills.Skills.headshot);
-        inputSystem.setSkillMapping("dbuttonright", PSkills.Skills.nothing);
-        inputSystem.setSkillMapping("kbuttonleft", PSkills.Skills.stun);
-        inputSystem.setSkillMapping("kbuttonmid", PSkills.Skills.push);
-        inputSystem.setSkillMapping("kbuttonright", PSkills.Skills.nothing);
+        inputSystem.setSkillMapping("dbuttonleft", PlayerSkills.Skills.tripleShot);
+        inputSystem.setSkillMapping("dbuttonmid", PlayerSkills.Skills.headshot);
+        inputSystem.setSkillMapping("dbuttonright", PlayerSkills.Skills.nothing);
+        inputSystem.setSkillMapping("kbuttonleft", PlayerSkills.Skills.stun);
+        inputSystem.setSkillMapping("kbuttonmid", PlayerSkills.Skills.push);
+        inputSystem.setSkillMapping("kbuttonright", PlayerSkills.Skills.nothing);
     }
 
     private void register() {

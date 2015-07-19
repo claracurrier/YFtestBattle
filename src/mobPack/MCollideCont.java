@@ -49,21 +49,7 @@ public class MCollideCont extends AbstractControl {
 
         if (!atkNode.getLocalTranslation().equals(loc)) {
             atkNode.setLocalTranslation(loc);
-            //make sure box follows mob 
-        }
-
-        //check bounds
-        if (loc.x > width) {
-            spatial.setLocalTranslation(width, loc.y, 0);
-        }
-        if (loc.y > height) {
-            spatial.setLocalTranslation(loc.x, height, 0);
-        }
-        if (loc.x < 0) {
-            spatial.setLocalTranslation(0, loc.y, 0);
-        }
-        if (loc.y < 0) {
-            spatial.setLocalTranslation(loc.x, 0, 0);
+            //make sure attackbox follows mob 
         }
 
         //place to poll for collisions

@@ -4,6 +4,7 @@
  */
 package battlestatepack;
 
+import pathfindingPack.Picker;
 import cameraPack.CCManual;
 import cameraPack.CameraOptions;
 import com.jme3.input.InputManager;
@@ -14,7 +15,7 @@ import com.jme3.input.controls.KeyTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
 import java.util.HashMap;
 import menuPack.MainMenu;
-import playerPack.PSkills;
+import skillPack.PlayerSkills;
 import playerPack.SkillMapper;
 
 /**
@@ -68,7 +69,7 @@ public class InputSystem implements ActionListener {
         }
     }
 
-    public void setSkillMapping(String buttonName, PSkills.Skills skill) {
+    public void setSkillMapping(String buttonName, PlayerSkills.Skills skill) {
         skillmap.setSkillMapping(buttonName, skill);
     }
 

@@ -4,6 +4,7 @@
  */
 package playerPack;
 
+import skillPack.SkillGraphic;
 import battlestatepack.EntityWrapper;
 import battlestatepack.GVars;
 import com.jme3.app.Application;

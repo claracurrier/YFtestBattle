@@ -4,6 +4,7 @@
  */
 package playerPack;
 
+import skillPack.PlayerSkills;
 import com.jme3.input.InputManager;
 import java.util.HashMap;
 import java.util.Map.Entry;
@@ -16,12 +17,12 @@ public class SkillMapper {
 
     private InputManager inputManager;
     private static boolean autoCast = false; //keep this global
-    private HashMap<String, PSkills.Skills> skillMap = new HashMap<>();
-    private PSkills.Skills waitingForSkill;
+    private HashMap<String, PlayerSkills.Skills> skillMap = new HashMap<>();
+    private PlayerSkills.Skills waitingForSkill;
     private boolean waiting = false;
-    private PSkills pskills;
+    private PlayerSkills pskills;
 
-    public SkillMapper(InputManager input, PSkills pskill) {
+    public SkillMapper(InputManager input, PlayerSkills pskill) {
         inputManager = input;
         pskills = pskill;
     }
@@ -34,8 +35,8 @@ public class SkillMapper {
         return waiting;
     }
 
-    public String getAssignedButton(PSkills.Skills value) {
-        for (Entry<String, PSkills.Skills> entry : skillMap.entrySet()) {
+    public String getAssignedButton(PlayerSkills.Skills value) {
+        for (Entry<String, PlayerSkills.Skills> entry : skillMap.entrySet()) {
             if (value.equals(skillMap.get(entry.getKey()))) {
                 return entry.getKey();
             }
@@ -43,13 +44,13 @@ public class SkillMapper {
         return null;
     }
 
-    public void setSkillMapping(String buttonName, PSkills.Skills skill) {
+    public void setSkillMapping(String buttonName, PlayerSkills.Skills skill) {
         skillMap.put(buttonName, skill);
     }
 
     public void cancelSkill() {
         waiting = false;
-        waitingForSkill = PSkills.Skills.nothing;
+        waitingForSkill = PlayerSkills.Skills.nothing;
         pskills.getGraphic().removeTargetCursor();
         //when user hits the skill button/shortcut twice, skill gets canceled
     }
