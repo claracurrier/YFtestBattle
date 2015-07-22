@@ -13,7 +13,7 @@
  * 
  * EDITED 2015 by Clara Currier
  */
-package MapPack;
+package mapPack;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -277,6 +277,10 @@ public class TMXReader {
                                 tile.setClosed(true);
                             } else {
                                 tile.setClosed(false);
+                            }
+                            if (tile.getNumber() < 200) {
+                                //special tile
+                                map.addSpecialTile(tile);
                             }
                         }
                     }

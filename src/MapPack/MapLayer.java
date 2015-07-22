@@ -13,9 +13,7 @@
  * 
  * EDITED 2015 by Clara Currier
  */
-package MapPack;
-
-import com.jme3.math.Vector2f;
+package mapPack;
 
 public class MapLayer {
 

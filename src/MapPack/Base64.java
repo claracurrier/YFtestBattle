@@ -23,7 +23,7 @@
 // 81050  USA.                                                         //
 //                                                                     //
 ////////////////////end license & copyright header///////////////////////
-package MapPack;
+package mapPack;
 
 /**
  * Provides encoding of raw bytes to base64-encoded characters, and decoding of

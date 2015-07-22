@@ -76,7 +76,7 @@ public class MCollideCont extends AbstractControl {
         spatial.setUserData("knockback", true);
         spatial.addControl(new KnockbackCont(GVars.gvars.mminmovement + atkpower,
                 atkpower * GVars.gvars.mintensitymovemod + GVars.gvars.mminintensity,
-                spatial.getName(), 0, dir));
+                spatial.getName(), dir));
     }
 
     @Override

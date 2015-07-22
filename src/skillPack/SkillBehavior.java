@@ -5,6 +5,10 @@
 package skillPack;
 
 import battlestatepack.EntityWrapper;
+import battlestatepack.GVars;
+import battlestatepack.KnockbackCont;
+import com.jme3.math.FastMath;
+import com.jme3.math.Vector2f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.control.AbstractControl;
@@ -18,9 +22,46 @@ public class SkillBehavior {
     public SkillBehavior() {
     }
 
-    protected void addDisplacement(EntityWrapper target) {
+    protected void addDisplacement(EntityWrapper target, EntityWrapper source, float distance, float intensity) {
         //moves the target a certain amount in the given direction if possible
-        //needs to check that there are no tiles in the way
+
+        target.getNode().addControl(new KnockbackCont(GVars.gvars.mminmovement + distance,
+                intensity * GVars.gvars.mintensitymovemod + GVars.gvars.mminintensity,
+                target.getNode().getName(), findAimDir(
+                new Vector2f(source.getNode().getLocalTranslation().x, source.getNode().getLocalTranslation().y),
+                new Vector2f(target.getNode().getLocalTranslation().x, target.getNode().getLocalTranslation().y))));
+
+    }
+
+    private int findAimDir(Vector2f cur, Vector2f targ) {
+        Vector2f newvec = targ.subtract(cur);
+        float aim = newvec.normalize().getAngle();
+
+        if (aim <= 5 * FastMath.PI / 6 && aim > 2 * FastMath.PI / 3) {
+            //up left
+            return 7;
+        } else if (aim <= 2 * FastMath.PI / 3 && aim > FastMath.PI / 3) {
+            //facing up
+            return 0;
+        } else if (aim <= FastMath.PI / 3 && aim > FastMath.PI / 6) {
+            //up right
+            return 1;
+        } else if (aim <= FastMath.PI / 6 && aim > -FastMath.PI / 6) {
+            //facing right
+            return 2;
+        } else if (aim <= -FastMath.PI / 6 && aim > -FastMath.PI / 3) {
+            //down right
+            return 3;
+        } else if (aim <= -FastMath.PI / 3 && aim > -2 * FastMath.PI / 3) {
+            //facing down
+            return 4;
+        } else if (aim <= -2 * FastMath.PI / 3 && aim > -5 * FastMath.PI / 6) {
+            //down left
+            return 5;
+        } else {
+            //facing left
+            return 6;
+        }
     }
 
     protected void addMovementModifier(EntityWrapper target) {

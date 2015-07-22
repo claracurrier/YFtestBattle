@@ -28,10 +28,12 @@ public class InputSystem implements ActionListener {
     private HashMap<String, Integer> mappings = new HashMap<>();
     private SkillMapper skillmap; //just for maintaining skills
     private ReferenceRegistry reg = ReferenceRegistry.registry;
+    private BattleMain bmain;
 
-    public InputSystem(InputManager input, SkillMapper skillmap) {
+    public InputSystem(InputManager input, SkillMapper skillmap, BattleMain main) {
         inputManager = input;
         this.skillmap = skillmap;
+        this.bmain = main;
 
         defaultShortcuts();
     }
@@ -162,26 +164,6 @@ public class InputSystem implements ActionListener {
                         skillmap.doSkill(name);
                     }
                     break;
-                case up:
-                    if (reg.hasRegistry(CCManual.class)) {
-                        ((CCManual) reg.get(CCManual.class)).move(name, isPressed);
-                    }
-                    break;
-                case down:
-                    if (reg.hasRegistry(CCManual.class)) {
-                        ((CCManual) reg.get(CCManual.class)).move(name, isPressed);
-                    }
-                    break;
-                case right:
-                    if (reg.hasRegistry(CCManual.class)) {
-                        ((CCManual) reg.get(CCManual.class)).move(name, isPressed);
-                    }
-                    break;
-                case left:
-                    if (reg.hasRegistry(CCManual.class)) {
-                        ((CCManual) reg.get(CCManual.class)).move(name, isPressed);
-                    }
-                    break;
                 case space: //switch between AutoFollowLocked and Manual cameras
                     CameraOptions camOps = ((CameraOptions) reg.get(CameraOptions.class));
                     if (camOps.getCamSetting().equals("Manual")) {
@@ -194,17 +176,41 @@ public class InputSystem implements ActionListener {
                     if (skillmap.skillIsWaiting()) {
                         skillmap.cancelSkill();
                     }
-                    ((Picker) reg.get(Picker.class)).pick(name, inputManager.getCursorPosition());
+                    ((Picker) reg.get(Picker.class)).pick(name, inputManager.getCursorPosition(),
+                            bmain.getCurChar());
                     break;
             }
         }
-        if (name.equals("leftclick")) {
-            //dragging may want to listen for isPressed
-            if (skillmap.skillIsWaiting() && !isPressed) {
-                skillmap.doSkill(name);
-            } else if (!isPressed) { //handle regular picking (picker class takes over actions)
-                ((Picker) reg.get(Picker.class)).pick(name, inputManager.getCursorPosition());
-            }
+        switch (Keys.valueOf(name)) {
+            case leftclick:
+                //dragging may want to listen for isPressed
+                if (skillmap.skillIsWaiting() && !isPressed) {
+                    skillmap.doSkill(name);
+                } else if (!isPressed) { //handle regular picking (picker class takes over actions)
+                    ((Picker) reg.get(Picker.class)).pick(name, inputManager.getCursorPosition(),
+                            bmain.getCurChar());
+                }
+                break;
+            case up:
+                if (reg.hasRegistry(CCManual.class)) {
+                    ((CCManual) reg.get(CCManual.class)).move(name, isPressed);
+                }
+                break;
+            case down:
+                if (reg.hasRegistry(CCManual.class)) {
+                    ((CCManual) reg.get(CCManual.class)).move(name, isPressed);
+                }
+                break;
+            case right:
+                if (reg.hasRegistry(CCManual.class)) {
+                    ((CCManual) reg.get(CCManual.class)).move(name, isPressed);
+                }
+                break;
+            case left:
+                if (reg.hasRegistry(CCManual.class)) {
+                    ((CCManual) reg.get(CCManual.class)).move(name, isPressed);
+                }
+                break;
         }
     }
 

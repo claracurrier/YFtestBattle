@@ -20,11 +20,11 @@ public class KnockbackCont extends AbstractControl {
     private float dtimer;
     private int dir;
 
-    public KnockbackCont(float distance, float intensity, String libraryName, int spriteIndex, int dir) {
+    public KnockbackCont(float distance, float intensity, String libraryName, int dir) {
         this.distance = distance;
         this.intensity = intensity;
         this.dir = dir;
-        BattleMain.sEngine.getLibrary(libraryName).activateSprite(spriteIndex);
+        BattleMain.sEngine.getLibrary(libraryName).activateSprite(0);
     }
 
     @Override

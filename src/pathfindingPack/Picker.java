@@ -25,8 +25,6 @@ import playerPack.AutoAttackCont;
 public class Picker {
 
     private final Camera cam;
-    private EntityWrapper activePlayer;
-    private Node activeNode;
     private Node rootNode;
     private BattleMain bmain;
 
@@ -36,12 +34,7 @@ public class Picker {
         bmain = bm;
     }
 
-    public void setActiveChar(EntityWrapper player) {
-        activePlayer = player;
-        activeNode = player.getNode();
-    }
-
-    public void pick(String mouseEvent, Vector2f mouse) {
+    public void pick(String mouseEvent, Vector2f mouse, EntityWrapper picker) {
         Vector3f mousePosition3d = cam.getWorldCoordinates(mouse, 0).clone();
         Vector3f direction = cam.getWorldCoordinates(mouse, 1f).subtractLocal(mousePosition3d).normalizeLocal();
 
@@ -61,16 +54,16 @@ public class Picker {
                     handleSwitch("ki");
                 } else {
                     if (picked instanceof Tile) {
-                        handleMovement(picked.getLocalTranslation(), 0);
+                        handleMovement(picked.getLocalTranslation(), 0, picker);
                     } else {
                         handleMovement(picked.getParent().getParent().getLocalTranslation(),
-                                (activeNode.getName().equals("Dan")
-                                ? GVars.gvars.dminatkdist : GVars.gvars.kminatkdist));
+                                (picker.getNode().getName().equals("Dan")
+                                ? GVars.gvars.dminatkdist : GVars.gvars.kminatkdist), picker);
                     }
                 }
             } else if (mouseEvent.equals("rightclick")) {
                 if (picked.getName().contains("monster")) {
-                    handleAttack(picked.getParent().getParent().getLocalTranslation());
+                    handleAttack(picked.getParent().getParent().getLocalTranslation(), picker);
                     //ignore the sprites and get to the node
                 }
             }
@@ -80,7 +73,8 @@ public class Picker {
         }
     }
 
-    private void handleMovement(Vector3f target, float distanceAway) {
+    private void handleMovement(Vector3f target, float distanceAway, EntityWrapper activeChar) {
+        Node activeNode = activeChar.getNode();
         if (activeNode.getControl(MoveCont.class) != null) {
             //cancel movement (don't bother cancelling pathfinding)
             activeNode.removeControl(MoveCont.class);
@@ -101,9 +95,11 @@ public class Picker {
         Pathfinder pathfinder = new Pathfinder(start, end, distanceAway);
         activeNode.addControl(pathfinder);
         start = null;
+        end = null;
     }
 
-    private void handleAttack(Vector3f target) {
+    public void handleAttack(Vector3f target, EntityWrapper activePlayer) {
+        Node activeNode = activePlayer.getNode();
         if (activeNode.getControl(AutoAttackCont.class) != null) {
             //cancel attacking
             activeNode.removeControl(AutoAttackCont.class);
@@ -114,7 +110,7 @@ public class Picker {
                 ? GVars.gvars.dminatkdist : GVars.gvars.kminatkdist)) {
             //if character is too far to attack
             handleMovement(target, activeNode.getName().equals("Dan")
-                    ? GVars.gvars.dminatkdist : GVars.gvars.kminatkdist);
+                    ? GVars.gvars.dminatkdist : GVars.gvars.kminatkdist, activePlayer);
         }
 
         activeNode.addControl(new AutoAttackCont(
@@ -124,8 +120,8 @@ public class Picker {
     }
 
     private void handleSwitch(String character) {
-        if ((!bmain.getCurChar() && character.equals("dan"))
-                || (bmain.getCurChar() && character.equals("ki"))) {
+        if ((bmain.getCurChar().getNode().getName().equals("Kirith") && character.equals("dan"))
+                || (bmain.getCurChar().getNode().getName().equals("Dan") && character.equals("ki"))) {
             bmain.switchChar();
         }
     }

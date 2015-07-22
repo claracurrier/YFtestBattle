@@ -1,5 +1,6 @@
 package battlestatepack;
 
+import mobPack.MobMoveBehavior;
 import pathfindingPack.Picker;
 import skillPack.*;
 import mapPack.MapAppState;
@@ -62,11 +63,11 @@ public class BattleMain extends AbstractAppState {
 
         //set up characters
         danNode = maker.createSpatial("Dan");
-        danLogic = new DanWrapper(danNode);
+        danLogic = new DanWrapper(danNode, picker);
         danCC = new PCollideCont(danLogic);
 
         kiNode = maker.createSpatial("Kirith");
-        kiLogic = new KirithWrapper(kiNode);
+        kiLogic = new KirithWrapper(kiNode, picker);
         kiCC = new PCollideCont(kiLogic);
 
         SkillBehavior behavior = new SkillBehavior();
@@ -76,8 +77,9 @@ public class BattleMain extends AbstractAppState {
         PlayerSkills pskill = new PlayerSkills(danLogic, kiLogic, app.getCamera(),
                 graphic, cooldown, behavior);
         SkillMapper skillmap = new SkillMapper(input, pskill);
+        MobSkill mskill = new MobSkill(graphic, behavior);
 
-        inputSystem = new InputSystem(inputManager, skillmap);
+        inputSystem = new InputSystem(inputManager, skillmap, this);
         battleGUI = new BattleGUI(settings.getWidth(), settings.getHeight(),
                 danLogic, kiLogic, inputSystem);
 
@@ -87,19 +89,21 @@ public class BattleMain extends AbstractAppState {
         register();
 
         ((DanWrapper) danLogic).setGraphic(graphic);
+        ((KirithWrapper) kiLogic).setGraphic(graphic);
         cooldown.setSkillmap(skillmap);
         cooldown.setBattleGUI(battleGUI);
-    }
 
-    @Override
-    public void initialize(AppStateManager asm, Application appl) {
         //spawn a MobWrapper
         Node mobSpat = maker.createSpatial("Wanderer");
-        mob = new MobWrapper(mobSpat, "Wanderer", danNode, kiNode, new MobBehavior());
+        mob = new MobWrapper(mobSpat, "Wanderer", danNode, kiNode, new MobMoveBehavior(), mskill);
         mobSpat.setLocalTranslation(map.getSpecialTile(2).getLocalTranslation().x,
                 map.getSpecialTile(2).getLocalTranslation().y, 0);
         //disabled mob for now
         mob.setEnabled(false);
+    }
+
+    @Override
+    public void initialize(AppStateManager asm, Application appl) {
 
         //load all the states
         stateManager.attach(collideAS);
@@ -108,7 +112,6 @@ public class BattleMain extends AbstractAppState {
         stateManager.attach(mob);
 
         stateManager.getState(MapAppState.class).setActiveChar(danNode);
-        picker.setActiveChar(danLogic);
 
         danNode.addControl(danCC);
         danNode.setLocalTranslation(map.getSpecialTile(0).getLocalTranslation().x,
@@ -133,7 +136,6 @@ public class BattleMain extends AbstractAppState {
             //if kirith is now in control
             stateManager.detach(danLogic);
             stateManager.attach(kiLogic);
-            picker.setActiveChar(kiLogic);
             stateManager.getState(MapAppState.class).setActiveChar(kiNode);
 
             camOps.setChar(kiNode);
@@ -143,7 +145,6 @@ public class BattleMain extends AbstractAppState {
             //if dan is now in control
             stateManager.detach(kiLogic);
             stateManager.attach(danLogic);
-            picker.setActiveChar(danLogic);
             stateManager.getState(MapAppState.class).setActiveChar(danNode);
 
             camOps.setChar(danNode);
@@ -151,9 +152,9 @@ public class BattleMain extends AbstractAppState {
         }
     }
 
-    public boolean getCurChar() {
+    public EntityWrapper getCurChar() {
         //true for dan, false for ki
-        return stateManager.hasState(danLogic);
+        return stateManager.hasState(danLogic) ? danLogic : kiLogic;
     }
 
     @Override

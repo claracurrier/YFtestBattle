@@ -9,6 +9,8 @@ import battlestatepack.BattleMain;
 import com.jme3.asset.AssetManager;
 import com.jme3.input.InputManager;
 import com.jme3.material.Material;
+import com.jme3.math.ColorRGBA;
+import com.jme3.math.FastMath;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
@@ -16,6 +18,7 @@ import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.control.AbstractControl;
+import com.jme3.scene.debug.WireBox;
 import com.jme3.scene.shape.Quad;
 import com.jme3.texture.Texture;
 import playerPack.ArrowControl;
@@ -144,5 +147,127 @@ public class SkillGraphic {
                 dan.getNode().getLocalTranslation().x,
                 dan.getNode().getLocalTranslation().y).normalizeLocal()));
         BattleMain.ATKNODE.attachChild(arrow);
+    }
+
+    private Geometry tempWireBox(float width, float height) {
+        //temp wirebox to see the hitboxes
+        Geometry g = new Geometry("attackBox", new WireBox(width, height, 0));
+        Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        mat.getAdditionalRenderState().setWireframe(true);
+        mat.setColor("Color", ColorRGBA.Blue);
+        g.setMaterial(mat);
+        return g;
+    }
+
+    public void makeAttackBox(Vector3f source, Vector3f target, float power, String name) {
+        int dir = findDirectionBetween(source, target);
+
+        Node node = new Node(name);
+
+        float x = source.x;
+        float y = source.y;
+        float boxw = 0;
+        float boxh = 0;
+
+        switch (dir) {
+            //moves the node to appropriate location relative to ki
+            case 0: //up
+                node.setLocalTranslation(x, y + 50f, 0);
+                boxw = 15;
+                boxh = 50;
+                break;
+            case 1:
+                node.setLocalTranslation(x + 30f, y + 50f, 0);
+                boxw = 30;
+                boxh = 30;
+                break;
+            case 2: //right
+                node.setLocalTranslation(x + 30f, y, 0);
+                boxw = 50;
+                boxh = 15;
+                break;
+            case 3:
+                node.setLocalTranslation(x + 30f, y - 50f, 0);
+                boxw = 30;
+                boxh = 30;
+                break;
+            case 4: //down
+                node.setLocalTranslation(x, y - 50f, 0);
+                boxw = 15;
+                boxh = 50;
+                break;
+            case 5:
+                node.setLocalTranslation(x - 30f, y - 50f, 0);
+                boxw = 30;
+                boxh = 30;
+                break;
+            case 6: //left
+                node.setLocalTranslation(x - 30f, y, 0);
+                boxw = 50;
+                boxh = 15;
+                break;
+            case 7:
+                node.setLocalTranslation(x - 30f, y + 50f, 0);
+                boxw = 30;
+                boxh = 30;
+                break;
+        }
+
+        node.setUserData("type", name);
+        node.setUserData("collided", "none");
+        node.setUserData("atkpower", power);
+        node.setUserData("halfwidth", boxw / 2);
+        node.setUserData("halfheight", boxh / 2);
+        node.attachChild(tempWireBox(boxw, boxh));
+
+        node.addControl(new AbstractControl() {
+            float hbtimer = 0;
+
+            @Override
+            protected void controlUpdate(float tpf) {
+                if (hbtimer > .2f || !spatial.getUserData("collided").equals("none")) {
+                    spatial.removeFromParent();
+                } else {
+                    hbtimer += tpf;
+                }
+            }
+
+            @Override
+            protected void controlRender(RenderManager rm, ViewPort vp) {
+            }
+        });
+
+        BattleMain.ATKNODE.attachChild(node);
+    }
+
+    private int findDirectionBetween(Vector3f targ, Vector3f cur) {
+        Vector2f newvec = new Vector2f(cur.x, cur.y).subtractLocal(targ.x, targ.y);
+        float aim = newvec.normalizeLocal().getAngle();
+
+        if (aim <= 5 * FastMath.PI / 6 && aim > 2 * FastMath.PI / 3) {
+            //up left
+            return 7;
+        } else if (aim <= 2 * FastMath.PI / 3 && aim > FastMath.PI / 3) {
+            //facing up
+            return 0;
+        } else if (aim <= FastMath.PI / 3 && aim > FastMath.PI / 6) {
+            //up right
+            return 1;
+        } else if (aim <= FastMath.PI / 6 && aim > -FastMath.PI / 6) {
+            //facing right
+            return 2;
+        } else if (aim <= -FastMath.PI / 6 && aim > -FastMath.PI / 3) {
+            //down right
+            return 3;
+        } else if (aim <= -FastMath.PI / 3 && aim > -2 * FastMath.PI / 3) {
+            //facing down
+            return 4;
+        } else if (aim <= -2 * FastMath.PI / 3 && aim > -5 * FastMath.PI / 6) {
+            //down left
+            return 5;
+        } else {
+            //facing left
+            return 6;
+        }
     }
 }

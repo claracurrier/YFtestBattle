@@ -71,7 +71,12 @@ public class CollideAS extends AbstractAppState {
             //mob and its atkbox or kirith (immune to bump) case
             return false;
         }
-        if (atkchild.getUserData("type").equals("kiatkbox")
+        if (atkchild.getName().equals("mobtacklebox")
+                && defchild.getUserData("type").equals("mob")){
+            //mob and tackle box case (will need to fix how type is used)
+            return false;
+        }
+        if (atkchild.getName().equals("kiautoatkbox")
                 && defchild.getName().equals("Kirith")) {
             //ki and her attacks
             return false;

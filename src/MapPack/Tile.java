@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package MapPack;
+package mapPack;
 
 import com.jme3.math.Vector2f;
 import com.jme3.scene.Geometry;
@@ -33,6 +33,7 @@ public class Tile extends Geometry implements Comparable {
     public float estimatedCostToGoal;
     private boolean isClosed;
     private boolean tempClosed = false;
+    private String closedBecause = "tile";
 
     public Tile() {
         properties = new Properties();
@@ -177,6 +178,10 @@ public class Tile extends Geometry implements Comparable {
         return costFromStart + estimatedCostToGoal;
     }
 
+    public Tile getNeighbor(int x, int y) {
+        return layer.getTile(location.x + x, location.y + y);
+    }
+
     public Tile[] getNeighbors(boolean sizeTesting) {
         Tile[] neighbors;
         if (sizeTesting) {
@@ -248,5 +253,13 @@ public class Tile extends Geometry implements Comparable {
 
         float v = thisValue - otherValue;
         return (v > 0) ? 1 : (v < 0) ? -1 : 0; // sign function
+    }
+
+    public String closedBecause() {
+        return closedBecause;
+    }
+
+    public void setClosedBecause(String name) {
+        closedBecause = name;
     }
 }

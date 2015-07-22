@@ -4,13 +4,13 @@
  */
 package mobPack;
 
-import skillPack.MobBehavior;
 import battlestatepack.BattleMain;
 import battlestatepack.EntityWrapper;
 import battlestatepack.GVars;
 import com.jme3.app.Application;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.scene.Node;
+import skillPack.MobSkill;
 
 /**
  *
@@ -20,16 +20,19 @@ public class MobWrapper extends EntityWrapper {
 
     private final String name;
     private final Node mobNode, dan, ki;
-    private MobBehavior mobBehavior;
+    private MobMoveBehavior mobBehavior;
+    private MobSkill skill;
     private Node targ;
+    private float atkcooldowntimer = 0f;
 
-    public MobWrapper(Node mob, String name, Node d, Node k, MobBehavior ms) {
+    public MobWrapper(Node mob, String name, Node d, Node k, MobMoveBehavior ms, MobSkill mskill) {
         this.name = name;
         this.mobNode = mob;
         dan = d;
         ki = k;
         health = GVars.gvars.mhealth;
         mobBehavior = ms;
+        skill = mskill;
 
         Node mobatkbox = new Node("mobatkbox");
 
@@ -53,22 +56,34 @@ public class MobWrapper extends EntityWrapper {
 
     @Override
     public void update(float tpf) {
-        if (mobNode.getControl(MobBehavior.mSkillCont.class) == null) {
+        if (atkcooldowntimer > 1.3f && (mobNode.getLocalTranslation().distance(dan.getLocalTranslation())
+                < GVars.gvars.mminatkdistance
+                || mobNode.getLocalTranslation().distance(ki.getLocalTranslation())
+                < GVars.gvars.mminatkdistance)) {
+            //tackle if within range
+            skill.tackle(this, mobNode.getLocalTranslation().distance(dan.getLocalTranslation())
+                    < GVars.gvars.mminatkdistance ? dan : ki);
+            atkcooldowntimer = 0;
+            //else if(in range to dash){ skill.dash(); }
+        } else if (mobNode.getControl(MobMoveBehavior.MobMoveBehaviorCont.class) == null) {
+            //otherwise move
             pickTarget();
-            pickSkill(targ);
+            pickBehavior(targ);
         }
 
         if (!dan.getUserData("collided").equals("none")
                 || !ki.getUserData("collided").equals("none")) {
             //stop doing stuff if attack connects
-            if (mobNode.getControl(MobBehavior.mSkillCont.class) != null) {
-                mobNode.removeControl(mobNode.getControl(MobBehavior.mSkillCont.class));
+            if (mobNode.getControl(MobMoveBehavior.MobMoveBehaviorCont.class) != null) {
+                mobNode.removeControl(mobNode.getControl(MobMoveBehavior.MobMoveBehaviorCont.class));
                 mobBehavior.idle(mobNode, .2f);
             }
         }
+
+        atkcooldowntimer += tpf;
     }
 
-    private void pickSkill(Node target) {
+    private void pickBehavior(Node target) {
         //hardcoded mob right now. will need an abstraction later
         double rand = Math.random();
         if (rand >= 0 && rand < .3) {
@@ -99,8 +114,8 @@ public class MobWrapper extends EntityWrapper {
     @Override
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
-        if (mobNode.getControl(MobBehavior.mSkillCont.class) != null) {
-            mobNode.getControl(MobBehavior.mSkillCont.class).setEnabled(enabled);
+        if (mobNode.getControl(MobMoveBehavior.MobMoveBehaviorCont.class) != null) {
+            mobNode.getControl(MobMoveBehavior.MobMoveBehaviorCont.class).setEnabled(enabled);
         }
     }
 

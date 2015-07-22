@@ -2,10 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package MapPack;
+package mapPack;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  *
@@ -20,7 +19,7 @@ public class Map {
     private int closedTileGID = -1;
     private ArrayList<TileSet> tileSets = new ArrayList<>();
     private static ArrayList<MapLayer> mapLayers = new ArrayList<>();
-    private HashMap<String, String> properties = new HashMap<>();
+    private ArrayList<Tile> specialTiles = new ArrayList<>();
 
     public Map() {
     }
@@ -37,9 +36,17 @@ public class Map {
     public static MapLayer getTransparentLayer() {
         return mapLayers.get(1); //always the transparent layer
     }
-    
-    public static void clearLayers(){
+
+    public static void clearLayers() {
         mapLayers.removeAll(mapLayers);
+    }
+
+    public void addSpecialTile(Tile tile) {
+        specialTiles.add(tile);
+    }
+
+    public Tile getSpecialTile(int index) {
+        return specialTiles.get(index);
     }
 
     public MapLayer getLayer(int index) {
@@ -96,10 +103,6 @@ public class Map {
 
     public int getNumLayers() {
         return mapLayers.size();
-    }
-
-    public void setProperties(HashMap<String, String> properties) {
-        this.properties = properties;
     }
 
     public void setClosedTileGID(int tileGID) {

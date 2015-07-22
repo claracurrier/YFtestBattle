@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package MapPack;
+package mapPack;
 
 import battlestatepack.BattleMain;
 import com.jme3.app.state.AbstractAppState;
@@ -31,17 +31,18 @@ public class MapAppState extends AbstractAppState {
     public void update(float tpf) {
         while (!tempClosed.isEmpty()) { //reset and clear list
             tempClosed.get(0).setTempClosed(false);
+            tempClosed.get(0).setClosedBecause("tile");
             tempClosed.remove(0);
         }
 
-        //flips tiles that are occupied, ignore active char
+        //flips tiles that are occupied
         for (Spatial node : BattleMain.DEFNODE.getChildren()) {
-            if (!node.equals(activeChar)) {
-                Tile centerTile = layer.getTile(node.getLocalTranslation().x, node.getLocalTranslation().y);
-                for (Tile neighbor : centerTile.getNeighbors(true)) {
-                    neighbor.setTempClosed(true);
-                    tempClosed.add(neighbor);
-                }
+            Tile centerTile = layer.getTile(node.getLocalTranslation().x, node.getLocalTranslation().y);
+            for (Tile neighbor : centerTile.getNeighbors(true)) {
+                neighbor.setTempClosed(true);
+                neighbor.setClosedBecause(node.getName());
+                tempClosed.add(neighbor);
+
             }
         }
     }

@@ -85,8 +85,14 @@ public class PlayerSkills {
     }
 
     private Vector2f getTrueMouseLoc(Vector2f mouse) {
-        Vector3f trueloc3d = collide(mouse).getClosestCollision().getGeometry().getLocalTranslation();
-        return new Vector2f(trueloc3d.x, trueloc3d.y);
+        Geometry hit = collide(mouse).getClosestCollision().getGeometry();
+        if (!hit.getName().contains("tile")) {
+            Vector3f trueloc3d = hit.getParent().getParent().getLocalTranslation(); //node of entity
+            return new Vector2f(trueloc3d.x, trueloc3d.y);
+        } else {
+            Vector3f trueloc3d = hit.getLocalTranslation(); //tile
+            return new Vector2f(trueloc3d.x, trueloc3d.y);
+        }
     }
 
     private EntityWrapper checkHitEntity(Vector2f mouse) {
@@ -188,5 +194,23 @@ public class PlayerSkills {
     }
 
     public void push(Vector2f mousePos, boolean activate) {
+        if (cooldowns.get(Skills.push) == null
+                || cooldowns.get(Skills.push).isReady()) {
+            graphic.removeTargetCursor();
+            if (activate) {
+                EntityWrapper entity = checkHitEntity(mousePos);
+                if (entity != null) {
+                    graphic.addPictureEffect("kiidle0", mousePos, .1f);
+                    behavior.addDisplacement(entity, kirith, 40f, 8f);
+
+                    kirith.getNode().removeControl(cooldowns.get(Skills.push));
+                    Cooldown cooldown = skillCooldown.newCooldown(6, Skills.push);
+                    kirith.getNode().addControl(cooldown);
+                    cooldowns.put(Skills.push, cooldown);
+                }
+            } else {
+                graphic.makeTargetCursor();
+            }
+        }
     }
 }

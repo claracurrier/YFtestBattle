@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package MapPack;
+package mapPack;
 
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
@@ -54,7 +54,7 @@ public class MapLoader {
         rootNode.attachChild(imageMapNode);
     }
 
-    public void makeTiledMap(String name) {
+    public Map makeTiledMap(String name) {
         //sax parsing for tiled maps - might only be used for collision
         TMXReader tmxReader = new TMXReader();
         InputStream is = null;
@@ -87,6 +87,7 @@ public class MapLoader {
             }
         }
         rootNode.attachChild(mapNode);
+        return map;
     }
 
     private Spatial makeTileNodes(MapLayer layer, String name, TileSet tileSet, int zorder) {

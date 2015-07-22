@@ -263,8 +263,20 @@ public class BattleGUI extends AbstractAppState {
                 countdown -= tpf;
                 button.setText(new Integer((int) countdown + 1).toString());
             } else {
-                button.setText("");
-                buttondim.setIsActive(false);
+                String name = button.getName().split(":")[0];
+
+                MyButton replacebutton = new MyButton(screen, name,
+                        button.getPosition(), button.getDimensions(),
+                        new Vector4f(1, 1, 1, 1), button.getElementTexture().getName()) {
+                    @Override
+                    public void onButtonMouseLeftUp(MouseButtonEvent evt, boolean toggled) {
+                        inputSystem.manualFire(name.split(":")[0]);
+                    }
+                };
+                replacebutton.setY(0f);
+                buttons.put(name, replacebutton);
+                HUDNode.removeChild(HUDNode.getChildElementById(name));
+                HUDNode.addChild(replacebutton);
                 spatial.removeControl(this);
             }
         }

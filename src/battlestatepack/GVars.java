@@ -34,6 +34,7 @@ public class GVars {
     public final float mintensitymovemod = 8f;
     public final float mminmovement = 30;
     public final float mminintensity = 50;
+    public final float mminatkdistance = 50;
     //pickskill and the times are all in MobAS
     //map constants that get updated upon map creation
     public int mapwidth = 0;
