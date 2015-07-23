@@ -33,20 +33,23 @@ public class Pathfinder extends AbstractControl {
     private float proximity = 0; //defaults to being on top of the tile
     private Future future = null;
     private Pathway way = null;
+    private int speed;
     private final ScheduledThreadPoolExecutor executor =
             ((MainMenu) ReferenceRegistry.registry.get(MainMenu.class)).getExecutor();
 
-    public Pathfinder(Vector2f start, Vector2f end, float proximity) {
+    public Pathfinder(Vector2f start, Vector2f end, float proximity, int speed) {
         this.start = new Tile(start, Map.getTransparentLayer());
         this.end = new Tile(end, Map.getTransparentLayer());
         this.proximity = proximity;
+        this.speed = speed;
     }
 
-    public Pathfinder(Tile s, Tile e, float proximity) {
+    public Pathfinder(Tile s, Tile e, float proximity, int speed) {
         //TODO: go through this and thread-proof it with clones, etc.
         start = s;
         end = e;
         this.proximity = proximity;
+        this.speed = speed;
     }
 
     @Override
@@ -125,7 +128,7 @@ public class Pathfinder extends AbstractControl {
                 for (Tile neighbor : current.getNeighbors(false)) {
                     for (Tile plusNeighbor : neighbor.getNeighbors(true)) {
                         //checks to make sure character can fit
-                        if (plusNeighbor.isClosed() 
+                        if (plusNeighbor.isClosed()
                                 && !plusNeighbor.closedBecause().equals(spatial.getName())) {
                             closedset.add(neighbor);
                             break;
@@ -167,7 +170,7 @@ public class Pathfinder extends AbstractControl {
             node = node.pathParent;
         }
         path.addFirst(start);
-        return new Pathway(path); //contains the tiles that lie on the path
+        return new Pathway(path, speed); //contains the tiles that lie on the path
     }
 
     @Override

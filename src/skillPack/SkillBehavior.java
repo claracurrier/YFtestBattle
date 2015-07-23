@@ -64,10 +64,15 @@ public class SkillBehavior {
         }
     }
 
-    protected void addMovementModifier(EntityWrapper target) {
+    protected void addMovementModifier(final EntityWrapper target, float length, int speed) {
         //slows or speeds up the target
-        //will need to integrate with MoveCont somehow
-        // * MoveCont is unfriendly towards speed modifiers right now
+        target.setSpeed(speed);
+        target.getNode().addControl(new Timer(length, new Command() {
+            @Override
+            public void execute() {
+                target.setSpeed(3);
+            }
+        }));
     }
 
     protected void addStun(final EntityWrapper target, float length) {

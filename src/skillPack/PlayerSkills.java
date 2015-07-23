@@ -181,6 +181,7 @@ public class PlayerSkills {
                 if (entity != null) {
                     graphic.addPictureEffect("kiidle4", mousePos, .1f);
                     behavior.addStun(entity, 4);
+                    behavior.addMovementModifier(entity, 6.3f, 6);
 
                     kirith.getNode().removeControl(cooldowns.get(Skills.stun));
                     Cooldown cooldown = skillCooldown.newCooldown(6, Skills.stun);
@@ -202,6 +203,7 @@ public class PlayerSkills {
                 if (entity != null) {
                     graphic.addPictureEffect("kiidle0", mousePos, .1f);
                     behavior.addDisplacement(entity, kirith, 40f, 8f);
+                    behavior.addMovementModifier(entity, 4f, 8);
 
                     kirith.getNode().removeControl(cooldowns.get(Skills.push));
                     Cooldown cooldown = skillCooldown.newCooldown(6, Skills.push);

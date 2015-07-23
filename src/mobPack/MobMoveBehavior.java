@@ -4,6 +4,7 @@
  */
 package mobPack;
 
+import battlestatepack.EntityWrapper;
 import battlestatepack.GVars;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
@@ -42,8 +43,8 @@ public class MobMoveBehavior {
         }
     }
 
-    public void pursue(final Node target, final Node mob, float time) {
-
+    public void pursue(final Node target, final EntityWrapper mobLogic, float time) {
+        final Node mob = mobLogic.getNode();
         //actively runs towards target after "picking" them
         mob.addControl(new MobMoveBehaviorCont(time) {
             @Override
@@ -57,7 +58,7 @@ public class MobMoveBehavior {
                         Vector2f targLoc = new Vector2f(
                                 target.getLocalTranslation().x,
                                 target.getLocalTranslation().y);
-                        mob.addControl(new Pathfinder(mobLoc, targLoc, 35));
+                        mob.addControl(new Pathfinder(mobLoc, targLoc, 35, mobLogic.getSpeed()));
                     }
                     timer += tpf;
                 } else {

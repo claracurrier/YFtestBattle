@@ -92,7 +92,7 @@ public class Picker {
         Tile end = new Tile(new Vector2f(target.x, target.y),
                 Map.getTransparentLayer());
 
-        Pathfinder pathfinder = new Pathfinder(start, end, distanceAway);
+        Pathfinder pathfinder = new Pathfinder(start, end, distanceAway, activeChar.getSpeed());
         activeNode.addControl(pathfinder);
         start = null;
         end = null;

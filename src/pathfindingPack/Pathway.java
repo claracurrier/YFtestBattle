@@ -17,11 +17,13 @@ public class Pathway {
 
     private LinkedList<Vector2f> coordPath = new LinkedList<>();
     private float closenessScore = 1000; //zero means end was reached
+    private int speed = 4;
 
-    public Pathway(LinkedList<Tile> path) {
+    public Pathway(LinkedList<Tile> path, int speed) {
         for (Tile t : path) {
             coordPath.add(t.getLocVector());
         }
+        this.speed = speed;
     }
 
     public Pathway() {
@@ -56,9 +58,7 @@ public class Pathway {
             CatmullRomSpline2D crs2Dfirst = new CatmullRomSpline2D(
                     coordPath.get(0), coordPath.get(0),
                     coordPath.get(1), coordPath.get(1));
-            newPath.add(crs2Dfirst.q(.333f));
-            newPath.add(crs2Dfirst.q(.667f));
-            newPath.add(coordPath.get(1));
+            newPath = addSubdivisions(crs2Dfirst, newPath);
             return newPath;
         }
 
@@ -67,21 +67,15 @@ public class Pathway {
         crs2D = new CatmullRomSpline2D(
                 coordPath.get(0), coordPath.get(0),
                 coordPath.get(1), coordPath.get(2));
-        newPath.add(crs2D.q(.25f));
-        newPath.add(crs2D.q(.5f));
-        newPath.add(crs2D.q(.75f));
+        newPath = addSubdivisions(crs2D, newPath);
         newPath.add(coordPath.get(1));
 
         //What CRS does is calculate a new "in between" points for p1 and p2
-        //for every point in coordPath, calculate t = .25, .5, .75
-        //if character appears to walk too fast, just increase sample size
         for (int i = 1; i < coordPath.size() - 2; i++) {
             crs2D = new CatmullRomSpline2D(
                     coordPath.get(i - 1), coordPath.get(i),
                     coordPath.get(i + 1), coordPath.get(i + 2));
-            newPath.add(crs2D.q(.25f));
-            newPath.add(crs2D.q(.5f));
-            newPath.add(crs2D.q(.75f));
+            newPath = addSubdivisions(crs2D, newPath);
             newPath.add(coordPath.get(i + 1));
         }
 
@@ -89,11 +83,19 @@ public class Pathway {
         crs2D = new CatmullRomSpline2D(
                 coordPath.get(coordPath.size() - 3), coordPath.get(coordPath.size() - 2),
                 coordPath.getLast(), coordPath.getLast());
-        newPath.add(crs2D.q(.25f));
-        newPath.add(crs2D.q(.5f));
-        newPath.add(crs2D.q(.75f));
+        newPath = addSubdivisions(crs2D, newPath);
         newPath.add(coordPath.getLast());
 
         return newPath;
+    }
+
+    private LinkedList<Vector2f> addSubdivisions(CatmullRomSpline2D spline, LinkedList<Vector2f> path) {
+        //takes the spline and adds in as many subdivisions as the speed asks
+        //higher speed actually means slower, more subdivisions
+        //ie. speed = 3 returns t=.25, .5, .75
+        for (int i = 1; i <= speed; i++) {
+            path.add(spline.q((float) i / ((float) speed + 1)));
+        }
+        return path;
     }
 }

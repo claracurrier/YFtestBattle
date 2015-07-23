@@ -88,7 +88,7 @@ public class MobWrapper extends EntityWrapper {
         double rand = Math.random();
         if (rand >= 0 && rand < .3) {
             System.out.println("pursuing");
-            mobBehavior.pursue(target, mobNode, 2f);
+            mobBehavior.pursue(target, this, 2f);
         } else if (rand >= .3 && rand < .6) {
             System.out.println("wandering");
             mobBehavior.wander(mobNode, 3f);

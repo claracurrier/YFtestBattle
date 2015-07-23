@@ -19,6 +19,7 @@ import java.io.IOException;
 public abstract class EntityWrapper extends AbstractAppState implements Savable {
 
     public float health;
+    public int speed = 3;
     private float damageModifier = 1f;
 
     public EntityWrapper() {
@@ -48,5 +49,13 @@ public abstract class EntityWrapper extends AbstractAppState implements Savable 
 
     @Override
     public void read(JmeImporter im) throws IOException {
+    }
+
+    public int getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(int speed) {
+        this.speed = speed;
     }
 }
