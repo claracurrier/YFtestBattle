@@ -60,25 +60,14 @@ public class CollideAS extends AbstractAppState {
     }
 
     private boolean noException(Spatial atkchild, Spatial defchild) {
-        if (defchild.getName().equals("Dan")
-                && atkchild.getUserData("type").equals("arrow")) {
-            //dan and arrow case
+        if (atkchild.getUserData("source").equals(defchild.getName())) {
+            //source = the entity that made the hitbox
             return false;
         }
         if (atkchild.getName().equals("mobatkbox")
                 && (defchild.getUserData("type").equals("mob")
                 || defchild.getName().equals("Kirith"))) {
             //mob and its atkbox or kirith (immune to bump) case
-            return false;
-        }
-        if (atkchild.getName().equals("mobtacklebox")
-                && defchild.getUserData("type").equals("mob")){
-            //mob and tackle box case (will need to fix how type is used)
-            return false;
-        }
-        if (atkchild.getName().equals("kiautoatkbox")
-                && defchild.getName().equals("Kirith")) {
-            //ki and her attacks
             return false;
         }
         if ((Boolean) defchild.getUserData("knockback")) {

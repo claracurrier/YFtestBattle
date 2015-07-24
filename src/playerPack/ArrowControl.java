@@ -28,7 +28,7 @@ public class ArrowControl extends AbstractControl {
 
     @Override
     protected void controlUpdate(float tpf) {
-        if ((Boolean) spatial.getUserData("collided")) {
+        if (!spatial.getUserData("collided").equals("none")) {
             //arrow collided
             System.out.println("arrow collided!");
             spatial.removeFromParent();

@@ -13,7 +13,7 @@ import com.jme3.scene.Node;
 import pathfindingPack.MoveCont;
 import pathfindingPack.Pathfinder;
 import pathfindingPack.Picker;
-import skillPack.SkillGraphic;
+import skillPack.PlayerSkills;
 
 /**
  *
@@ -23,7 +23,7 @@ public class KirithWrapper extends EntityWrapper {
 
     private final Node kirith;
     private Vector3f playerPos;
-    private SkillGraphic graphic;
+    private PlayerSkills skill;
     private Picker picker;
 
     public KirithWrapper(Node ki, Picker picker) {
@@ -32,8 +32,8 @@ public class KirithWrapper extends EntityWrapper {
         this.picker = picker;
     }
 
-    public void setGraphic(SkillGraphic graphic) {
-        this.graphic = graphic;
+    public void setSkills(PlayerSkills skill) {
+        this.skill = skill;
     }
 
     @Override
@@ -44,7 +44,7 @@ public class KirithWrapper extends EntityWrapper {
     @Override
     public void autoAttack(Vector3f target) {
         if (playerPos.distance(target) <= GVars.gvars.kminatkdist) {
-            graphic.makeAttackBox(playerPos, target, 10f, "kiautoatkbox");
+            skill.autoAttack(target, this);
         } else if (kirith.getControl(MoveCont.class) == null && kirith.getControl(Pathfinder.class) == null) {
             //pick again, removes this control in method
             picker.handleAttack(target, this);

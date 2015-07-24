@@ -70,14 +70,14 @@ public class BattleMain extends AbstractAppState {
         kiLogic = new KirithWrapper(kiNode, picker);
         kiCC = new PCollideCont(kiLogic);
 
+        SkillEffects effects = new SkillEffects();
         SkillBehavior behavior = new SkillBehavior();
         SkillGraphic graphic = new SkillGraphic(app.getGuiNode(), app.getRootNode(),
-                assetManager, danLogic, kiLogic, input);
+                assetManager, input);
         SkillCooldown cooldown = new SkillCooldown();
         PlayerSkills pskill = new PlayerSkills(danLogic, kiLogic, app.getCamera(),
-                graphic, cooldown, behavior);
+                graphic, cooldown, effects, behavior);
         SkillMapper skillmap = new SkillMapper(input, pskill);
-        MobSkill mskill = new MobSkill(graphic, behavior);
 
         inputSystem = new InputSystem(inputManager, skillmap, this);
         battleGUI = new BattleGUI(settings.getWidth(), settings.getHeight(),
@@ -88,14 +88,14 @@ public class BattleMain extends AbstractAppState {
         makeInput();
         register();
 
-        ((DanWrapper) danLogic).setGraphic(graphic);
-        ((KirithWrapper) kiLogic).setGraphic(graphic);
+        ((DanWrapper) danLogic).setSkills(pskill);
+        ((KirithWrapper) kiLogic).setSkills(pskill);
         cooldown.setSkillmap(skillmap);
         cooldown.setBattleGUI(battleGUI);
 
         //spawn a MobWrapper
         Node mobSpat = maker.createSpatial("Wanderer");
-        mob = new MobWrapper(mobSpat, "Wanderer", danNode, kiNode, new MobMoveBehavior(), mskill);
+        mob = new MobWrapper(mobSpat, "Wanderer", danNode, kiNode, new MobMoveBehavior(), behavior);
         mobSpat.setLocalTranslation(map.getSpecialTile(2).getLocalTranslation().x,
                 map.getSpecialTile(2).getLocalTranslation().y, 0);
         //disabled mob for now

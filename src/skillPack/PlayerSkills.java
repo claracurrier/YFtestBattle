@@ -15,6 +15,7 @@ import com.jme3.renderer.Camera;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Geometry;
+import com.jme3.scene.Node;
 import com.jme3.scene.control.AbstractControl;
 import java.util.HashMap;
 import skillPack.SkillCooldown.Cooldown;
@@ -30,15 +31,17 @@ public class PlayerSkills {
     private Camera cam;
     private SkillGraphic graphic;
     private SkillCooldown skillCooldown;
+    private SkillEffects effects;
     private SkillBehavior behavior;
 
     public PlayerSkills(EntityWrapper d, EntityWrapper k, Camera c, SkillGraphic skillgraph,
-            SkillCooldown cooldown, SkillBehavior behave) {
+            SkillCooldown cooldown, SkillEffects effect, SkillBehavior behave) {
         dan = d;
         kirith = k;
         cam = c;
         graphic = skillgraph;
         skillCooldown = cooldown;
+        effects = effect;
         behavior = behave;
     }
 
@@ -103,6 +106,21 @@ public class PlayerSkills {
         return null;
     }
 
+    public void autoAttack(Vector3f target, EntityWrapper player) {
+        if (player.equals(dan)) {
+            Node effectpic = graphic.addPictureEffect("arrow", 10, 0, 0, false);
+            Node arrow = behavior.projectile(dan.getNode(),
+                    new Vector2f(target.x, target.y),
+                    (float) effectpic.getUserData("width"),
+                    (float) effectpic.getUserData("height"),
+                    GVars.gvars.dbaseatkpower);
+            arrow.attachChild(effectpic);
+        } else {
+            behavior.tackle(kirith.getNode(), target,
+                    40f, 40f, GVars.gvars.kbaseatkpower);
+        }
+    }
+
     /**
      * **************
      * Dan's skills *
@@ -120,8 +138,12 @@ public class PlayerSkills {
                     protected void controlUpdate(float tpf) {
                         if (numarrows <= 2) {
                             if (counter > .1f) {
-                                graphic.makeArrow("arrow", getTrueMouseLoc(mousePos),
+                                Node effectpic = graphic.addPictureEffect("arrow", 10, 0, 0, false);
+                                Node arrow = behavior.projectile(dan.getNode(), getTrueMouseLoc(mousePos),
+                                        (float) effectpic.getUserData("width"),
+                                        (float) effectpic.getUserData("height"),
                                         GVars.gvars.dbaseatkpower * .8f);
+                                arrow.attachChild(effectpic);
                                 counter = 0;
                                 numarrows++;
                             } else {
@@ -153,9 +175,12 @@ public class PlayerSkills {
                 || cooldowns.get(Skills.headshot).isReady()) {
             graphic.removeTargetCursor();
             if (activate) {
-                graphic.addPictureEffect("headshot", mousePos, .4f);
-                graphic.makeArrow("arrow", getTrueMouseLoc(mousePos),
+                Node effectpic = graphic.addPictureEffect("arrow", 10, 0, 0, false);
+                Node arrow = behavior.projectile(dan.getNode(), getTrueMouseLoc(mousePos),
+                        (float) effectpic.getUserData("width"),
+                        (float) effectpic.getUserData("height"),
                         GVars.gvars.dbaseatkpower * 1.5f);
+                arrow.attachChild(effectpic);
 
                 dan.getNode().removeControl(cooldowns.get(Skills.headshot));
                 Cooldown cooldown = skillCooldown.newCooldown(6, Skills.headshot);
@@ -179,9 +204,13 @@ public class PlayerSkills {
             if (activate) {
                 EntityWrapper entity = checkHitEntity(mousePos);
                 if (entity != null) {
-                    graphic.addPictureEffect("kiidle4", mousePos, .1f);
-                    behavior.addStun(entity, 4);
-                    behavior.addMovementModifier(entity, 6.3f, 6);
+                    Node effectpic = graphic.addPictureEffect("kiidle4", 10, 0, 0, false);
+                    Node tackle = behavior.tackle(kirith.getNode(), entity.getNode().getLocalTranslation(),
+                            40f, 40f, GVars.gvars.kbaseatkpower * .6f);
+                    tackle.attachChild(effectpic);
+
+                    effects.addStun(entity, 4);
+                    effects.addMovementModifier(entity, 6.3f, 6);
 
                     kirith.getNode().removeControl(cooldowns.get(Skills.stun));
                     Cooldown cooldown = skillCooldown.newCooldown(6, Skills.stun);
@@ -201,9 +230,13 @@ public class PlayerSkills {
             if (activate) {
                 EntityWrapper entity = checkHitEntity(mousePos);
                 if (entity != null) {
-                    graphic.addPictureEffect("kiidle0", mousePos, .1f);
-                    behavior.addDisplacement(entity, kirith, 40f, 8f);
-                    behavior.addMovementModifier(entity, 4f, 8);
+                    Node effectpic = graphic.addPictureEffect("kiidle6", 10, 0, 0, false);
+                    Node tackle = behavior.tackle(kirith.getNode(), entity.getNode().getLocalTranslation(),
+                            40f, 40f, GVars.gvars.kbaseatkpower * .5f);
+                    tackle.attachChild(effectpic);
+
+                    effects.addDisplacement(entity, kirith, 40f, 8f);
+                    effects.addMovementModifier(entity, 4f, 8);
 
                     kirith.getNode().removeControl(cooldowns.get(Skills.push));
                     Cooldown cooldown = skillCooldown.newCooldown(6, Skills.push);

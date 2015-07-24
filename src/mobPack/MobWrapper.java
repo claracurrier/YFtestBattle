@@ -10,7 +10,7 @@ import battlestatepack.GVars;
 import com.jme3.app.Application;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.scene.Node;
-import skillPack.MobSkill;
+import skillPack.SkillBehavior;
 
 /**
  *
@@ -21,11 +21,12 @@ public class MobWrapper extends EntityWrapper {
     private final String name;
     private final Node mobNode, dan, ki;
     private MobMoveBehavior mobBehavior;
-    private MobSkill skill;
+    private SkillBehavior skill;
     private Node targ;
     private float atkcooldowntimer = 0f;
+    private float dashcooldown = 0f;
 
-    public MobWrapper(Node mob, String name, Node d, Node k, MobMoveBehavior ms, MobSkill mskill) {
+    public MobWrapper(Node mob, String name, Node d, Node k, MobMoveBehavior ms, SkillBehavior mskill) {
         this.name = name;
         this.mobNode = mob;
         dan = d;
@@ -56,15 +57,26 @@ public class MobWrapper extends EntityWrapper {
 
     @Override
     public void update(float tpf) {
-        if (atkcooldowntimer > 1.3f && (mobNode.getLocalTranslation().distance(dan.getLocalTranslation())
-                < GVars.gvars.mminatkdistance
-                || mobNode.getLocalTranslation().distance(ki.getLocalTranslation())
-                < GVars.gvars.mminatkdistance)) {
+        float mobDistanceFromKi = mobNode.getLocalTranslation().distance(ki.getLocalTranslation());
+        float mobDistanceFromDan = mobNode.getLocalTranslation().distance(dan.getLocalTranslation());
+
+        if (atkcooldowntimer > 1.3f && (mobDistanceFromDan < GVars.gvars.mminatkdistance
+                || mobDistanceFromKi < GVars.gvars.mminatkdistance)) {
             //tackle if within range
-            skill.tackle(this, mobNode.getLocalTranslation().distance(dan.getLocalTranslation())
-                    < GVars.gvars.mminatkdistance ? dan : ki);
+            skill.tackle(mobNode, mobDistanceFromDan < GVars.gvars.mminatkdistance
+                    ? dan.getLocalTranslation() : ki.getLocalTranslation(),
+                    40f, 40f, GVars.gvars.matkpwr);
             atkcooldowntimer = 0;
-            //else if(in range to dash){ skill.dash(); }
+
+        } else if (dashcooldown > 1f && ((mobDistanceFromDan < 300 && mobDistanceFromDan > 100)
+                || (mobDistanceFromKi < 300 && mobDistanceFromKi > 100))) {
+            //else dash if the range is right
+            skill.dash(mobNode, (mobDistanceFromDan < mobDistanceFromKi) ? dan : ki);
+            skill.tackle(mobNode, mobDistanceFromDan < GVars.gvars.mminatkdistance
+                    ? dan.getLocalTranslation() : ki.getLocalTranslation(),
+                    40f, 40f, GVars.gvars.matkpwr * 1.8f);
+            dashcooldown = 0;
+
         } else if (mobNode.getControl(MobMoveBehavior.MobMoveBehaviorCont.class) == null) {
             //otherwise move
             pickTarget();
@@ -79,7 +91,7 @@ public class MobWrapper extends EntityWrapper {
                 mobBehavior.idle(mobNode, .2f);
             }
         }
-
+        dashcooldown += tpf;
         atkcooldowntimer += tpf;
     }
 

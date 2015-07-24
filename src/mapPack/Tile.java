@@ -262,4 +262,8 @@ public class Tile extends Geometry implements Comparable {
     public void setClosedBecause(String name) {
         closedBecause = name;
     }
+
+    public boolean isClosedIgnoreChars() {
+        return isClosed;
+    }
 }
