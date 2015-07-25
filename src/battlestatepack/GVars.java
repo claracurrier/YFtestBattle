@@ -18,24 +18,23 @@ public class GVars {
     public final float camspeed = 380f;
     //Kirith's vars
     public final float kminatkdist = 80f;
-    public final float kbaseatkpower = 8f;
-    public float kautocooldown = 1.2f;
-    public final float khealth = 900;
+    public final float kbaseatkpower = 10f;
+    public float kautocooldown = 1.3f;
+    public final float khealth = 350;
     //Dan's vars
     public final float dminatkdist = 300f;
     public final float arrowspeed = 1100f;
-    public final float dbaseatkpower = 10f;
+    public final float dbaseatkpower = 15f;
     public float dautocooldown = 1.4f;
-    public final float dhealth = 500;
+    public final float dhealth = 300;
     //Standard Mob vars
     public final float mspeed = 150;
-    public final float matkpwr = 10;
-    public final float mhealth = 8000;
-    public final float mintensitymovemod = 8f;
-    public final float mminmovement = 30;
-    public final float mminintensity = 50;
-    public final float mminatkdistance = 50;
-    //pickskill and the times are all in MobAS
+    public final float matkpwr = 14;
+    public final float mhealth = 250;
+    public final float mintensitymovemod = 10f;
+    public final float mminmovement = 50;
+    public final float mminintensity = 60;
+    public final float mminatkdistance = 70;
     //map constants that get updated upon map creation
     public int mapwidth = 0;
     public int mapheight = 0;

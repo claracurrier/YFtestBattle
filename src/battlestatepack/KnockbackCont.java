@@ -18,12 +18,14 @@ public class KnockbackCont extends AbstractControl {
     private final float distance;
     private final float intensity;
     private float dtimer;
+    private String library;
     private int dir;
 
     public KnockbackCont(float distance, float intensity, String libraryName, int dir) {
         this.distance = distance;
         this.intensity = intensity;
         this.dir = dir;
+        this.library = libraryName;
         BattleMain.sEngine.getLibrary(libraryName).activateSprite(0);
     }
 
@@ -55,6 +57,9 @@ public class KnockbackCont extends AbstractControl {
             }
             dtimer += tpf * intensity;
         } else {
+            if (!library.equals("Wanderer")) {
+                BattleMain.sEngine.getLibrary(library).activateSprite(dir + 8);
+            }
             spatial.setUserData("knockback", false);
             spatial.removeControl(this);
         }

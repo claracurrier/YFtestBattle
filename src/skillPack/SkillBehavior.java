@@ -92,7 +92,7 @@ public class SkillBehavior {
         }
     }
 
-    private int findDirectionBetween(Vector3f targ, Vector3f cur) {
+    private int findDirectionBetween(Vector3f cur, Vector3f targ) {
         Vector2f newvec = new Vector2f(cur.x, cur.y).subtractLocal(targ.x, targ.y);
         float aim = newvec.normalizeLocal().getAngle();
 
@@ -123,7 +123,7 @@ public class SkillBehavior {
         }
     }
 
-    public void dash(Node source, final Node target) {
+    public void dash(final Node source, final Node target) {
         //charges towards node in a straight line
         MapLayer mapLayer = Map.getTransparentLayer();
         ArrayList<Tile> closedTiles = new ArrayList<>();
@@ -177,13 +177,15 @@ public class SkillBehavior {
         }
         //execute dash
         source.addControl(new AbstractControl() {
-            int steps = 0;
+            float distanceCovered = 0;
+            Vector3f direction = target.getLocalTranslation().subtract(
+                    source.getLocalTranslation()).normalizeLocal();
 
             @Override
             protected void controlUpdate(float tpf) {
-                if (steps < 10) {
-                    spatial.move(target.getLocalTranslation().divide(10));
-                    steps++;
+                if (distanceCovered < target.getLocalTranslation().distance(source.getLocalTranslation())) {
+                    spatial.move(direction.mult(tpf * 500));
+                    distanceCovered += tpf * 500;
                 } else {
                     spatial.removeControl(this);
                 }

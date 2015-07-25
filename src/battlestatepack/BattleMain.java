@@ -95,11 +95,12 @@ public class BattleMain extends AbstractAppState {
 
         //spawn a MobWrapper
         Node mobSpat = maker.createSpatial("Wanderer");
-        mob = new MobWrapper(mobSpat, "Wanderer", danNode, kiNode, new MobMoveBehavior(), behavior);
+        mob = new MobWrapper(mobSpat, "Wanderer", danNode, kiNode, new MobMoveBehavior(),
+                behavior, graphic, effects);
         mobSpat.setLocalTranslation(map.getSpecialTile(2).getLocalTranslation().x,
                 map.getSpecialTile(2).getLocalTranslation().y, 0);
         //disabled mob for now
-        mob.setEnabled(false);
+        //mob.setEnabled(false);
     }
 
     @Override
@@ -116,9 +117,11 @@ public class BattleMain extends AbstractAppState {
         danNode.addControl(danCC);
         danNode.setLocalTranslation(map.getSpecialTile(0).getLocalTranslation().x,
                 map.getSpecialTile(0).getLocalTranslation().y, 0);
+        
         kiNode.addControl(kiCC);
         kiNode.setLocalTranslation(map.getSpecialTile(1).getLocalTranslation().x,
                 map.getSpecialTile(1).getLocalTranslation().y, 0);
+        
         DEFNODE.attachChild(danNode);
         DEFNODE.attachChild(kiNode);
 

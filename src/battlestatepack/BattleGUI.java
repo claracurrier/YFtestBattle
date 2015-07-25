@@ -34,7 +34,6 @@ public class BattleGUI extends AbstractAppState {
     private final Screen screen;
     private HashMap<String, MyButton> buttons = new HashMap<>();
     private int w, h;
-    private String curChar = "dan";
     private Element HUDNode;
     private Indicator danIndicator, kiIndicator;
     private InputSystem inputSystem;
@@ -65,24 +64,13 @@ public class BattleGUI extends AbstractAppState {
 
     @Override
     public void update(float tpf) {
-        if (curChar.equals("dan")) {
-            if (dan.getHealth() != danIndicator.getCurrentValue()) {
-                danHealth = dan.getHealth();
-                danIndicator.setCurrentValue(danHealth);
-            }
-            if (ki.getHealth() != kiIndicator.getCurrentValue()) {
-                kiHealth = ki.getHealth();
-                kiIndicator.setCurrentValue(kiHealth);
-            }
-        } else if (curChar.equals("kirith")) {
-            if (dan.getHealth() != kiIndicator.getCurrentValue()) {
-                danHealth = dan.getHealth();
-                kiIndicator.setCurrentValue(danHealth);
-            }
-            if (ki.getHealth() != danIndicator.getCurrentValue()) {
-                kiHealth = ki.getHealth();
-                danIndicator.setCurrentValue(kiHealth);
-            }
+        if (dan.getHealth() != danIndicator.getCurrentValue()) {
+            danHealth = dan.getHealth();
+            danIndicator.setCurrentValue(danHealth * 100 / GVars.gvars.dhealth);
+        }
+        if (ki.getHealth() != kiIndicator.getCurrentValue()) {
+            kiHealth = ki.getHealth();
+            kiIndicator.setCurrentValue(kiHealth * 100 / GVars.gvars.khealth);
         }
     }
 
@@ -95,9 +83,7 @@ public class BattleGUI extends AbstractAppState {
     public void setActiveHUD(EntityWrapper player) {
         //TODO: make some kind of indicator for when the player is active
         if (player.equals(dan)) {
-            curChar = "dan";
         } else if (player.equals(ki)) {
-            curChar = "kirith";
         }
     }
 

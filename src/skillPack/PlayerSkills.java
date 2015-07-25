@@ -116,8 +116,9 @@ public class PlayerSkills {
                     GVars.gvars.dbaseatkpower);
             arrow.attachChild(effectpic);
         } else {
-            behavior.tackle(kirith.getNode(), target,
+            Node tacklebox = behavior.tackle(kirith.getNode(), target,
                     40f, 40f, GVars.gvars.kbaseatkpower);
+            tacklebox.attachChild(graphic.tempWireBox(40, 40));
         }
     }
 
@@ -160,7 +161,7 @@ public class PlayerSkills {
                 });
                 dan.getNode().removeControl(cooldowns.get(Skills.tripleShot));
 
-                Cooldown cooldown = skillCooldown.newCooldown(4, Skills.tripleShot);
+                Cooldown cooldown = skillCooldown.newCooldown(7, Skills.tripleShot);
                 dan.getNode().addControl(cooldown);
 
                 cooldowns.put(Skills.tripleShot, cooldown);
@@ -179,11 +180,11 @@ public class PlayerSkills {
                 Node arrow = behavior.projectile(dan.getNode(), getTrueMouseLoc(mousePos),
                         (float) effectpic.getUserData("width"),
                         (float) effectpic.getUserData("height"),
-                        GVars.gvars.dbaseatkpower * 1.5f);
+                        GVars.gvars.dbaseatkpower * 2.5f);
                 arrow.attachChild(effectpic);
 
                 dan.getNode().removeControl(cooldowns.get(Skills.headshot));
-                Cooldown cooldown = skillCooldown.newCooldown(6, Skills.headshot);
+                Cooldown cooldown = skillCooldown.newCooldown(9, Skills.headshot);
                 dan.getNode().addControl(cooldown);
 
                 cooldowns.put(Skills.headshot, cooldown);
@@ -208,12 +209,13 @@ public class PlayerSkills {
                     Node tackle = behavior.tackle(kirith.getNode(), entity.getNode().getLocalTranslation(),
                             40f, 40f, GVars.gvars.kbaseatkpower * .6f);
                     tackle.attachChild(effectpic);
+                    tackle.attachChild(graphic.tempWireBox(40, 40));
 
                     effects.addStun(entity, 4);
                     effects.addMovementModifier(entity, 6.3f, 6);
 
                     kirith.getNode().removeControl(cooldowns.get(Skills.stun));
-                    Cooldown cooldown = skillCooldown.newCooldown(6, Skills.stun);
+                    Cooldown cooldown = skillCooldown.newCooldown(8, Skills.stun);
                     kirith.getNode().addControl(cooldown);
                     cooldowns.put(Skills.stun, cooldown);
                 }
@@ -234,6 +236,7 @@ public class PlayerSkills {
                     Node tackle = behavior.tackle(kirith.getNode(), entity.getNode().getLocalTranslation(),
                             40f, 40f, GVars.gvars.kbaseatkpower * .5f);
                     tackle.attachChild(effectpic);
+                    tackle.attachChild(graphic.tempWireBox(40, 40));
 
                     effects.addDisplacement(entity, kirith, 40f, 8f);
                     effects.addMovementModifier(entity, 4f, 8);

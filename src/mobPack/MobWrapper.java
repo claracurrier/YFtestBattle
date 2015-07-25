@@ -11,6 +11,8 @@ import com.jme3.app.Application;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.scene.Node;
 import skillPack.SkillBehavior;
+import skillPack.SkillEffects;
+import skillPack.SkillGraphic;
 
 /**
  *
@@ -20,20 +22,26 @@ public class MobWrapper extends EntityWrapper {
 
     private final String name;
     private final Node mobNode, dan, ki;
-    private MobMoveBehavior mobBehavior;
-    private SkillBehavior skill;
+    private MobMoveBehavior movebehavior;
+    private SkillBehavior behavior;
+    private SkillGraphic graphic;
+    private SkillEffects effect;
     private Node targ;
     private float atkcooldowntimer = 0f;
     private float dashcooldown = 0f;
 
-    public MobWrapper(Node mob, String name, Node d, Node k, MobMoveBehavior ms, SkillBehavior mskill) {
+    public MobWrapper(Node mob, String name, Node d, Node k, MobMoveBehavior ms,
+            SkillBehavior behavior, SkillGraphic graphic, SkillEffects effect) {
         this.name = name;
         this.mobNode = mob;
         dan = d;
         ki = k;
         health = GVars.gvars.mhealth;
-        mobBehavior = ms;
-        skill = mskill;
+        movebehavior = ms;
+        speed = 5;
+        this.behavior = behavior;
+        this.graphic = graphic;
+        this.effect = effect;
 
         Node mobatkbox = new Node("mobatkbox");
 
@@ -42,6 +50,7 @@ public class MobWrapper extends EntityWrapper {
         mobatkbox.setUserData("halfheight", 40f);
         mobatkbox.setUserData("type", "attackbox");
         mobatkbox.setUserData("atkpower", GVars.gvars.matkpwr);
+        mobatkbox.setUserData("source", name);
         mob.setUserData("type", "mob");
 
         BattleMain.ATKNODE.attachChild(mobatkbox);
@@ -63,18 +72,20 @@ public class MobWrapper extends EntityWrapper {
         if (atkcooldowntimer > 1.3f && (mobDistanceFromDan < GVars.gvars.mminatkdistance
                 || mobDistanceFromKi < GVars.gvars.mminatkdistance)) {
             //tackle if within range
-            skill.tackle(mobNode, mobDistanceFromDan < GVars.gvars.mminatkdistance
+            Node tackle = behavior.tackle(mobNode, mobDistanceFromDan < GVars.gvars.mminatkdistance
                     ? dan.getLocalTranslation() : ki.getLocalTranslation(),
                     40f, 40f, GVars.gvars.matkpwr);
+            tackle.attachChild(graphic.tempWireBox(40, 40));
             atkcooldowntimer = 0;
 
-        } else if (dashcooldown > 1f && ((mobDistanceFromDan < 300 && mobDistanceFromDan > 100)
-                || (mobDistanceFromKi < 300 && mobDistanceFromKi > 100))) {
+        } else if (dashcooldown > 5f && ((mobDistanceFromDan < 350 && mobDistanceFromDan > 150)
+                || (mobDistanceFromKi < 350 && mobDistanceFromKi > 150))) {
             //else dash if the range is right
-            skill.dash(mobNode, (mobDistanceFromDan < mobDistanceFromKi) ? dan : ki);
-            skill.tackle(mobNode, mobDistanceFromDan < GVars.gvars.mminatkdistance
+            behavior.dash(mobNode, (mobDistanceFromDan < mobDistanceFromKi) ? dan : ki);
+            Node tackle = behavior.tackle(mobNode, mobDistanceFromDan < GVars.gvars.mminatkdistance
                     ? dan.getLocalTranslation() : ki.getLocalTranslation(),
                     40f, 40f, GVars.gvars.matkpwr * 1.8f);
+            tackle.attachChild(graphic.tempWireBox(40, 40));
             dashcooldown = 0;
 
         } else if (mobNode.getControl(MobMoveBehavior.MobMoveBehaviorCont.class) == null) {
@@ -88,7 +99,7 @@ public class MobWrapper extends EntityWrapper {
             //stop doing stuff if attack connects
             if (mobNode.getControl(MobMoveBehavior.MobMoveBehaviorCont.class) != null) {
                 mobNode.removeControl(mobNode.getControl(MobMoveBehavior.MobMoveBehaviorCont.class));
-                mobBehavior.idle(mobNode, .2f);
+                movebehavior.idle(mobNode, 1.2f);
             }
         }
         dashcooldown += tpf;
@@ -100,15 +111,13 @@ public class MobWrapper extends EntityWrapper {
         double rand = Math.random();
         if (rand >= 0 && rand < .3) {
             System.out.println("pursuing");
-            mobBehavior.pursue(target, this, 2f);
+            movebehavior.pursue(target, this, 2f);
         } else if (rand >= .3 && rand < .6) {
             System.out.println("wandering");
-            mobBehavior.wander(mobNode, 3f);
-        } else if (rand >= .6 && rand < .7) {
+            movebehavior.wander(mobNode, 3f);
+        } else if (rand >= .6 && rand < 1) {
             System.out.println("idling");
-            mobBehavior.idle(mobNode, 2f);
-        } else if (rand >= .7 && rand < 1.0) {
-            System.out.println("dashing");
+            movebehavior.idle(mobNode, 2f);
         }
     }
 
