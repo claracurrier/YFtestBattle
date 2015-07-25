@@ -13,8 +13,6 @@ import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Quad;
 import com.jme3.texture.plugins.AWTLoader;
 import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Level;
@@ -61,8 +59,8 @@ public class MapLoader {
         Map map = null;
         Map.clearLayers();
         try {
-            is = new BufferedInputStream(new FileInputStream("assets/Scenes/" + name + ".tmx"));
-        } catch (FileNotFoundException ex) {
+            is = new BufferedInputStream(this.getClass().getResourceAsStream("/Scenes/" + name + ".tmx"));
+        } catch (Exception ex) {
             Logger.getLogger(MapLoader.class.getName()).log(Level.SEVERE, null, ex);
         }
         try {
@@ -74,7 +72,8 @@ public class MapLoader {
         TileSet tileSet = map.getTileSet(0);
         TileCutter tileCutter = new TileCutter(16, 16, tileSet.getSpacing(), tileSet.getMargin());
         try {
-            tileSet.importTileBitmap("assets/Scenes/" + tileSet.getSource(), tileCutter);
+            tileSet.importTileBitmap(this.getClass().getResourceAsStream(
+                    "/Scenes/" + tileSet.getSource()), tileCutter);
         } catch (IOException ex) {
             Logger.getLogger(MapLoader.class.getName()).log(Level.SEVERE, null, ex);
         }
