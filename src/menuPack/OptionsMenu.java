@@ -43,7 +43,8 @@ public class OptionsMenu {
         win.setWindowIsMovable(false);
         win.setIgnoreMouse(true);
 
-        final GraphicsDevice device = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+        final GraphicsDevice device = GraphicsEnvironment.getLocalGraphicsEnvironment()
+                .getDefaultScreenDevice();
         final DisplayMode[] modes = device.getDisplayModes();
 
         //Resolution list
@@ -60,7 +61,8 @@ public class OptionsMenu {
                         mm.getStateManager().getState(BattleGUI.class).changeRes(res[0], res[1]);
                     }
                     if (ReferenceRegistry.registry.hasRegistry(CCManual.class)) {
-                        ((CCManual) ReferenceRegistry.registry.get(CCManual.class)).refreshScreenDim(res[0], res[1]);
+                        ((CCManual) ReferenceRegistry.registry.get(CCManual.class))
+                                .refreshScreenDim(res[0], res[1]);
                     }
                 }
             }
@@ -123,22 +125,6 @@ public class OptionsMenu {
         vsyncBtn.setTextAlign(BitmapFont.Align.Center);
         vsyncBtn.setIsToggledNoCallback(settings.isVSync());
         win.addChild(vsyncBtn);
-
-        //Camera list
-        SelectBox camList = new SelectBox(screen, "Cameras", new Vector2f(15, 140)) {
-            @Override
-            public void onChange(int i, Object o) {
-                if (o != null) {
-                    System.out.println("can't switch yet");
-                }
-            }
-        };
-        camList.addListItem("Camera", null);
-        camList.addListItem("Manual", "Manual");
-        camList.addListItem("Auto-follow (box)", "AutoFollowBox");
-        camList.addListItem("Auto-follow (midpoint)", "AutoFollowMidPoint");
-        camList.addListItem("Auto-follow (locked)", "AutoFollowLocked");
-        win.addChild(camList);
 
         //go back button
         MyButton goBackBtn = new MyButton(screen, "GoBack",

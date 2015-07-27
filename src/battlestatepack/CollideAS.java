@@ -76,7 +76,7 @@ public class CollideAS extends AbstractAppState {
         return true;
     }
 
-    public void moveCheck() {
+    private void moveCheck() {
         collided = false;
         //collision loop
         for (int i = 0; i < defNode.getQuantity(); i++) {

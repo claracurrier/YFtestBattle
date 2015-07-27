@@ -41,11 +41,11 @@ public class CCAutoFollowLocked extends CameraControl {
     public void setup() {
         activeChar.attachChild(camBox);
         camBox.setLocalTranslation(Vector3f.ZERO);
+        camOps.resetLocation();
     }
 
     @Override
     public void takedown() {
         rootNode.attachChild(camBox);
-        camOps.resetLocation();
     }
 }

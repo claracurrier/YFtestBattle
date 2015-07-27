@@ -34,6 +34,7 @@ import java.awt.image.ImageFilter;
 import java.awt.image.RGBImageFilter;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import javax.imageio.ImageIO;
 
@@ -64,11 +65,11 @@ public class TileSet {
      * @throws IOException
      * @see TileSet#importTileBitmap(BufferedImage, TileCutter)
      */
-    public void importTileBitmap(String imgFilename, TileCutter cutter)
+    public void importTileBitmap(InputStream imgFilename, TileCutter cutter)
             throws IOException {
-        setTilesetImageFilename(imgFilename);
+        setTilesetImageFilename(imgFilename.toString());
 
-        Image image = ImageIO.read(new File(imgFilename));
+        Image image = ImageIO.read(imgFilename);
         if (image == null) {
             throw new IOException("Failed to load " + tilebmpFile);
         }

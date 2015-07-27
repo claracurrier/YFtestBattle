@@ -37,8 +37,6 @@ public class CameraOptions {
 
         int w = cam.getWidth();
         int h = cam.getHeight();
-        afBox = new CCAutoFollowBox(w, h, camBox);
-        afMidpoint = new CCAutoFollowMidpoint(w, h);
         afLocked = new CCAutoFollowLocked(w, h, firstChar, root, this);
         manual = new CCManual(w, h, in);
     }
@@ -125,7 +123,6 @@ public class CameraOptions {
 
     public void setChar(Node character) {
         activeChar = character;
-        resetLocation();
         ((CCAutoFollowLocked) afLocked).updateChar(character);
     }
 
