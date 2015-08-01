@@ -1,5 +1,5 @@
 # YFtestBattle
-Just the battle portion of a game
+Just the battle portion of a game ye
 
 Controls are:
 
