@@ -9,5 +9,3 @@ Controls are:
 - To move the camera: use the arrow keys or place your mouse near the edge of the screen
 - To pause: use the p key
 - To lock/unlock the camera: use the spacebar
-
-fgdsgdsfgs
