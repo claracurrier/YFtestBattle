@@ -1,5 +1,5 @@
 # YFtestBattle
-Just the battle portion of a game, to be expanded
+Just the battle portion of a game, to be expanded gfdjkl
 
 Controls are:
 
