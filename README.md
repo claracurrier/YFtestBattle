@@ -1,5 +1,5 @@
 # YFtestBattle
-Just the battle portion of a game, to be expanded eeee
+Just the battle portion of a game, to be expanded ee
 
 Controls are:
 
